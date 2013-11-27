@@ -1,0 +1,139 @@
+Check bit tables for segment 1 on 1 elements
+End Check bit tables for segment 1
+Check bit tables for segment 65 on 1 elements
+End Check bit tables for segment 65
+Checking auto sequence number definitions on 3 elements
+End Checking auto sequence number definitions
+Checking chained list of deleted auto sequence number def initions on 3 elements
+End Checking chained list of deleted auto sequence number def initions
+Checking data table definitions on 4 elements
+End Checking data table definitions
+Checking chained list of deleted table definitions on 4 elements
+End Checking chained list of deleted table definitions
+Checking index definitions on 13 elements
+End Checking index definitions
+Checking chained list of deleted index definitions on 13 elements
+End Checking chained list of deleted index definitions
+Load data tables on 0 elements
+Checking data table headers on 4 elements
+End Checking data table headers
+Checking chained list of deleted data table headers on 4 elements
+End Checking chained list of deleted data table headers
+End 
+Checking BLOBs in table Holiday on 0 elements
+End Checking BLOBs in table Holiday
+Checking list of deleted BLOBs in table Holiday on 0 elements
+End Checking list of deleted BLOBs in table Holiday
+Checking records in table Holiday on 3 elements
+End Checking records in table Holiday
+Checking list of deleted records in table Holiday on 0 elements
+End Checking list of deleted records in table Holiday
+Checking BLOBs in table User on 0 elements
+End Checking BLOBs in table User
+Checking list of deleted BLOBs in table User on 0 elements
+End Checking list of deleted BLOBs in table User
+Checking records in table User on 0 elements
+End Checking records in table User
+Checking list of deleted records in table User on 0 elements
+End Checking list of deleted records in table User
+Checking BLOBs in table Request on 0 elements
+End Checking BLOBs in table Request
+Checking list of deleted BLOBs in table Request on 0 elements
+End Checking list of deleted BLOBs in table Request
+Checking records in table Request on 35 elements
+End Checking records in table Request
+Checking list of deleted records in table Request on 0 elements
+End Checking list of deleted records in table Request
+Checking BLOBs in table Requests on 0 elements
+End Checking BLOBs in table Requests
+Checking list of deleted BLOBs in table Requests on 0 elements
+End Checking list of deleted BLOBs in table Requests
+Checking records in table Requests on 0 elements
+End Checking records in table Requests
+Checking list of deleted records in table Requests on 0 elements
+End Checking list of deleted records in table Requests
+Checking index B-tree Index 0 on Holiday.dateHoliday on 0 elements
+Checking index page addresses on B-tree Index 0 on Holiday.dateHoliday on 1 elements
+End Checking index page addresses on B-tree Index 0 on Holiday.dateHoliday
+Checking index pages on B-tree Index 0 on Holiday.dateHoliday on 1 elements
+End Checking index pages on B-tree Index 0 on Holiday.dateHoliday
+End 
+Checking index B-tree Index 1 on Holiday.id on 0 elements
+Checking index page addresses on B-tree Index 1 on Holiday.id on 1 elements
+End Checking index page addresses on B-tree Index 1 on Holiday.id
+Checking index pages on B-tree Index 1 on Holiday.id on 1 elements
+End Checking index pages on B-tree Index 1 on Holiday.id
+End 
+Checking index B-tree Index 2 on Holiday.title on 0 elements
+Checking index page addresses on B-tree Index 2 on Holiday.title on 1 elements
+End Checking index page addresses on B-tree Index 2 on Holiday.title
+Checking index pages on B-tree Index 2 on Holiday.title on 1 elements
+End Checking index pages on B-tree Index 2 on Holiday.title
+End 
+Checking index B-tree Index 3 on Request.compensation on 0 elements
+Checking index page addresses on B-tree Index 3 on Request.compensation on 1 elements
+End Checking index page addresses on B-tree Index 3 on Request.compensation
+Checking index pages on B-tree Index 3 on Request.compensation on 1 elements
+End Checking index pages on B-tree Index 3 on Request.compensation
+End 
+Checking index B-tree Index 4 on Request.dateRequested on 0 elements
+Checking index page addresses on B-tree Index 4 on Request.dateRequested on 1 elements
+End Checking index page addresses on B-tree Index 4 on Request.dateRequested
+Checking index pages on B-tree Index 4 on Request.dateRequested on 1 elements
+End Checking index pages on B-tree Index 4 on Request.dateRequested
+End 
+Checking index B-tree Index 5 on Request.hours on 0 elements
+Checking index page addresses on B-tree Index 5 on Request.hours on 1 elements
+End Checking index page addresses on B-tree Index 5 on Request.hours
+Checking index pages on B-tree Index 5 on Request.hours on 1 elements
+End Checking index pages on B-tree Index 5 on Request.hours
+End 
+Checking index B-tree Index 6 on Request.id on 0 elements
+Checking index page addresses on B-tree Index 6 on Request.id on 1 elements
+End Checking index page addresses on B-tree Index 6 on Request.id
+Checking index pages on B-tree Index 6 on Request.id on 1 elements
+End Checking index pages on B-tree Index 6 on Request.id
+End 
+Checking index Cluster Index 7 on Request.owner on 0 elements
+Checking index page addresses on Cluster Index 7 on Request.owner on 1 elements
+End Checking index page addresses on Cluster Index 7 on Request.owner
+Checking clusters on Cluster Index 7 on Request.owner on 2 elements
+End Checking clusters on Cluster Index 7 on Request.owner
+Checking list of deleted clusters on Cluster Index 7 on Request.owner on 2 elements
+End Checking list of deleted clusters on Cluster Index 7 on Request.owner
+Checking index pages on Cluster Index 7 on Request.owner on 1 elements
+End Checking index pages on Cluster Index 7 on Request.owner
+End 
+Checking index B-tree Index 8 on Request.status on 0 elements
+Checking index page addresses on B-tree Index 8 on Request.status on 1 elements
+End Checking index page addresses on B-tree Index 8 on Request.status
+Checking index pages on B-tree Index 8 on Request.status on 1 elements
+End Checking index pages on B-tree Index 8 on Request.status
+End 
+Checking index B-tree Index 9 on User.email on 0 elements
+Checking index page addresses on B-tree Index 9 on User.email on 0 elements
+End Checking index page addresses on B-tree Index 9 on User.email
+Checking index pages on B-tree Index 9 on User.email on 0 elements
+End Checking index pages on B-tree Index 9 on User.email
+End 
+Checking index B-tree Index 10 on User.fullName on 0 elements
+Checking index page addresses on B-tree Index 10 on User.fullName on 0 elements
+End Checking index page addresses on B-tree Index 10 on User.fullName
+Checking index pages on B-tree Index 10 on User.fullName on 0 elements
+End Checking index pages on B-tree Index 10 on User.fullName
+End 
+Checking index B-tree Index 11 on User.id on 0 elements
+Checking index page addresses on B-tree Index 11 on User.id on 0 elements
+End Checking index page addresses on B-tree Index 11 on User.id
+Checking index pages on B-tree Index 11 on User.id on 0 elements
+End Checking index pages on B-tree Index 11 on User.id
+End 
+Checking index B-tree Index 12 on User.role on 0 elements
+Checking index page addresses on B-tree Index 12 on User.role on 0 elements
+End Checking index page addresses on B-tree Index 12 on User.role
+Checking index pages on B-tree Index 12 on User.role on 0 elements
+End Checking index pages on B-tree Index 12 on User.role
+End 
+Scanning data on 65 elements
+End Scanning data
+no errors found

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PTO Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="libs/bootstrap-3.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for PTO2 application -->
+    <link href="css/pto2.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <!-- Wrap all page content here -->
+    <div id="wrap">
+
+      <!-- PTO Navbar that stays fixed at the top of our page (start) -->
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">PTO Admin</a>
+          </div>
+
+          <div class="navbar-collapse collapse">
+            <ul id="navbarlist" class="nav navbar-nav">
+              <li class="requests"><a href="">Requests</a></li>
+              <li class="users"><a href="">Users</a></li>
+              <li class="holidays"><a href="">Holidays</a></li>
+            </ul>
+
+            <div id="loginContainer">
+              <form class="navbar-form navbar-right login">
+                <div class="form-group">
+                  <input type="text" id="loginEmail" placeholder="Email" class="form-control">
+                </div>
+                <div class="form-group">
+                  <input type="password" id="loginPassword" placeholder="Password" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-success">Sign in</button>
+              </form>
+
+              <form class="navbar-form navbar-right logout hidden">
+                <div class="form-group">
+                  <p id="currentUserMsg" class="text-info text-left"></p>
+                </div>
+                <button type="submit" class="btn btn-success">Sign Out</button>
+              </form>
+            </div><!--/loginContainer-->
+
+          </div><!--/.navbar-collapse -->
+        </div><!--/.container -->
+      </div><!--/.navbar -->
+      <!-- PTO2 Navbar that stays fixed at the top of our page (end) -->
+
+      <div id="appContainer">
+
+      <!-- <div class="row" id="messageContainerRow">
+      <div class="col-md-12">
+      <div id="messageContainer"></div>
+      </div>
+      </div> -->
+
+      <div class="row splash">     
+        <!-- Main jumbotron for our splashscreen -->
+        <div class="jumbotron">
+          <div class="container marketing">
+            <h1>Paid Time Off</h1>
+            <p>Create new Users. Review PTO Requests. Set your Holidays for the year and more.</p>
+
+            <p><a class="btn btn-primary btn-lg" role="button">Learn more &raquo;</a></p>
+          </div>
+        </div><!--/jumbotron-->
+
+        <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <h2>Requests</h2>
+            <p>Review the Paid Time Off Requests.</p>
+          </div>
+          <div class="col-md-4">
+            <h2>Users</h2>
+            <p>Create new users. Manage their account.</p>
+          </div>
+          <div class="col-md-4">
+            <h2>Holidays</h2>
+            <p>Setup your Company Holidays. </p>
+         </div>
+        </div>
+        </div>
+      </div><!--/splash-->
+
+      <div class="hidden app"> 
+        <div class="container requests">
+        <div class="row">
+        <div class="col-md-12">
+          <h3>Requests</h3>
+          <hr class='hr-double'>
+          <br>
+
+          <!-- <div id="listContainer" > 
+            <ul id="requestsUL" class="list-group"></ul>
+          </div> -->
+
+           <!-- Request Table (start) -->
+          <div class='row'>
+          <div class='col-sm-12'>
+
+          <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="table-responsive">
+          <table class="table table-hover table-condensed">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Hours</th>
+                <th>Compensation</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody id="requestTableBody">
+            </tbody>
+          </table>
+          </div><!--/Request table-responsive-->
+          </div>
+        </div>
+          
+
+        </div>
+        </div>
+
+        </div><!--/col-md-12-->
+        </div><!--/row-->
+        </div><!--/request container-->
+
+        <div class="container users hidden">
+        <div class="row">
+        <div class="col-md-12">
+          <h3>Users</h3>
+          <hr class='hr-double'>
+          <br>
+
+          <!-- User Table (start) -->
+          <div class='row'>
+          <div class='col-sm-12'>
+
+          <div class="table-responsive">
+          <table class="table table-hover table-condensed">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody id="userTableBody">
+            </tbody>
+          </table>
+          </div><!--/user table-responsive-->
+
+          </div>
+          </div>
+          <!-- User Table (end) -->
+
+        </div><!--/col-md-12-->
+        </div><!--/row-->
+        </div><!--/users container-->
+
+
+
+        <div class="container holidays hidden">
+        <div class="row">
+        <div class="col-md-12">
+          <h3>Holidays</h3>
+          <hr class='hr-double'>
+          <br>
+        </div><!--/col-md-12-->
+        </div><!--/row-->
+        </div><!--/holiday container-->
+      </div><!--/app-->
+
+
+      </div><!--/appContainer-->
+
+    </div><!--/wrap-->
+
+    <div id="footer">
+      <div class="container">
+        <hr>
+        <p>&copy; 4D US 2013</p>
+      </div>
+    </div>
+
+    <br/>
+    <div class="row" id="messageContainerRow">
+    <div class="col-md-12">
+    <div id="messageContainer"></div>
+    </div>
+    </div>
+
+    
+
+
+    <!--Edit User Modal Dialog-->
+    <div class='modal fade' id='editUserModalWin' tabindex='-1'>
+    <div class='modal-dialog'>
+    <div class='modal-content'>
+    
+    <div class='modal-header'>
+      <h4 class='modal-title' id='myModalLabel'>Edit User</h4>
+    </div>
+    
+    <div class='modal-body'>
+    <form class="form-stacked"  method="post" action="#" role="form">  
+      <div class="row">
+        <div class="col-xs-6">
+          <label for='fullName'>Name</label>
+          <input class='form-control' id='fullName' placeholder='Name' type='text'>
+        </div>
+
+        <div class="col-xs-6">
+          <label for='role'>Role</label>
+          <select id="role" class="form-control">
+            <option value="Employee">Employee</option>
+            <option value="Manager">Manager</option>
+            <option value="Payroll">Payroll</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div><!--/class="col-xs-6"-->
+      </div>
+
+      <div class="row">
+         <div class="col-xs-6">
+          <label for='floatingDays'>Floating Days</label>
+          <input class='form-control' id='floatingDays' placeholder='Floating Days' type='text'>
+        </div>
+        <div class="col-xs-6">
+          <label for='ptoHours'>PTO Hours</label>
+        <input class='form-control' id='ptoHours' placeholder='PTO Hours' type='text'>
+        </div>
+      </div><!--/class="row"-->
+
+      <div class="row">
+        
+      </div><!--/class="row"-->
+
+    <hr class='hr-normal'>
+    </form>
+    </div>
+
+    <div class='modal-footer'>
+      <button  class='btn btn-default' data-dismiss='modal' type='button'>Close</button>
+      <button  class='btn btn-primary save' data-dismiss='modal' type='button'>Save</button>
+    </div>
+
+    </div>
+    </div>
+    </div>
+    <!--End Edit User Modal Dialog-->
+
+
+    <script id="message-template" type="text/template">
+      <div class="alert <%= contextualClass %> alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        <%= title %>
+      </div>
+    </script>
+
+    <script type="text/template" id="requests-template">
+        <div class="requestLineItemTopRow">
+          <div class="requestLineItemLeft"><em><%= dateString %></em></div>
+          <div class="requestLineItemRight"><%= hours %> hours - <%= status %></div>
+        </div>
+        <div style="clear: both;"></div>
+  
+    </script>
+
+    <script id="requests-table-template" type="text/template">
+      <td><%= ownerName %></td>
+      <td><%= dateString %></td>
+      <td><%= hours %></td>
+      <td><%= compensation %></td>
+      <td><%= status %></td>
+    </script>
+
+    <script id="user-template" type="text/template">
+      <td><%= fullName %></td>
+      <td><%= email %></td>
+      <td><%= role %></td>
+      <td><a class="btn btn-default edit" data-toggle="modal" href="#editUserModalWin" role="button">Edit</a></td>
+      <td><a class="btn btn-default delete" href="#userDelete/<%= id %>" role="button">Delete</a></td>
+    </script>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins and  some Bootstrap features) -->
+    <script src="libs/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <!-- Backbone's only hard dependency is Underscore.js -->
+    <script src="libs/underscore-min.js" type="text/javascript"></script>
+    <script src="libs/backbone-min.js" type="text/javascript"></script>
+    <!-- For Bootstrap - Include all compiled plugins (below), or include individual files as needed -->
+    <script src="libs/bootstrap-3.0.2/js/bootstrap.min.js"></script>
+    <!-- Now let's load our application specific Javascript. -->
+    <script type="text/javascript" src="/js/PTO_Utility.js"></script>
+    <script type="text/javascript" src="/js/admin.js"></script>
+
+  </body>
+</html>

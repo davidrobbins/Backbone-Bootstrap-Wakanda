@@ -1,0 +1,1 @@
+﻿var PTO = PTO || {}; //Don't assume we are first to define PTO.PTO.customLogin = require('CustomLogin').customLoginListener;

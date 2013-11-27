@@ -1,0 +1,25 @@
+Compacting auto sequence number definitions on 3 elements
+End Compacting auto sequence number definitions
+Compacting data table definitions on 4 elements
+End Compacting data table definitions
+Loading data tables on 0 elements
+Compacting data table headers on 4 elements
+End Compacting data table headers
+End 
+Compacting BLOBs in table Holiday on 0 elements
+End Compacting BLOBs in table Holiday
+Compacting records in table Holiday on 3 elements
+End Compacting records in table Holiday
+Compacting BLOBs in table User on 0 elements
+End Compacting BLOBs in table User
+Compacting records in table User on 0 elements
+End Compacting records in table User
+Compacting BLOBs in table Request on 0 elements
+End Compacting BLOBs in table Request
+Compacting records in table Request on 35 elements
+End Compacting records in table Request
+Compacting BLOBs in table Requests on 0 elements
+End Compacting BLOBs in table Requests
+Compacting records in table Requests on 0 elements
+End Compacting records in table Requests
+no errors found

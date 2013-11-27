@@ -1,0 +1,140 @@
+/* Move down content because we have a fixed navbar that is 50px tall */
+/**/
+body {
+  padding-top: 50px;
+  padding-bottom: 20px;
+}
+
+ul
+{
+    list-style-type: none;
+}
+
+ /*#listContainer ul {  padding: 0; 
+      margin: 0; 
+      border: solid 1px lightgray;
+  }
+
+#listContainer {
+  overflow-y: scroll;
+  height: 400px;
+}*/
+
+#currentUserMsgContainer {
+  margin-right: 20px;
+}
+
+.requestLineItemTopRow {
+  margin-bottom: 15px;
+}
+
+.requestLineItemButtonRow {
+  margin-top: 15px;
+}
+
+.requestLineItemLeft {
+  float: left;
+  /*width: 170px;*/
+  /*padding: 5px;*/
+}
+
+.requestLineItemRight {
+  float: right;
+  /*width: 110px;*/
+  /*padding: 5px;*/
+}
+
+.clearBoth: {
+  clear: both;
+}
+
+
+.pendingRequestListItem {
+  /*border-right: 1px solid lightgray;
+  border-top: 1px solid lightgray;
+  border-left: 1px solid lightgray;*/
+
+  height: 120px;
+  /*padding: 7px;*/
+  /*width: 600px;*/
+}
+
+
+.employeeRequestListItem {
+  /*border-right: 1px solid lightgray;
+  border-top: 1px solid lightgray;
+  border-left: 1px solid lightgray;*/
+
+  height: 120px;
+  /*padding: 7px;*/
+  /*width: 600px;*/
+}
+
+
+.pendingRequestsPreview { /* You can find this class in our template. */
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        border-bottom-color: lightgray;
+
+        /*border-top-style: solid;
+        border-top-width: 1px;
+        border-top-color: lightgray;*/
+
+        /*border-right-style: solid;
+        border-right-width: 1px;
+        border-right-color: lightgray;*/
+
+        background-color: #EEEEEE; 
+
+        font-size: 14px;
+        padding: 7px 10px;
+        height: 90px;
+        width: 290px;
+        /*padding: 10px;*/
+}
+
+
+.ui-datepicker-unselectable.holiday span.ui-state-default{
+       background: #A5D3FF !important;
+ }
+
+ .ui-datepicker-unselectable.vacation span.ui-state-default{
+       background: #D1FFC2 !important;
+ }
+
+
+#messageContainer div{
+  border-radius: 0 !important;
+  /*padding-left: 20px;*/
+  margin: 0px;
+}
+
+
+
+.gridHover {
+	background-color: #F0F8FF;
+}
+
+.gridSelect {
+	background-color: #F0F8FF;
+}
+
+
+.marketing {
+
+}
+
+.messageSpacer {
+	margin: 10px;
+}
+.spacer {
+    margin-top: 10px; /* define margin as you see fit */
+}
+
+.big-spacer {
+    margin-top: 100px; /* define margin as you see fit */
+}
+
+
+
+

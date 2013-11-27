@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PTO</title>
+    <!-- <meta name="viewport" content="width=device-width, maximum-scale=1.0"> -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Bootstrap -->
+    <link href="libs/bootstrap-3.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jquery-ui datapicker -->
+    <link href="libs/jquery-ui-1.10.3/css/smoothness/jquery-ui-1.10.3.custom.min.css" rel="stylesheet">
+    <!-- Custom styles for PTO2 application -->
+    <link href="css/pto2.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <!-- Wrap all page content here -->
+    <div id="wrap">
+      <div id="appContainer">
+
+      <div class="row splash">
+        <div class="container">     
+        <div class="container" id="loginContainer">
+        <form class="form-signin login">
+          <h2 class="form-signin-heading">PTO Sign In</h2>
+          <br/>
+          <input type="text" class="form-control" id="loginEmail" placeholder="Email address" required autofocus>
+          <input type="password" class="form-control" id="loginPassword" placeholder="Password" required>
+          <label class="checkbox">
+            <input type="checkbox" value="remember-me"> Remember me
+          </label>
+          <button class="btn btn-lg btn-primary btn-block " type="submit">Sign in</button>
+        </form>
+        </div> <!-- /container -->
+        </div>
+      </div><!--/splash-->
+
+
+
+
+      <div class="hidden app">
+        <!-- PTO Navbar that stays fixed at the top of our page (start) -->
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">PTO</a>
+        </div>
+
+        <!--/.navbar-collapse/start-->
+        <div id="collapseContainer" class="navbar-collapse collapse" >
+          <ul id="navbarlist" class="nav navbar-nav"> 
+            <li class="newRequestNav"><a href="">New Request</a></li> 
+            <li class="accountNav"><a href="">Account</a></li>
+            <li class="pendingRequestsNav"><a href="">Pending Requests</a></li>
+            <li class="employeeRequestsNav"><a href="">Employee Requests</a></li>
+          </ul>
+
+          <div id="logoutContainer">
+          <form class="navbar-form navbar-right logout">
+            <div class="form-group" id="currentUserMsgContainer">
+              <p id="currentUserMsg" class="text-info text-left"></p>
+            </div>
+            <button type="submit" class="btn btn-success">Sign Out</button>
+          </form>
+        </div><!--/logoutContainer-->
+        </div> <!--/.navbar-collapse -->
+
+      </div><!--/.container -->
+      </div><!--/.navbar -->
+      <!-- PTO2 Navbar that stays fixed at the top of our page (end) -->
+
+
+
+        <div class="container newRequest">
+        <div class="row">
+        <div class="col-md-12">
+          <h4>New Request</h4>
+          <!-- <hr class='hr-double'> -->
+          <form role="form" id="newRequestForm">
+            <div class="form-group">
+              <label for="requestDate" >Date</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="requestDate" placeholder="Enter Date" readonly="readonly">
+                <span id="dayName" class="input-group-addon"></span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="requestHours" >Hours</label>
+              <input type="text" class="form-control" id="requestHours" placeholder="Enter Hours">
+            </div>
+
+            <div class="form-group">
+              <label for="requestCompensation" >Hours</label>
+              <select id="requestCompensation" class="form-control">
+                <option>PTO</option>
+                <option>Floating Day</option>
+                <option>Comp Day</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary newRequest">Submit</button>
+          </form>
+        </div><!--/col-md-12-->
+        </div><!--/row-->
+        </div><!--/newRequest container-->
+
+
+
+        <div class="container account hidden">
+        <div class="row">
+        <div class="col-md-12">
+        <h4>Account</h4>
+        <!--  <hr class='hr-double'> -->
+        <form role="form" id="accountForm">
+          <div class="form-group">
+            <label for="accountName">Account Name</label>
+            <input type="text" class="form-control" id="accountName" placeholder="Account Name" readonly="readonly">
+          </div>
+
+          <div class="form-group">
+            <label for="ptoHours">PTO Hours</label>
+            <input type="text" class="form-control" id="ptoHours" placeholder="PTO Hours" readonly="readonly">
+          </div>
+
+          <div class="form-group">
+            <label for="floatingDays">Floating Days</label>
+            <input type="text" class="form-control" id="floatingDays" placeholder="Floating Days" readonly="readonly">
+          </div>
+
+          <div class="form-group">
+            <label for="compDays">Comp Days</label>
+            <input type="text" class="form-control" id="compDays" placeholder="Comp Days" readonly="readonly">
+          </div>
+        </form>
+        </div>
+        </div>
+        </div><!--/account container-->
+
+
+
+        <!--/pendingRequests container (start)-->
+        <div class="container pendingRequests hidden"> <!--/container-->
+        <div class="row">
+        <div class="col-md-12">
+        <h4>Pending Requests</h4>
+
+          <!-- <div id="pendingRequests" class="list-group"></div>  -->
+
+          <div id="listContainer" > 
+            <ul id="pendingRequestsUL" class="list-group"></ul>
+          </div>
+
+        </div>
+        </div>
+        </div><!--/pendingRequests container-->
+
+
+        <!--/employeeRequests container (start)-->
+        <div class="container employeeRequests hidden"> <!--/container-->
+        <div class="row">
+        <div class="col-md-12">
+        <h4>Employee Requests</h4>
+
+          <div id="employeeRequestListContainer" > 
+            <ul id="employeeRequestsUL" class="list-group"></ul>
+          </div>
+
+        </div>
+        </div>
+        </div><!--/employeeRequests container-->
+
+      </div><!--/app-->
+
+      </div><!--/appContainer-->
+    </div><!--/wrap-->
+    
+    <!-- 
+    <div id="footer">
+      <div class="container">
+        <hr>
+        <p>&copy; 4D US 2013</p>
+      </div>
+    </div> -->
+
+    <br/>
+
+    <div class="row" id="messageContainerRow">
+    <div class="col-md-12">
+    <div id="messageContainer"></div>
+    </div>
+    </div>
+
+    <!-- Withdraw Request Modal (start) -->
+    <div class="modal fade" id="delRequestModalWin" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Withdraw Request</h4>
+          </div>
+          <div class="modal-body"> 
+            
+            <form role="form">
+              <div class="row">
+                <div class="col-xs-2">
+                  <label for="requestId">ID</label>
+                </div>
+                <div class="col-xs-4">
+                  <p class="requestId" id="requestId"></p>
+                </div>
+                <div class="col-xs-2">
+                  <label for="requestDate">Date</label>
+                </div>
+                <div class="col-xs-4">
+                  <p class="requestDate" id="requestDate"></p>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xs-2">
+                  <label for="requestHours">Hours</label>
+                </div>
+                <div class="col-xs-4">
+                  <p class="requestHours" id="requestHours"></p>
+                </div>
+                <div class="col-xs-2">
+                  <label for="requestStatus">Status</label>
+                </div>
+                <div class="col-xs-4">
+                  <p class="requestStatus" id="requestStatus"></p>
+                </div>
+              </div>
+            </form>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary withdraw" data-dismiss="modal">Withdraw Request</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- Withdraw Request Modal (end) -->
+
+
+    <script type="text/template" id="pending-requests-template4">
+       <em><%= dateString %></em> - <%= status %> - <%= id %>
+    </script>
+
+    <script type="text/template" id="pending-requests-template3">
+        <div><em><%= dateString %></em></div>
+        <div><%= status %></div></div>
+        <div>
+          <button type="button" data-toggle="modal" href="#delRequestModalWin" class="btn btn-primary">Delete</button>
+        </div>
+    </script>
+
+
+
+    <script type="text/template" id="pending-requests-template">
+        <div class="requestLineItemTopRow">
+          <div class="requestLineItemLeft"><em><%= dateString %></em></div>
+          <div class="requestLineItemRight"><%= hours %> hours - <%= status %></div>
+        </div>
+        <div style="clear: both;"></div>
+       
+         <div class="requestLineItemButtonRow">
+          <div class="requestLineItemLeft"></div>
+          <div class="requestLineItemRight"><button type="button" data-toggle="modal" href="#delRequestModalWin" class="btn btn-primary delete">Withdraw</button></div>
+        </div>
+    </script>
+
+    <script type="text/template" id="employee-requests-template">
+        <div class="requestLineItemTopRow">
+          <div class="requestLineItemLeft"><em><%= dateString %></em></div>
+          <div class="requestLineItemRight"><%= hours %> Hours <%= compensation %> 
+        </div>
+        <div style="clear: both;"></div>
+        <div class="requestLineItemTopRow">
+          <div class="requestLineItemLeft"><em><%= ownerName %></em></div>
+          <div class="requestLineItemRight"><%= status %></div>
+        </div>
+
+        <div style="clear: both;"></div>
+         <div class="requestLineItemButtonRow">
+          <div class="requestLineItemLeft"><button type="button"  class="btn btn-default reject">Reject</button></div>
+          <div class="requestLineItemRight"><button type="button"  class="btn btn-primary accept">Accept</button></div>
+        </div>
+        
+    </script>
+
+
+
+    <script id="message-template" type="text/template">
+      <div class="alert <%= contextualClass %> alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        <%= title %>
+      </div>
+    </script>
+    
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins and  some Bootstrap features) -->
+    <script src="libs/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <!-- Backbone's only hard dependency is Underscore.js -->
+    <script src="libs/underscore-min.js" type="text/javascript"></script>
+    <script src="libs/backbone-min.js" type="text/javascript"></script>
+    <!-- For Bootstrap - Include all compiled plugins (below), or include individual files as needed -->
+    <script src="libs/bootstrap-3.0.2/js/bootstrap.min.js"></script>
+    <!-- jquery-ui datepicker. -->
+    <script src="libs/jquery-ui-1.10.3/js/jquery-ui-1.10.3.custom.min.js"></script>
+    <!--date library-->
+    <script src="libs/moment.min.js"></script>
+
+    <!-- Now let's load our application specific Javascript. -->
+    <script type="text/javascript" src="/js/PTO_Utility.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+
+  </body>
+</html>
+
+
+
+

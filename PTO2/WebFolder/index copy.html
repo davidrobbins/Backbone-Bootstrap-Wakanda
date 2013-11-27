@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PTO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="libs/bootstrap-3.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jquery-ui datapicker -->
+    <link href="libs/jquery-ui-1.10.3/css/smoothness/jquery-ui-1.10.3.custom.min.css" rel="stylesheet">
+    <!-- Custom styles for PTO2 application -->
+    <link href="css/pto2.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <!-- Wrap all page content here -->
+    <div id="wrap">
+
+      <!-- PTO Navbar that stays fixed at the top of our page (start) -->
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">PTO</a>
+          </div>
+
+          <div class="navbar-collapse collapse">
+            <ul id="navbarlist" class="nav navbar-nav">
+              <li class="newRequest"><a href="#newRequest">New Request</a></li>
+              <li class="accountHistory"><a href="#accountHistory">Account History</a></li>
+            </ul>
+
+            <div id="loginContainer">
+              <form class="navbar-form navbar-right login">
+                <div class="form-group">
+                  <input type="text" id="loginEmail" placeholder="Email" class="form-control">
+                </div>
+                <div class="form-group">
+                  <input type="password" id="loginPassword" placeholder="Password" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-success">Sign in</button>
+              </form>
+
+              <form class="navbar-form navbar-right logout hidden">
+                <div class="form-group">
+                  <p id="currentUserMsg" class="text-info text-left"></p>
+                </div>
+                <button type="submit" class="btn btn-success">Sign Out</button>
+              </form>
+            </div><!--/loginContainer-->
+
+          </div><!--/.navbar-collapse -->
+        </div><!--/.container -->
+      </div><!--/.navbar -->
+      <!-- PTO2 Navbar that stays fixed at the top of our page (end) -->
+
+      <div id="appContainer">
+      <div class="row" id="messageContainerRow">
+      <div class="col-md-12">
+      <div id="messageContainer"></div>
+      </div>
+      </div>
+
+      <div class="row splash">     
+        <!-- Main jumbotron for our splashscreen -->
+        <div class="jumbotron">
+          <div class="container marketing">
+            <h1>Paid Time Off</h1>
+            <p>You've worked hard for your money. Now it's time to relax.</p>
+
+            <p><a class="btn btn-primary btn-lg" role="button">Learn more &raquo;</a></p>
+          </div>
+        </div><!--/jumbotron-->
+
+        <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <h2>Vacation</h2>
+            <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+          </div>
+          <div class="col-md-4">
+            <h2>Holidays</h2>
+            <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+         </div>
+          <div class="col-md-4">
+            <h2>Comp Days</h2>
+            <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+          </div>
+        </div>
+        </div>
+      </div><!--/splash-->
+
+      <div class="hidden app"> 
+
+        <div class="container newRequest">
+        <div class="row">
+        <div class="col-md-12">
+          <h3>New Request</h3>
+          <hr class='hr-double'>
+          <br>
+
+          <form role="form" id="newRequest">
+            <div class="form-group">
+              <label for="requestDate">Date</label>
+              <input type="text" class="form-control" id="requestDate" placeholder="Enter Hours">
+            </div>
+
+            <div class="form-group">
+              <label for="requestHours">Hours</label>
+              <input type="text" class="form-control" id="requestHours" placeholder="Enter Hours">
+            </div>
+
+            <div class="form-group">
+              <label for="requestCompensation">Hours</label>
+              <select id="requestCompensation" class="form-control">
+                <option>Floating Day</option>
+                <option>PTO</option>
+                <option>Comp Day</option>
+              </select>
+            </div>
+
+            
+            <button type="submit" class="btn btn-default newRequest">Submit</button>
+          </form>
+
+        </div><!--/col-md-12-->
+        </div><!--/row-->
+        </div><!--/newRequest container-->
+
+
+
+        <div class="container accountHistory hidden">
+        <div class="row">
+        <div class="col-md-12">
+          <h3>Account History</h3>
+          <hr class='hr-double'>
+          <br>
+        </div><!--/col-md-12-->
+        </div><!--/row-->
+        </div><!--/accountHistory container-->
+      </div><!--/app-->
+
+
+      </div><!--/appContainer-->
+
+    </div><!--/wrap-->
+
+    <div id="footer">
+      <div class="container">
+        <hr>
+        <p>&copy; 4D US 2013</p>
+      </div>
+    </div>
+
+
+    <script id="message-template" type="text/template">
+      <div class="alert alert-info alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+        <%= title %>
+      </div>
+    </script>
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins and  some Bootstrap features) -->
+    <script src="libs/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <!-- Backbone's only hard dependency is Underscore.js -->
+    <script src="libs/underscore-min.js" type="text/javascript"></script>
+    <script src="libs/backbone-min.js" type="text/javascript"></script>
+    <!-- For Bootstrap - Include all compiled plugins (below), or include individual files as needed -->
+    <script src="libs/bootstrap-3.0.2/js/bootstrap.min.js"></script>
+    <!-- jquery-ui datepicker. -->
+    <script src="libs/jquery-ui-1.10.3/js/jquery-ui-1.10.3.custom.min.js"></script>
+
+    <!-- Now let's load our application specific Javascript. -->
+    <script type="text/javascript" src="/js/PTO_Utility.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+
+  </body>
+</html>
+
+
+
+
