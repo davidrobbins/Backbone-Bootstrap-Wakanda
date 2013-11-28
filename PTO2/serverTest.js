@@ -1,6 +1,13 @@
 
 
-ds.User.all()
+
+
+ds.Request .all()
+
+//var req = ds.Request(28);
+//req.payrollChecked = true;
+//req.save()
+
 
 
 //var tom = ds.User("2D448A662AEC44E6BE2CF5F7B0882927");

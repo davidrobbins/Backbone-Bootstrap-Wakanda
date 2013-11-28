@@ -10,13 +10,26 @@ ul
     list-style-type: none;
 }
 
+
+.scrollable-area {
+  height: 560px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+
  /*#listContainer ul {  padding: 0; 
       margin: 0; 
       border: solid 1px lightgray;
-  }
+  } 
 
 #listContainer {
   overflow-y: scroll;
+  height: 400px;
+}*/
+
+/*#tableScrollWrap {
+  overflow-y: auto;
   height: 400px;
 }*/
 
@@ -116,7 +129,7 @@ ul
 }
 
 .gridSelect {
-	background-color: #F0F8FF;
+	background-color: #F5F5F5;
 }
 
 

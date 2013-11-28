@@ -510,11 +510,37 @@ $(document).ready(function() {
 
 	PTO.Views.Request = Backbone.View.extend({
 		tagName: 'tr',
-		//tagName: 'li',
 
-		// attributes: {
-		// 	class: 'list-group-item pendingRequestListItem'
-		// },
+		initialize: function() {
+			//_bindAll(this, 'editTask', 'render');
+			this.model.on('change', this.render, this); //change:title, destroy, add, etc.
+			this.model.on('destroy', this.remove, this);
+		},
+
+		events: {
+			"click" 	: "selected"
+		},
+
+		selected: function() {
+			this.$el.siblings().removeClass('gridSelect');
+			this.$el.addClass('gridSelect');
+		}, //end - selected().
+
+		/*
+		events: {
+			"click a.payrollcheck"	: "payrollCheck",
+		}, //end - events.
+
+
+        payrollCheck: function() {
+        	console.log('payroll check');
+			this.model.save({payrollChecked: !(this.model.get('payrollChecked'))}, {
+				success: function(model, response) {
+
+        		} //end - success().
+			});
+        }, //end - payrollCheck().
+		*/
 
 		template: PTO.Utility.template('requests-table-template'),
 
@@ -535,7 +561,7 @@ $(document).ready(function() {
 			// requestConfigObj.timeout = 300;
 
 			// return PTO.wakandaQueryURLString(requestConfigObj, new Date(), PTO.currentUserModel.get('ID'));
-			return "/rest/Request/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'";
+			return "/rest/Request/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'&$expand=owner, owner.myManager";
 		},
 
 		parse: function(response) {
