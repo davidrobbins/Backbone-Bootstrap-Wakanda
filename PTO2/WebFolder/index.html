@@ -267,7 +267,7 @@
 
     <script type="text/template" id="pending-requests-template">
         <div class="requestLineItemTopRow">
-          <div class="requestLineItemLeft"><em><%= dateString %></em></div>
+          <div class="requestLineItemLeft"># <%= id %> - <em><%= dateString %></em></div>
           <div class="requestLineItemRight"><%= hours %> hours - <%= status %></div>
         </div>
         <div style="clear: both;"></div>
@@ -280,7 +280,7 @@
 
     <script type="text/template" id="employee-requests-template">
         <div class="requestLineItemTopRow">
-          <div class="requestLineItemLeft"><em><%= dateString %></em></div>
+          <div class="requestLineItemLeft"># <%= id %> - <em><%= dateString %></em></div>
           <div class="requestLineItemRight"><%= hours %> Hours <%= compensation %> 
         </div>
         <div style="clear: both;"></div>

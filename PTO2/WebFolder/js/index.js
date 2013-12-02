@@ -773,6 +773,7 @@
 		}, //end - events.
 
 		rejectRequest : function() {
+			/**/
 			this.model.save({status: "Rejected"}, {
 				success: function(model, response) {
 					PTO.employeeRequestCollection.fetch({
@@ -784,10 +785,12 @@
 					}); //end - PTO.userCollection.fetch();
 				}
 			});
-
+			
 		},
 
 		acceptRequest : function() {
+
+			/**/
 			this.model.save({status: "Accepted"}, {
 				success: function(model, response) {
 					PTO.employeeRequestCollection.fetch({
@@ -799,6 +802,8 @@
 					}); //end - PTO.userCollection.fetch();
 				}
 			});
+			
+			
 		}, //end - acceptRequest().
 
 

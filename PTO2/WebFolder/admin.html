@@ -118,11 +118,14 @@
             <table class="table">
             <thead>
               <tr>
+                <th>#</th>
                 <th>Name</th>
                 <th>Date</th>
                 <th>Hours</th>
                 <th>Compensation</th>
                 <th>Status</th>
+                <th>Payroll Check</th>
+                <th></th>
               </tr>
             </thead>
             </table>
@@ -229,8 +232,16 @@
     </div>
 
     <div class='modal-body'>
+      <form class="form-stacked"  method="post" action="#" role="form"> 
 
+        <div class="row">
+         <div class="col-xs-12">
+          <label for='payrollChecked'>Payroll Checked</label>
+          <input type="checkbox" id="payrollChecked">
+        </div>
+      </div><!--/class="row"-->
 
+      </form>
     </div>
 
     <div class='modal-footer'>
@@ -319,19 +330,22 @@
     </script>
 
     <script id="requests-table-template" type="text/template">
+      <td><%= id %></td>
       <td><%= ownerName %></td>
       <td><%= dateString %></td>
       <td><%= hours %></td>
       <td><%= compensation %></td>
       <td><%= status %></td>
+      <td><%= payrollChecked %></td>
+      <td><button type="button" class="btn btn-primary payrollcheck">Check</button></td>
     </script>
+
 
     <script id="user-template" type="text/template">
       <td><%= fullName %></td>
       <td><%= email %></td>
       <td><%= role %></td>
       <td><a class="btn btn-primary edit" data-toggle="modal" href="#editUserModalWin" role="button">Edit</a></td>
-      // <td><a class="btn btn-default delete" href="#userDelete/<%= id %>" role="button">Delete</a></td>
     </script>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins and  some Bootstrap features) -->

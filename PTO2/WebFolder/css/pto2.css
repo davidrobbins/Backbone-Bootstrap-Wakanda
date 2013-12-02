@@ -5,6 +5,14 @@ body {
   padding-bottom: 20px;
 }
 
+th {
+  width: 100px;
+}
+
+td {
+  width: 100px;
+}
+
 ul
 {
     list-style-type: none;

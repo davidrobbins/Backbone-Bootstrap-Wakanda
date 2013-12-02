@@ -1,18 +1,11 @@
 
 
+ds.Request.all()
 
 
-ds.Request .all()
-
-//var req = ds.Request(28);
-//req.payrollChecked = true;
-//req.save()
-
-
-
-//var tom = ds.User("2D448A662AEC44E6BE2CF5F7B0882927");
-//var dave = ds.User("2B32086F8BEF43349C76266FE907A6E6");
-//var greg = ds.User("15A6AD41E1B34E8AB909C0AE70C2E1BA");
+//var tom = ds.User("AB0C8BB5555441E8A780124215256468");
+//var dave = ds.User("4E8F7EFBF2CC4411AFA9F38C07035EA1");
+//var greg = ds.User("9ED3EA6198A94816952B265131235647");
 
 //greg.myManager = tom;
 //greg.save();
@@ -21,13 +14,6 @@ ds.Request .all()
 //dave.save();
 
 //ds.User.all();
-
-
-
-
-
-
-//ds.Holiday.all()
 
 
 
