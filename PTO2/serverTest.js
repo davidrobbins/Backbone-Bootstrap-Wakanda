@@ -1,6 +1,6 @@
 
 
-//ds.User.all()
+ds.User.all().length
 
 //var tom = ds.User("FAE473275A854222AEC79D335E6B255F");
 

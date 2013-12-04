@@ -22,7 +22,11 @@ WAF.onAfterInit = function onAfterInit() {// @lock
 
 	button2.click = function button2_click (event)// @startlock
 	{// @endlock
-		waf.sources.request.query("owner.id = :1", waf.directory.currentUser().ID);
+		
+		waf.sources.user.myManager.set(waf.sources.user1); 
+        // employer is a relation attribute of the datasource; it has the set method
+        // we assign a datasource to it, hence its current element
+    	waf.sources.user.save();
 	};// @lock
 
 	button1.click = function button1_click (event)// @startlock

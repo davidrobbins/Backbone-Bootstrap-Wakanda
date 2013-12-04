@@ -1,4 +1,42 @@
 
+{ "__ENTITIES": [{"__KEY":"BA91A6180F5E4FB29B8CA8EEA153525B","__STAMP":4,"myManager":{"__KEY":"FAE473275A854222AEC79D335E6B255F"}}]}
+
+
+
+
+
+
+var rate_select_template = _.template($("#rate_select_template").html(), {
+    rates: this.rates.toJSON(),
+    labelValue: 'Something'
+});
+
+
+
+
+
+
+
+
+/*
+	PTO.Views.ManagerView = Backbone.View.extend({
+		tagName: 'option',
+
+		template: PTO.Utility.template('manager-options-template'),
+
+		render: function() {
+			this.$el.html(this.template(this.model.toJSON()));
+			return this; //this allows us to chain.
+		}
+
+	}); //end - PTO.Views.EmployeeRequest().
+	*/
+
+
+
+
+
+
 payrollCheck: function() {
         	/**/
         	this.model.save({payrollChecked: !(this.model.get('payrollChecked'))}, {

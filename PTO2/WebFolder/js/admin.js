@@ -49,13 +49,13 @@ $(document).ready(function() {
 				}
 			}); //end - PTO.userCollection.fetch();
 
-			PTO.managerCollection = new PTO.Collections.ManagerCollection();
-			PTO.managerCollection.fetch({
-				success: function(theCollection) {
-					PTO.managerCollectionView = new PTO.Views.ManagerCollectionView({collection: theCollection});
-					PTO.managerCollectionView.render();
-				}
-			});
+			// PTO.managerCollection = new PTO.Collections.ManagerCollection();
+			// PTO.managerCollection.fetch({
+			// 	success: function(theCollection) {
+			// 		PTO.managerCollectionView = new PTO.Views.ManagerCollectionView({collection: theCollection});
+			// 		PTO.managerCollectionView.render();
+			// 	}
+			// });
 			
 		}, //end - initialize().
 
@@ -355,12 +355,20 @@ $(document).ready(function() {
 
 	            case "update":
 	            options.url = "/rest/User/?$method=update";
-	            delete(model.attributes.uri);
-                options.url = "/rest/User(" + this.get('id') + ")/?$method=update";
-                var wakandaquestPayload = {};
+	            var wakandaquestPayload = {},
+                	updateAttrs = this.changedAttributes();
                 wakandaquestPayload.__ENTITIES = [];
-                wakandaquestPayload.__ENTITIES.push(this.attributes);
+                updateAttrs.__KEY = this.attributes.__KEY;
+                updateAttrs.__STAMP = this.attributes.__STAMP;
+                wakandaquestPayload.__ENTITIES.push(updateAttrs);
                 options.data = JSON.stringify(wakandaquestPayload);
+
+	            // delete(model.attributes.uri);
+             //    options.url = "/rest/User(" + this.get('id') + ")/?$method=update";
+             //    var wakandaquestPayload = {};
+             //    wakandaquestPayload.__ENTITIES = [];
+             //    wakandaquestPayload.__ENTITIES.push(this.attributes);
+             //    options.data = JSON.stringify(wakandaquestPayload);
                 break;
 
                 case "create":
@@ -433,6 +441,9 @@ $(document).ready(function() {
 		}, //end - events.
 
 		saveUser: function() {
+
+			//console.log(this.$el.find('#managerSelect').val());
+
 			this.model.set({
 				fullName: 		this.$el.find('#fullName').val(),
 				floatingDays: 	this.$el.find('#floatingDays').val(),
@@ -458,6 +469,19 @@ $(document).ready(function() {
 			this.$el.find('#ptoHours').val(this.model.get('ptoHours'));
 			this.$el.find('#role').val(this.model.get('role'));
 			this.$el.find('#email').val(this.model.get('email'));
+
+			var myManager = this.model;
+
+			PTO.managerCollection = new PTO.Collections.ManagerCollection();
+			PTO.managerCollection.fetch({
+				success: function(theCollection) {
+					PTO.managerCollectionView = new PTO.Views.ManagerCollectionView({collection: theCollection});
+					PTO.managerCollectionView.render(myManager);
+				}
+			});
+
+			//managerSelect
+
 			return this; 
 		}  //end - render().
 	}); //end - PTO.Views.EditUser().
@@ -491,31 +515,31 @@ $(document).ready(function() {
 	PTO.Views.ManagerCollectionView = Backbone.View.extend({
 		el : '#managerSelect',
 
-		render: function() {
+		template: PTO.Utility.template('manager-options-template'),
+
+		render: function(theUser) {
+			var managerName = theUser.toJSON().myManager.fullName;
 			this.$el.empty();
+
+			this.$el.append('<option></option>');
 
 			//1. filter through all items in a collection.
 			this.collection.each(function(manager) {
-				//2. For each item create a new person view.
-				var managerView = new PTO.Views.ManagerView({model: manager});
-				//3. Append each person view to our collection view.
-				this.$el.append(managerView.render().el); //chain chain chain...
+				this.$el.append(this.template(manager.toJSON())); 
 			}, this); //the second parameter to each is the context.
-		}
+
+			//$("option[value='Gateway 2']").attr('selected', 'selected');
+
+			this.$el.find("option[value='" + managerName + "']").attr('selected', 'selected');
+
+			return this;
+		} //end - render().
 
 	}); //end - PTO.Views.ManagerCollectionView()
 
-	PTO.Views.ManagerView = Backbone.View.extend({
-		tagName: 'option',
+	
 
-		template: PTO.Utility.template('manager-options-template'),
 
-		render: function() {
-			this.$el.html(this.template(this.model.toJSON()));
-			return this; //this allows us to chain.
-		}
-
-	}); //end - PTO.Views.EmployeeRequest().
 
 	// The List of Users
 	PTO.Collections.UserCollection = Backbone.Collection.extend({
@@ -660,18 +684,13 @@ $(document).ready(function() {
                 break;
 
 	            case "update":
-	            options.url = "/rest/Request/?$method=update";
-	            console.log('now using changedAttributes()');
-	            
-                var wakandaquestPayload = {};
+	            options.url = "/rest/Request/?$method=update";    
+                var wakandaquestPayload = {},
+                	updateAttrs = this.changedAttributes();
                 wakandaquestPayload.__ENTITIES = [];
-                //var updateAttrs = {};
-                var updateAttrs = this.changedAttributes();
                 updateAttrs.__KEY = this.attributes.__KEY;
                 updateAttrs.__STAMP = this.attributes.__STAMP;
-                //updateAttrs.payrollChecked = this.attributes.payrollChecked;
                 wakandaquestPayload.__ENTITIES.push(updateAttrs);
-                //wakandaquestPayload.__ENTITIES.push(this.attributes);
                 options.data = JSON.stringify(wakandaquestPayload);
                 break;
 

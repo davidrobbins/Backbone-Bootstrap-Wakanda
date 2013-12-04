@@ -323,7 +323,7 @@
           <input class='form-control' id='email' placeholder='Email' type='text'>
         </div>
         <div class="col-xs-6">
-          <label for='role'>Manager</label>
+          <label for='managerSelect'>Manager</label>
           <select id="managerSelect" class="form-control">
             <!-- <option value="Employee">Employee</option>
             <option value="Manager">Manager</option>
@@ -360,7 +360,7 @@
     <!--End Edit User Modal Dialog-->
 
     <script type="text/template" id="manager-options-template">
-       <%= fullName %>
+       <option value="<%= fullName %>"><%= fullName %></option>
     </script>
 
 
