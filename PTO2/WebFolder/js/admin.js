@@ -10,14 +10,21 @@ $(document).ready(function() {
 	/* Global PTO Admin App View */
 	PTO.Views.App = Backbone.View.extend({
 		initialize: function() {
-			PTO.vent.on('navigate', this.navigate, this); //Set hash change event handler.
+			PTO.vent.on('navigate', this.navigate, this); //Set hash change event handler. NO LONGER HASH CHANGE EVENTS
+
 			PTO.currentUserModel = new PTO.Models.CurrentUser(); //Instantiate our currentUser Model.
 			PTO.currentUserView = new PTO.Views.CurrentUser({model: PTO.currentUserModel}); //Instantiate our currentUser Model.
-			PTO.editUserView = new PTO.Views.EditUser();
+			// PTO.editUserView = new PTO.Views.EditUser();
 
 			//Message.
 			PTO.messageModel = new PTO.Models.Message();
-			PTO.messageXView = new PTO.Views.XMessage({model: PTO.messageModel})
+			//PTO.messageXView = new PTO.Views.XMessage({model: PTO.messageModel});
+
+			PTO.setMessage = function(messageObj) {
+				PTO.messageModel.set({title: messageObj.title, contextualClass: messageObj.contextualClass});
+				PTO.messageXView = new PTO.Views.XMessage({model: PTO.messageModel});
+				PTO.messageXView.render();
+			};
 
 			PTO.appContainerView = new PTO.Views.AppContainer({model: PTO.currentUserModel});
 			
@@ -33,6 +40,7 @@ $(document).ready(function() {
 			PTO.messageContainer$ = $('#messageContainer');
 			PTO.currentUserMsg$ = $('#currentUserMsg');
 
+			PTO.userToolBar = new PTO.Views.UserToolbar();
 			PTO.userCollection = new PTO.Collections.UserCollection();
 			PTO.userCollection.fetch({
 				success: function(theCollection) {
@@ -115,7 +123,7 @@ $(document).ready(function() {
 		}
 	});
 
-
+	//Message Model.
 	PTO.Models.Message = Backbone.Model.extend({
 		defaults: {
 			title: '',
@@ -123,11 +131,15 @@ $(document).ready(function() {
 		}
 	}); //end - PTO.Models.Message().
 
+
 	PTO.Views.XMessage = Backbone.View.extend({
 		el: '#messageContainer', 
 
 		initialize: function() {
-			this.model.on('change', this.render, this); //change:title, destroy, add, etc.
+			// console.log('we are init for xMessage');
+			// console.log(this.model);
+
+			//this.model.on('change', this.render, this); //change:title, destroy, add, etc.
 		},
 
 		template: PTO.Utility.template('message-template'),
@@ -135,9 +147,9 @@ $(document).ready(function() {
 		render: function() {
 			this.$el.children().remove();
 			this.$el.append(this.template(this.model.toJSON())); 
-			this.$el.fadeIn(2000);
+			this.$el.fadeIn(500);
 			var that$ = this.$el;
-			setTimeout(function() {that$.fadeOut(3000);}, 5000);
+			setTimeout(function() {that$.fadeOut(1500);}, 4000);
 			return this; //this allows us to chain.
 		}  //end - render().
 	}); //end - PTO.Views.Message().
@@ -161,6 +173,14 @@ $(document).ready(function() {
 			return response.result;
 		}, //end - parse.
 
+		currentUserBelongsTo: function(parmObj, successCallBkFn) {
+			this.save({}, {
+				data: JSON.stringify({groupName: parmObj.groupName}),
+				url: "rest/User/currentUserBelongsTo/?$top=40&$method=entityset&$timeout=300",
+				success: successCallBkFn
+			}); //end this.save();
+		}, //end - currentUserBelongsTo().
+
 		logout: function() {
 			this.save({}, {
 				url: "rest/$directory/logout/?$top=40&$method=entityset&$timeout=300",
@@ -175,28 +195,37 @@ $(document).ready(function() {
 			this.save({}, {
 				data: JSON.stringify({email: credentialsObj.email, password: credentialsObj.password}),
 				url: "rest/User/login/?$top=40&$method=entityset&$timeout=300",
+
 				//success: successCallBkFn
+
 				success: function(model, response) {
-					model.fetch({success: function(model) {
-						if (model.get('fullName') !== null) {
-							//PTO.messageModel.set({title: model.get('fullName') + " successfully signed in.", contextualClass: "alert-info"});
-							PTO.currentUserMsg$.text("Signed in as " + model.get('fullName'));
-							PTO.requestCollection.fetch({
-								success: function(theCollection) {
-									PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
-									PTO.requestCollectionView.render();
-								}
-							}); //end - PTO.userCollection.fetch();
+
+					model.currentUserBelongsTo({groupName: "Administrator"}, function(model, response) {
+						if (!response.result) {
+							//No access to Admin group.
+							PTO.setMessage({title: "You do not have permission to access PTO Admin.", contextualClass: "alert-danger"});
 
 						} else {
-							PTO.messageModel.set({title: "We could not sign you in.", contextualClass: "alert-danger"});
-						}
-						
-						// var messageView = new PTO.Views.Message({model: PTO.messageModel});
-						// PTO.messageContainer$.children().remove();
-						// PTO.messageContainer$.append(messageView.render().el); 
-					}}); 
-				}
+						 	//Yes to admin permission.
+							model.fetch({success: function(model) {
+								if (model.get('fullName') !== null) {
+									PTO.currentUserMsg$.text("Signed in as " + model.get('fullName'));
+									PTO.requestCollection.fetch({
+										success: function(theCollection) {
+											PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
+											PTO.requestCollectionView.render();
+										}
+									}); //end - PTO.userCollection.fetch();
+
+								} else {
+									PTO.setMessage({title: "We could not sign you in.", contextualClass: "alert-danger"});
+								}
+							}}); 
+						} //end - if (!response.result).
+					}); //end - model.currentUserBelongsTo({groupName: "Manager"}).
+
+					
+				} //end - success(). 
 			}); //end - this.save().
 		} //end - loginByPassword().
 
@@ -238,7 +267,8 @@ $(document).ready(function() {
 			} else {
 				this.$el.find('.login').addClass('hidden'); 
 				this.$el.find('.logout').removeClass('hidden'); 
-				PTO.navbarlist$.find('li.requests').addClass('active');
+				//PTO.navbarlist$.find('li.requests').addClass('active');
+				PTO.navbarlist$.find('li.users').addClass('active');
 			}
 			
 			return this; //So we can chain our render() method.
@@ -364,6 +394,7 @@ $(document).ready(function() {
 		editUser: function() {
 			this.model.fetch({
 				success: function(model, response) {
+					PTO.editUserView = new PTO.Views.EditUser();
 					PTO.editUserView.model = model;
 					PTO.editUserView.render(); 
 				}
@@ -399,7 +430,8 @@ $(document).ready(function() {
 				fullName: 		this.$el.find('#fullName').val(),
 				floatingDays: 	this.$el.find('#floatingDays').val(),
 				ptoHours: 		this.$el.find('#ptoHours').val(),
-				role: 			this.$el.find('#role').val()
+				role: 			this.$el.find('#role').val(),
+				email: 			this.$el.find('#email').val()
 
 			}, 
 
@@ -418,6 +450,7 @@ $(document).ready(function() {
 			this.$el.find('#floatingDays').val(this.model.get('floatingDays'));
 			this.$el.find('#ptoHours').val(this.model.get('ptoHours'));
 			this.$el.find('#role').val(this.model.get('role'));
+			this.$el.find('#email').val(this.model.get('email'));
 			return this; 
 		}  //end - render().
 	}); //end - PTO.Views.EditUser().
@@ -442,7 +475,13 @@ $(document).ready(function() {
 	PTO.Views.UserCollectionView = Backbone.View.extend({
 		el: '#userTableBody',
 
+		// initialize: function() {
+		// 	this.collection.bind('add', this.render);
+		// },
+
 		render: function() {
+			this.$el.children().remove();
+
 			//1. filter through all items in a collection.
 			this.collection.each(function(user) {
 				//2. For each item create a new person view.
@@ -452,6 +491,83 @@ $(document).ready(function() {
 			}, this); //the second parameter to each is the context.
 		}
 	}); //end - PTO.Views.UserCollectionView().
+
+	PTO.Views.UserToolbar = Backbone.View.extend({
+		el: '#userToolBar',
+
+		events: {
+			"click button.newUser"		: "newUser"
+		},
+
+		newUser: function() {
+			PTO.newUserView = new PTO.Views.NewUser({model: new PTO.Models.User(), collection: PTO.userCollection});
+			PTO.newUserView.render();
+		} //end - newUser().
+
+	}); //end - PTO.Views.UserToolbar().
+
+	PTO.Views.NewUser = Backbone.View.extend({
+		el: '#editUserModalWin',
+
+		events: {
+			"click button.save"	: "saveUser",
+		}, //end - events.
+
+		saveUser: function() {
+
+			/*
+			this.collection.create({
+				fullName: 		this.$el.find('#fullName').val(),
+				floatingDays: 	this.$el.find('#floatingDays').val(),
+				ptoHours: 		this.$el.find('#ptoHours').val(),
+				role: 			this.$el.find('#role').val(),
+				email: 			this.$el.find('#email').val(),
+				__ISNEW: true
+			}, {
+				success: function(ev) {
+					//console.log('New user saved on wakanda server.');
+					PTO.userCollectionView.render();
+				}, //end - success().
+
+				error: function(ev) {
+
+				}
+			});
+			*/
+
+
+			/**/
+			this.model.save({
+				fullName: 		this.$el.find('#fullName').val(),
+				floatingDays: 	this.$el.find('#floatingDays').val(),
+				ptoHours: 		this.$el.find('#ptoHours').val(),
+				role: 			this.$el.find('#role').val(),
+				email: 			this.$el.find('#email').val(),
+				__ISNEW: true
+			}, {
+				success: function(model, response) {
+					console.log('New user saved on wakanda server.');
+					console.log(model);
+				}, //end - success().
+
+				error: function(model, response) {
+					PTO.setMessage({title: response.responseJSON.__ENTITIES[0].__ERROR[0].message, contextualClass: "alert-danger"});
+					//console.log(response.responseJSON.__ENTITIES[0].__ERROR[0].message);
+				}
+			}); //end - this.model.save().
+			
+
+		}, //end - saveUser().
+
+		render: function() {
+			this.$el.find('#fullName').val("");
+			this.$el.find('#floatingDays').val("");
+			this.$el.find('#ptoHours').val("");
+			this.$el.find('#role').val("Employee");
+			this.$el.find('#email').val("");
+			return this; 
+		}  //end - render().
+	}); //end - PTO.Views.NewUser().
 
 
 
@@ -481,14 +597,15 @@ $(document).ready(function() {
 
 	            case "update":
 	            options.url = "/rest/Request/?$method=update";
-	            // delete(model.attributes.uri);
-             //    options.url = "/rest/Request(" + this.get('id') + ")/?$method=update";
+	            console.log('now using changedAttributes()');
+	            
                 var wakandaquestPayload = {};
                 wakandaquestPayload.__ENTITIES = [];
-                var updateAttrs = {};
+                //var updateAttrs = {};
+                var updateAttrs = this.changedAttributes();
                 updateAttrs.__KEY = this.attributes.__KEY;
                 updateAttrs.__STAMP = this.attributes.__STAMP;
-                updateAttrs.payrollChecked = this.attributes.payrollChecked;
+                //updateAttrs.payrollChecked = this.attributes.payrollChecked;
                 wakandaquestPayload.__ENTITIES.push(updateAttrs);
                 //wakandaquestPayload.__ENTITIES.push(this.attributes);
                 options.data = JSON.stringify(wakandaquestPayload);
@@ -547,19 +664,7 @@ $(document).ready(function() {
         	/**/
         	this.model.save({payrollChecked: !(this.model.get('payrollChecked'))}, {
 				success: function(model, response, options) {
-					console.log(model);
-					console.log(response);
-					console.log(options);
-
-					/*
-					PTO.requestCollection.fetch({
-						success: function(theCollection) {
-							PTO.requestCollectionView = null;
-							PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
-							PTO.requestCollectionView.render();
-						}
-					}); //end - PTO.userCollection.fetch();
-					*/ 
+					
 				},
 				error: function(model, xhr, options) {
 					console.log('error callback');
@@ -650,7 +755,7 @@ $(document).ready(function() {
 				this.$el.append(requestView.render().el); //chain chain chain...
 			}, this); //the second parameter to each is the context.
 		}
-	}); //end - PTO.Views.UserCollectionView().
+	}); //end - PTO.Views.RequestCollectionView().
 
 
 
@@ -674,7 +779,6 @@ $(document).ready(function() {
 			return this; //So we can chain our render() method.
 
 		} //end - render().
-
 	}); //end - PTO.Views.AppContainer().
 
 	new PTO.Views.App(); //Let's instantiate our App view so it can init everything.

@@ -5,13 +5,30 @@ body {
   padding-bottom: 20px;
 }
 
-th {
-  width: 100px;
+/*#requestTable.th {
+  width: 80px; 
 }
 
-td {
-  width: 100px;
+#requestTable.td {
+  width: 80px;
 }
+
+#userTable.th {
+  width: 160px !important;
+}
+
+#userTable.td {
+  width: 160px !important;
+}*/
+
+.column40 {
+  width: 40px;
+}
+
+.column160 {
+  width: 160px;
+}
+
 
 ul
 {

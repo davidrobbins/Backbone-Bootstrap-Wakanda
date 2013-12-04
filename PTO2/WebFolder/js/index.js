@@ -17,7 +17,13 @@
 			
 			//Messages
 			PTO.messageModel = new PTO.Models.Message();
-			PTO.messageXView = new PTO.Views.XMessage({model: PTO.messageModel})
+			//PTO.messageXView = new PTO.Views.XMessage({model: PTO.messageModel});
+
+			PTO.setMessage = function(messageObj) {
+				PTO.messageModel.set({title: messageObj.title, contextualClass: messageObj.contextualClass});
+				PTO.messageXView = new PTO.Views.XMessage({model: PTO.messageModel});
+				PTO.messageXView.render();
+			};
 
 			PTO.appContainerView = new PTO.Views.AppContainer({model: PTO.currentUserModel});
 			
@@ -362,7 +368,8 @@
 							});
 
 						} else {
-							PTO.messageModel.set({title: "We could not sign you in.", contextualClass: "alert-danger"});
+							//PTO.messageModel.set({title: "We could not sign you in.", contextualClass: "alert-danger"});
+							PTO.setMessage({title: "We could not sign you in.", contextualClass: "alert-danger"});
 						}
 					}}); 
 				}
@@ -483,7 +490,7 @@
 				return Backbone.sync.call(model, method, model, options); //first parameter sets the context.
 			} //end - if (options.url).
 		} //end - sync().
-	}); //end - PTO.Models.Message().
+	}); //end - PTO.Models.Account().
 
 	PTO.Views.Account = Backbone.View.extend({
 			el: '#accountForm', 
@@ -558,7 +565,7 @@
 	            case "update":
 	            options.url = "/rest/Request/?$method=update";
 	            // delete(model.attributes.uri);
-             //    options.url = "/rest/Request(" + this.get('id') + ")/?$method=update";
+             	// options.url = "/rest/Request(" + this.get('id') + ")/?$method=update";
                 var wakandaquestPayload = {};
                 wakandaquestPayload.__ENTITIES = [];
                 wakandaquestPayload.__ENTITIES.push(this.attributes);
@@ -626,7 +633,8 @@
 					if (response.ok) {
 						PTO.requestCollection.fetch({
 							success: function(theCollection) {
-								PTO.messageModel.set({title: "Request " + model.get('id') + " on date " + model.get('dateString') + " was withdrawn.", contextualClass: "alert-info"});
+								//PTO.messageModel.set({title: "Request " + model.get('id') + " on date " + model.get('dateString') + " was withdrawn.", contextualClass: "alert-info"});
+								PTO.setMessage({title: "Request " + model.get('id') + " on date " + model.get('dateString') + " was withdrawn.", contextualClass: "alert-info"});
 								PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: PTO.requestCollection});
 								PTO.requestCollectionView.render();
 							}
@@ -656,7 +664,7 @@
 			requestConfigObj.filter = "dateRequested > :1 && owner.id == :2";
 			requestConfigObj.timeout = 300;
 
-			return PTO.wakandaQueryURLString(requestConfigObj, new Date(), PTO.currentUserModel.get('ID'));
+			return PTO.wakandaQueryURLString(requestConfigObj, moment().subtract('days', 1).format(), PTO.currentUserModel.get('ID'));
 			//return "/rest/Request/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'";
 			},
 
@@ -707,15 +715,22 @@
 				error: function(model, xhr, options) {
 					// console.log(xhr.responseJSON.__ENTITIES[0].__ERROR[0].message);
 					// console.log(xhr.responseJSON.__ENTITIES[0].__ERROR[0].errCode);
+					/*
 					PTO.messageModel.set({
 						title: xhr.responseJSON.__ENTITIES[0].__ERROR[0].message,
 						contextualClass: "alert-danger"
 					});
-
+					*/
+					PTO.setMessage({
+						title: xhr.responseJSON.__ENTITIES[0].__ERROR[0].message,
+						contextualClass: "alert-danger"
+					});
 				},
 
 				success: function(ev) {
-					PTO.messageModel.set({title: "Request for " + moment(ev.get('dateString')).format('dddd') + " " + ev.get('dateString') + " submitted.", contextualClass: "alert-info"});
+					//PTO.messageModel.set({title: "Request for " + moment(ev.get('dateString')).format('dddd') + " " + ev.get('dateString') + " submitted.", contextualClass: "alert-info"});
+					PTO.setMessage({title: "Request for " + moment(ev.get('dateString')).format('dddd') + " " + ev.get('dateString') + " submitted.", contextualClass: "alert-info"});
+
 					PTO.requestModel = new PTO.Models.Request();
 					PTO.newRequestView.model = PTO.requestModel;
 
@@ -778,7 +793,8 @@
 				success: function(model, response) {
 					PTO.employeeRequestCollection.fetch({
 						success: function(theCollection) {
-							PTO.messageModel.set({title: "Request for " + model.get('ownerName') + " on " + model.get('dateString') + " updated on server.", contextualClass: "alert-info"});
+							//PTO.messageModel.set({title: "Request for " + model.get('ownerName') + " on " + model.get('dateString') + " updated on server.", contextualClass: "alert-info"});
+							PTO.setMessage({title: "Request for " + model.get('ownerName') + " on " + model.get('dateString') + " updated on server.", contextualClass: "alert-info"});
 							PTO.employeeRequestCollectionView = new PTO.Views.EmployeeRequestCollectionView({collection: theCollection});
 							PTO.employeeRequestCollectionView.render();
 						}
@@ -795,7 +811,8 @@
 				success: function(model, response) {
 					PTO.employeeRequestCollection.fetch({
 						success: function(theCollection) {
-							PTO.messageModel.set({title: "Request for " + model.get('ownerName') + " on " + model.get('dateString') + " updated on server.", contextualClass: "alert-info"});
+							//PTO.messageModel.set({title: "Request for " + model.get('ownerName') + " on " + model.get('dateString') + " updated on server.", contextualClass: "alert-info"});
+							PTO.setMessage({title: "Request for " + model.get('ownerName') + " on " + model.get('dateString') + " updated on server.", contextualClass: "alert-info"});
 							PTO.employeeRequestCollectionView = new PTO.Views.EmployeeRequestCollectionView({collection: theCollection});
 							PTO.employeeRequestCollectionView.render();
 						}
@@ -827,7 +844,7 @@
 			requestConfigObj.filter = "dateRequested > :1 && owner.myManager.id == :2  && status == :3";
 			requestConfigObj.timeout = 300;
 
-			return PTO.wakandaQueryURLString(requestConfigObj, new Date(), PTO.currentUserModel.get('ID'), "pending");
+			return PTO.wakandaQueryURLString(requestConfigObj, moment().subtract('days', 1).format(), PTO.currentUserModel.get('ID'), "pending");
 			//return "/rest/Request/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'";
 			},
 

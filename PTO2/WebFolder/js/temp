@@ -1,3 +1,35 @@
+
+payrollCheck: function() {
+        	/**/
+        	this.model.save({payrollChecked: !(this.model.get('payrollChecked'))}, {
+				success: function(model, response, options) {
+					// console.log(model);
+					// console.log(response);
+					// console.log(options);
+
+					/*
+					PTO.requestCollection.fetch({
+						success: function(theCollection) {
+							PTO.requestCollectionView = null;
+							PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
+							PTO.requestCollectionView.render();
+						}
+					}); //end - PTO.userCollection.fetch();
+					*/ 
+				},
+				error: function(model, xhr, options) {
+					console.log('error callback');
+					console.log(model);
+				}
+			});
+
+
+
+
+
+
+
+
 {"__KEY":"38","__STAMP":10,"compensation":"PTO","dateRequested":"19!12!2013","dateString":"12/19/2013","hours":8,"id":38,"owner":{"__KEY":"9ED3EA6198A94816952B265131235647","__STAMP":37,"compHours":null,"email":"greg@wakanda.org","floatingDays":null,"fullName":"Greg McCarvell","HA1Key":"36179ac80ab2b608f34574f867f5c6a3","id":"9ED3EA6198A94816952B265131235647","myEmployees":{"__deferred":{"uri":"/rest/User(9ED3EA6198A94816952B265131235647)/myEmployees?$expand=myEmployees"}},"myManager":{"__KEY":"7F1831D45E674C8A887BFF911294AC8F","__STAMP":10,"compHours":null,"email":null,"floatingDays":null,"fullName":null,"HA1Key":null,"id":"7F1831D45E674C8A887BFF911294AC8F","myEmployees":{"__deferred":{"uri":"/rest/User(7F1831D45E674C8A887BFF911294AC8F)/myEmployees?$expand=myEmployees"}},"myManager":null,"password":"*****","ptoAccrualRate":null,"ptoHours":null,"ptoSeedDate":null,"requestCollection":{"__deferred":{"uri":"/rest/User(7F1831D45E674C8A887BFF911294AC8F)/requestCollection?$expand=requestCollection"}},"role":null},"password":"*****","ptoAccrualRate":null,"ptoHours":58,"ptoSeedDate":null,"requestCollection":{"__deferred":{"uri":"/rest/User(9ED3EA6198A94816952B265131235647)/requestCollection?$expand=requestCollection"}},"role":"Employee"},"ownerName":"Greg McCarvell","payrollChecked":false,"status":"dave"}]}
 
 {"__KEY":"38","__STAMP":11,"compensation":"PTO","dateRequested":"19!12!2013","dateString":"12/19/2013","hours":8,"id":38,"owner":{"__KEY":"9ED3EA6198A94816952B265131235647","__STAMP":38,"compHours":null,"email":"greg@wakanda.org","floatingDays":null,"fullName":"Greg McCarvell","HA1Key":"36179ac80ab2b608f34574f867f5c6a3","id":"9ED3EA6198A94816952B265131235647","myEmployees":{"__deferred":{"uri":"/rest/User(9ED3EA6198A94816952B265131235647)/myEmployees?$expand=myEmployees"}},"myManager":{"__KEY":"7F1831D45E674C8A887BFF911294AC8F","__STAMP":11,"compHours":null,"email":null,"floatingDays":null,"fullName":null,"HA1Key":null,"id":"7F1831D45E674C8A887BFF911294AC8F","myEmployees":{"__deferred":{"uri":"/rest/User(7F1831D45E674C8A887BFF911294AC8F)/myEmployees?$expand=myEmployees"}},"myManager":null,"password":"*****","ptoAccrualRate":null,"ptoHours":null,"ptoSeedDate":null,"requestCollection":{"__deferred":{"uri":"/rest/User(7F1831D45E674C8A887BFF911294AC8F)/requestCollection?$expand=requestCollection"}},"role":null},"password":"*****","ptoAccrualRate":null,"ptoHours":58,"ptoSeedDate":null,"requestCollection":{"__deferred":{"uri":"/rest/User(9ED3EA6198A94816952B265131235647)/requestCollection?$expand=requestCollection"}},"role":"Employee"},"ownerName":"Greg McCarvell","payrollChecked":true,"status":"dave","uri":"/rest/Request(38)"}]}     

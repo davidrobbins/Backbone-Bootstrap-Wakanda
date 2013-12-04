@@ -1,9 +1,44 @@
 
+//var sandra = ds.User("D541DC5F0F7E4A629F5EEB515DBDFB2A");
+//sandra.role = "Administrator";
+//sandra.save();
+//sandra
 
-ds.Request.all()
+//ds.User("5B92A2DC17014E7DB5C919A593DE83B7").remove();
+ds.User.all()
+
+//if (loginByPassword("sandra@wakanda.org", "sandra1")) {
+	//ds.Request.remove();
+	//ds.Request.all()//.toArray("payrollChecked")
+	
+//}
 
 
-//var tom = ds.User("AB0C8BB5555441E8A780124215256468");
+//var sandra = ds.User("D541DC5F0F7E4A629F5EEB515DBDFB2A");
+//sandra
+//sandra.belongsTo("Administrator")
+
+//var tom = ds.User("FAE473275A854222AEC79D335E6B255F");
+
+//var sandra = new ds.User({
+//	email: "sandra@wakanda.org", 
+//	password: "sandra1", 
+//	fullName: "Sandra Michaels",
+//	role: "Administrator",
+//	myManager: tom
+//});
+//sandra.save();
+
+//ds.User.all()
+
+//ds.Request.all()
+
+//ds.User.all();
+
+//ds.Request.all().toArray("payrollChecked");
+
+//var sandra = ds.User("D541DC5F0F7E4A629F5EEB515DBDFB2A");
+//var tom = ds.User("FAE473275A854222AEC79D335E6B255F");
 //var dave = ds.User("4E8F7EFBF2CC4411AFA9F38C07035EA1");
 //var greg = ds.User("9ED3EA6198A94816952B265131235647");
 

@@ -268,12 +268,12 @@
     <script type="text/template" id="pending-requests-template">
         <div class="requestLineItemTopRow">
           <div class="requestLineItemLeft"># <%= id %> - <em><%= dateString %></em></div>
-          <div class="requestLineItemRight"><%= hours %> hours - <%= status %></div>
+          <div class="requestLineItemRight"><%= hours %> hours <%= compensation %></div>
         </div>
         <div style="clear: both;"></div>
        
          <div class="requestLineItemButtonRow">
-          <div class="requestLineItemLeft"></div>
+          <div class="requestLineItemLeft"><%= status %></div>
           <div class="requestLineItemRight"><button type="button" data-toggle="modal" href="#delRequestModalWin" class="btn btn-primary delete">Withdraw</button></div>
         </div>
     </script>
