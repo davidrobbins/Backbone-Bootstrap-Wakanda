@@ -1,11 +1,68 @@
 
+
+//ds.User.all()
+
+//var tom = ds.User("FAE473275A854222AEC79D335E6B255F");
+
+/*
+var tracy = new ds.User({
+	email: "tracy@wakanda.org", 
+	password: "tracy12", 
+	fullName: "Tracy Roberts",
+	role: "Manager",
+	myManager: tom
+});
+tracy.save();
+
+var court = new ds.User({
+	email: "court@wakanda.org", 
+	password: "court12", 
+	fullName: "Court Cooper",
+	role: "Employee",
+	myManager: tracy
+});
+court.save();
+
+var add = new ds.User({
+	email: "add@wakanda.org", 
+	password: "add1add", 
+	fullName: "Add K",
+	role: "Manager",
+	myManager: tom
+});
+add.save();
+
+var xiang = new ds.User({
+	email: "xiang@wakanda.org", 
+	password: "xiang12", 
+	fullName: "Xiang Liu",
+	role: "Employee",
+	myManager: add
+});
+xiang.save();
+
+var tim = new ds.User({
+	email: "tim@wakanda.org", 
+	password: "tim1tim", 
+	fullName: "Tim Penner",
+	role: "Employee",
+	myManager: add
+});
+tim.save();
+*/
+
+
+
+
+
+
 //var sandra = ds.User("D541DC5F0F7E4A629F5EEB515DBDFB2A");
 //sandra.role = "Administrator";
 //sandra.save();
 //sandra
 
 //ds.User("5B92A2DC17014E7DB5C919A593DE83B7").remove();
-ds.User.all()
+//ds.User.all()
 
 //if (loginByPassword("sandra@wakanda.org", "sandra1")) {
 	//ds.Request.remove();
@@ -18,7 +75,7 @@ ds.User.all()
 //sandra
 //sandra.belongsTo("Administrator")
 
-//var tom = ds.User("FAE473275A854222AEC79D335E6B255F");
+
 
 //var sandra = new ds.User({
 //	email: "sandra@wakanda.org", 

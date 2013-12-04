@@ -49,6 +49,13 @@ $(document).ready(function() {
 				}
 			}); //end - PTO.userCollection.fetch();
 
+			PTO.managerCollection = new PTO.Collections.ManagerCollection();
+			PTO.managerCollection.fetch({
+				success: function(theCollection) {
+					PTO.managerCollectionView = new PTO.Views.ManagerCollectionView({collection: theCollection});
+					PTO.managerCollectionView.render();
+				}
+			});
 			
 		}, //end - initialize().
 
@@ -455,6 +462,61 @@ $(document).ready(function() {
 		}  //end - render().
 	}); //end - PTO.Views.EditUser().
 
+	PTO.Collections.ManagerCollection = Backbone.Collection.extend({
+		model: PTO.Models.User,
+
+		url: function() {
+			var requestConfigObj = {};
+			requestConfigObj.dataClass = "User";
+			requestConfigObj.top = 40;
+			//requestConfigObj.filter = "dateRequested > :1 && owner.myManagerId == :2  && status == :3";
+			requestConfigObj.filter = "role == :1";
+			requestConfigObj.timeout = 300;
+
+			return PTO.wakandaQueryURLString(requestConfigObj, "Manager");
+
+			//return "/rest/User/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'&$expand=myManager";
+		},
+
+		parse: function(response) {
+			if (response.__ENTITIES) {
+				return response.__ENTITIES;
+			} else {
+				return response;
+			}
+		} //end - parse.
+
+	}); //end - PTO.Collections.ManagerCollection().
+
+	PTO.Views.ManagerCollectionView = Backbone.View.extend({
+		el : '#managerSelect',
+
+		render: function() {
+			this.$el.empty();
+
+			//1. filter through all items in a collection.
+			this.collection.each(function(manager) {
+				//2. For each item create a new person view.
+				var managerView = new PTO.Views.ManagerView({model: manager});
+				//3. Append each person view to our collection view.
+				this.$el.append(managerView.render().el); //chain chain chain...
+			}, this); //the second parameter to each is the context.
+		}
+
+	}); //end - PTO.Views.ManagerCollectionView()
+
+	PTO.Views.ManagerView = Backbone.View.extend({
+		tagName: 'option',
+
+		template: PTO.Utility.template('manager-options-template'),
+
+		render: function() {
+			this.$el.html(this.template(this.model.toJSON()));
+			return this; //this allows us to chain.
+		}
+
+	}); //end - PTO.Views.EmployeeRequest().
+
 	// The List of Users
 	PTO.Collections.UserCollection = Backbone.Collection.extend({
 		model: PTO.Models.User,
@@ -546,8 +608,10 @@ $(document).ready(function() {
 				__ISNEW: true
 			}, {
 				success: function(model, response) {
-					console.log('New user saved on wakanda server.');
-					console.log(model);
+					// console.log('New user saved on wakanda server.');
+					// console.log(model);
+					PTO.userCollection.add(model);
+					PTO.userCollectionView.render();
 				}, //end - success().
 
 				error: function(model, response) {
