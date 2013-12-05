@@ -41,6 +41,8 @@ $(document).ready(function() {
 			PTO.currentUserMsg$ = $('#currentUserMsg');
 
 			PTO.userToolBar = new PTO.Views.UserToolbar();
+
+			PTO.editUserView = new PTO.Views.EditUser();
 			PTO.userCollection = new PTO.Collections.UserCollection();
 			PTO.userCollection.fetch({
 				success: function(theCollection) {
@@ -48,14 +50,6 @@ $(document).ready(function() {
 					PTO.userCollectionView.render();
 				}
 			}); //end - PTO.userCollection.fetch();
-
-			// PTO.managerCollection = new PTO.Collections.ManagerCollection();
-			// PTO.managerCollection.fetch({
-			// 	success: function(theCollection) {
-			// 		PTO.managerCollectionView = new PTO.Views.ManagerCollectionView({collection: theCollection});
-			// 		PTO.managerCollectionView.render();
-			// 	}
-			// });
 			
 		}, //end - initialize().
 
@@ -284,6 +278,8 @@ $(document).ready(function() {
 
 
 
+
+
 	//Holiday Model
 	PTO.Models.Holiday = Backbone.Model.extend({
 		parse: function(response) {
@@ -363,12 +359,7 @@ $(document).ready(function() {
                 wakandaquestPayload.__ENTITIES.push(updateAttrs);
                 options.data = JSON.stringify(wakandaquestPayload);
 
-	            // delete(model.attributes.uri);
-             //    options.url = "/rest/User(" + this.get('id') + ")/?$method=update";
-             //    var wakandaquestPayload = {};
-             //    wakandaquestPayload.__ENTITIES = [];
-             //    wakandaquestPayload.__ENTITIES.push(this.attributes);
-             //    options.data = JSON.stringify(wakandaquestPayload);
+                console.log(options.data);
                 break;
 
                 case "create":
@@ -407,9 +398,11 @@ $(document).ready(function() {
 		},
 
 		editUser: function() {
+			//console.log(this.model);
+
 			this.model.fetch({
 				success: function(model, response) {
-					PTO.editUserView = new PTO.Views.EditUser();
+					//PTO.editUserView = new PTO.Views.EditUser();
 					PTO.editUserView.model = model;
 					PTO.editUserView.render(); 
 				}
@@ -436,108 +429,53 @@ $(document).ready(function() {
 	PTO.Views.EditUser = Backbone.View.extend({
 		el: '#editUserModalWin',
 
+
 		events: {
 			"click button.save"	: "saveUser",
 		}, //end - events.
 
 		saveUser: function() {
-
-			//console.log(this.$el.find('#managerSelect').val());
-
-			this.model.set({
+			this.model.save({
 				fullName: 		this.$el.find('#fullName').val(),
 				floatingDays: 	this.$el.find('#floatingDays').val(),
 				ptoHours: 		this.$el.find('#ptoHours').val(),
 				role: 			this.$el.find('#role').val(),
-				email: 			this.$el.find('#email').val()
+				email: 			this.$el.find('#email').val(),
+				myManagerId:    this.$el.find('#managerSelect').val()
 
-			}, 
-
-			{validate: true}).save({},{
-				success: function(ev) {
-					PTO.messageModel.set({title: ev.get('fullName') + " updated on the server.", contextualClass: "alert-info"});
-					// var messageView = new PTO.Views.Message({model: PTO.messageModel});
-					// PTO.messageContainer$.children().remove();
-					// PTO.messageContainer$.append(messageView.render().el); 
-				} //end - success().
+			}, {
+				success: function(model, response) {
+					PTO.messageModel.set({title: model.get('fullName') + " updated on the server.", contextualClass: "alert-info"});
+				}
 			});
 		},
 
 		render: function() {
+			console.log(this);
+
 			this.$el.find('#fullName').val(this.model.get('fullName'));
 			this.$el.find('#floatingDays').val(this.model.get('floatingDays'));
 			this.$el.find('#ptoHours').val(this.model.get('ptoHours'));
 			this.$el.find('#role').val(this.model.get('role'));
 			this.$el.find('#email').val(this.model.get('email'));
+			this.$el.find('#id').val(this.model.get('id'));
 
-			var myManager = this.model;
+			var theUser = this.model;
 
 			PTO.managerCollection = new PTO.Collections.ManagerCollection();
 			PTO.managerCollection.fetch({
 				success: function(theCollection) {
 					PTO.managerCollectionView = new PTO.Views.ManagerCollectionView({collection: theCollection});
-					PTO.managerCollectionView.render(myManager);
+					PTO.managerCollectionView.render(theUser);
 				}
 			});
-
-			//managerSelect
 
 			return this; 
 		}  //end - render().
 	}); //end - PTO.Views.EditUser().
 
-	PTO.Collections.ManagerCollection = Backbone.Collection.extend({
-		model: PTO.Models.User,
-
-		url: function() {
-			var requestConfigObj = {};
-			requestConfigObj.dataClass = "User";
-			requestConfigObj.top = 40;
-			//requestConfigObj.filter = "dateRequested > :1 && owner.myManagerId == :2  && status == :3";
-			requestConfigObj.filter = "role == :1";
-			requestConfigObj.timeout = 300;
-
-			return PTO.wakandaQueryURLString(requestConfigObj, "Manager");
-
-			//return "/rest/User/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'&$expand=myManager";
-		},
-
-		parse: function(response) {
-			if (response.__ENTITIES) {
-				return response.__ENTITIES;
-			} else {
-				return response;
-			}
-		} //end - parse.
-
-	}); //end - PTO.Collections.ManagerCollection().
-
-	PTO.Views.ManagerCollectionView = Backbone.View.extend({
-		el : '#managerSelect',
-
-		template: PTO.Utility.template('manager-options-template'),
-
-		render: function(theUser) {
-			var managerName = theUser.toJSON().myManager.fullName;
-			this.$el.empty();
-
-			this.$el.append('<option></option>');
-
-			//1. filter through all items in a collection.
-			this.collection.each(function(manager) {
-				this.$el.append(this.template(manager.toJSON())); 
-			}, this); //the second parameter to each is the context.
-
-			//$("option[value='Gateway 2']").attr('selected', 'selected');
-
-			this.$el.find("option[value='" + managerName + "']").attr('selected', 'selected');
-
-			return this;
-		} //end - render().
-
-	}); //end - PTO.Views.ManagerCollectionView()
-
 	
+
 
 
 
@@ -657,7 +595,57 @@ $(document).ready(function() {
 		}  //end - render().
 	}); //end - PTO.Views.NewUser().
 
+	PTO.Collections.ManagerCollection = Backbone.Collection.extend({
+		model: PTO.Models.User,
 
+		url: function() {
+			var requestConfigObj = {};
+			requestConfigObj.dataClass = "User";
+			requestConfigObj.top = 40;
+			//requestConfigObj.filter = "dateRequested > :1 && owner.myManagerId == :2  && status == :3";
+			requestConfigObj.filter = "role == :1";
+			requestConfigObj.timeout = 300;
+
+			return PTO.wakandaQueryURLString(requestConfigObj, "Manager");
+
+			//return "/rest/User/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'&$expand=myManager";
+		},
+
+		parse: function(response) {
+			if (response.__ENTITIES) {
+				return response.__ENTITIES;
+			} else {
+				return response;
+			}
+		} //end - parse.
+
+	}); //end - PTO.Collections.ManagerCollection().
+
+	PTO.Views.ManagerCollectionView = Backbone.View.extend({
+		el : '#managerSelect',
+
+		template: PTO.Utility.template('manager-options-template'),
+
+		render: function(theUser) {
+			var managerName = theUser.toJSON().myManager ? theUser.toJSON().myManager.fullName : "None";
+			this.$el.empty();
+
+			this.$el.append('<option>None</option>');
+
+			//1. filter through all items in a collection.
+			this.collection.each(function(manager) {
+				this.$el.append(this.template(manager.toJSON())); 
+			}, this); //the second parameter to each is the context.
+
+			//this.$el.find("option[value='" + managerName + "']").attr('selected', 'selected');
+			if (theUser.toJSON().myManager) {
+				this.$el.find("option[value='" + theUser.toJSON().myManager.id + "']").attr('selected', 'selected');
+			}
+				
+
+			return this;
+		} //end - render().
+	}); //end - PTO.Views.ManagerCollectionView()
 
 
 
@@ -750,8 +738,8 @@ $(document).ready(function() {
 					
 				},
 				error: function(model, xhr, options) {
-					console.log('error callback');
-					console.log(model);
+					// console.log('error callback');
+					// console.log(model);
 				}
 			});
 			
@@ -785,7 +773,7 @@ $(document).ready(function() {
 		},
 
 		render: function() {
-			console.log(this.model.get('payrollChecked')); 
+			// console.log(this.model.get('payrollChecked')); 
 
 			this.$el.find('#payrollChecked').prop('checked', this.model.get('payrollChecked'));
 

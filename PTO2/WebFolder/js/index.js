@@ -187,6 +187,8 @@
 
 
 
+
+
 	//Holiday Model
 	PTO.Models.Holiday = Backbone.Model.extend({
 		parse: function(response) {
@@ -229,6 +231,8 @@
 			}
 		} //end - parse.
 	}); //end - PTO.Collections.HolidayCollection.
+
+
 
 
 
@@ -431,6 +435,7 @@
 
 
 
+
 	//Account Model.
 	PTO.Models.Account = Backbone.Model.extend({
 		defaults: {
@@ -511,6 +516,7 @@
 
 
 
+
 	//Message Model.
 	PTO.Models.Message = Backbone.Model.extend({
 		defaults: {
@@ -537,6 +543,8 @@
 			return this; //this allows us to chain.
 		}  //end - render().
 	}); //end - PTO.Views.Message().
+
+
 
 
 
@@ -728,7 +736,6 @@
 				},
 
 				success: function(ev) {
-					//PTO.messageModel.set({title: "Request for " + moment(ev.get('dateString')).format('dddd') + " " + ev.get('dateString') + " submitted.", contextualClass: "alert-info"});
 					PTO.setMessage({title: "Request for " + moment(ev.get('dateString')).format('dddd') + " " + ev.get('dateString') + " submitted.", contextualClass: "alert-info"});
 
 					PTO.requestModel = new PTO.Models.Request();
