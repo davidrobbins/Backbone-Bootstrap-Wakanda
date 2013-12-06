@@ -36,7 +36,7 @@
 
 			//Employee Requests
 			PTO.employeeRequestCollection = new PTO.Collections.EmployeeRequestCollection();
-
+			PTO.employeeRequestsToolbar = new PTO.Views.EmployeeRequestsToolbar();
 
 			//Accounts
 			PTO.accountModel = new PTO.Models.Account();
@@ -608,7 +608,7 @@
 		tagName: 'li',
 
 		attributes: {
-			class: 'list-group-item pendingRequestListItem'
+			class: 'list-group-item pendingRequestListItem' 
 		},
 
 		events: {
@@ -783,14 +783,25 @@
 
 
 
+	PTO.Views.EmployeeRequestsToolbar = Backbone.View.extend({
+		el: '#employeeRequestsToolBar',
 
+		events: {
+			"click button.acceptAllRequests"	: "acceptAllRequests"
+		},
+
+		acceptAllRequests: function() {
+			console.log('accept all requests');
+		} //end - newUser().
+
+	}); //end - PTO.Views.UserToolbar().
 
 
 	PTO.Views.EmployeeRequest = Backbone.View.extend({
 		tagName: 'li',
 
 		attributes: {
-			class: 'list-group-item employeeRequestListItem' 
+			class: 'list-group-item employeeRequestListItem' //
 		},
 
 		events: {

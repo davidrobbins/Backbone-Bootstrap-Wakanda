@@ -47,6 +47,10 @@ ul
     list-style-type: none;
 }
 
+#employeeRequestListContainer {
+        overflow-y: scroll; /*scroll*/
+        /*height: 460px;*/
+}
 
 .scrollable-area {
   height: 560px !important;

@@ -156,30 +156,6 @@
 
         </form>
 
-
-        <!-- <form role="form" id="accountForm">
-          <div class="form-group">
-            <label for="accountName">Account Name</label>
-            <input type="text" class="form-control" id="accountName" placeholder="Account Name" readonly="readonly">
-          </div>
-
-          <div class="form-group">
-            <label for="ptoHours">PTO Hours</label>
-            <input type="text" class="form-control" id="ptoHours" placeholder="PTO Hours" readonly="readonly">
-          </div>
-
-          <div class="form-group">
-            <label for="floatingDays">Floating Days</label>
-            <input type="text" class="form-control" id="floatingDays" placeholder="Floating Days" readonly="readonly">
-          </div>
-
-          <div class="form-group">
-            <label for="compDays">Comp Days</label>
-            <input type="text" class="form-control" id="compDays" placeholder="Comp Days" readonly="readonly">
-          </div>
-        </form>
- -->
-
         </div>
         </div>
         </div><!--/account container-->
@@ -209,12 +185,23 @@
         <div class="col-md-12">
         <h4>Employee Requests</h4>
 
-          <div id="employeeRequestListContainer" > 
-            <ul id="employeeRequestsUL" class="list-group"></ul>
-          </div>
+        <div id="employeeRequestListContainer" > 
+          <ul id="employeeRequestsUL" class="list-group"></ul> 
+        </div>
 
         </div>
-        </div>
+        </div><!--/end row-->
+
+        <div class='row'>
+          <div class='col-sm-12'>
+          <div class="panel panel-default">
+            <div id="employeeRequestsToolBar" class="panel-body">
+              <button type="button" class="btn btn-primary acceptAllRequests">Accept All</button>
+            </div>
+          </div>
+          </div>
+        </div><!--/end row-->
+
         </div><!--/employeeRequests container-->
 
       </div><!--/app-->
@@ -289,19 +276,6 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
     <!-- Withdraw Request Modal (end) -->
-
-
-    <script type="text/template" id="pending-requests-template4">
-       <em><%= dateString %></em> - <%= status %> - <%= id %>
-    </script>
-
-    <script type="text/template" id="pending-requests-template3">
-        <div><em><%= dateString %></em></div>
-        <div><%= status %></div></div>
-        <div>
-          <button type="button" data-toggle="modal" href="#delRequestModalWin" class="btn btn-primary">Delete</button>
-        </div>
-    </script>
 
 
 
