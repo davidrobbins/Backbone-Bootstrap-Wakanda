@@ -80,6 +80,8 @@
 					//Get user account info.
 					PTO.accountModel.set({id: PTO.currentUserModel.get('ID')}).fetch({
 						success: function(model, response) {
+							PTO.newAccountView.render();
+
 							PTO.appContainerView.$el.find('.newRequest').addClass('hidden');
 							PTO.appContainerView.$el.find('.pendingRequests').addClass('hidden');
 							PTO.appContainerView.$el.find('.employeeRequests').addClass('hidden');
@@ -460,7 +462,7 @@
 
 			switch (method) {
 				case "read":
-	            options.url = "/rest/User/?top=1&$filter='id%20%3D%20'" + this.get('id') + "&$params='%5B%5D'";
+	            options.url = "/rest/User/?top=1&$filter='id%20%3D%20'" + this.get('id') + "&$params='%5B%5D'&$expand=myManager";
 	            break;
 
             	case "delete":
@@ -500,15 +502,17 @@
 	PTO.Views.Account = Backbone.View.extend({
 			el: '#accountForm', 
 
-			initialize: function() {
-				this.model.on('change', this.render, this); //change:title, destroy, add, etc.
-			},
+			// initialize: function() {
+			// 	this.model.on('change', this.render, this); //change:title, destroy, add, etc.
+			// },
 
 			render: function() {
 				this.$el.find('#accountName').val(this.model.get('fullName'));
 				this.$el.find('#ptoHours').val(this.model.get('ptoHours'));
 				this.$el.find('#floatingDays').val(this.model.get('floatingDays'));
 				this.$el.find('#compDays').val(this.model.get('compDays'));
+				this.$el.find('#myManager').val(this.model.get('myManager').fullName);
+
 				return this; //this allows us to chain.
 			}  //end - render().
 	}); //end - PTO.Views.Message().

@@ -119,7 +119,45 @@
         <div class="col-md-12">
         <h4>Account</h4>
         <!--  <hr class='hr-double'> -->
-        <form role="form" id="accountForm">
+
+        <form class="form-stacked"  id="accountForm" role="form">
+          <div class="row">
+            <div class="col-xs-6">
+              <label for="accountName">Account Name</label>
+              <input type="text" class="form-control" id="accountName" placeholder="Account Name" readonly="readonly">
+            </div>
+              <div class="col-xs-6">
+              <label for="myManager">My Manager</label>
+              <input type="text" class="form-control" id="myManager" placeholder="My Manager" readonly="readonly">
+            </div>
+          </div><!--/class="row"-->
+
+           <div class="row">
+            <div class="col-xs-6">
+              <label for="ptoHours">PTO Hours</label>
+              <input type="text" class="form-control" id="ptoHours" placeholder="PTO Hours" readonly="readonly">
+            </div>
+            <div class="col-xs-6">
+              <label for="floatingDays">Floating Days</label>
+              <input type="text" class="form-control" id="floatingDays" placeholder="Floating Days" readonly="readonly">
+            </div>
+          </div><!--/class="row"-->
+
+          <div class="row">
+            <div class="col-xs-6">
+              <label for="compDays">Comp Days</label>
+              <input type="text" class="form-control" id="compDays" placeholder="Comp Days" readonly="readonly">
+            </div>
+            <div class="col-xs-6">
+      
+            </div>
+          </div><!--/class="row"-->
+
+
+        </form>
+
+
+        <!-- <form role="form" id="accountForm">
           <div class="form-group">
             <label for="accountName">Account Name</label>
             <input type="text" class="form-control" id="accountName" placeholder="Account Name" readonly="readonly">
@@ -140,6 +178,8 @@
             <input type="text" class="form-control" id="compDays" placeholder="Comp Days" readonly="readonly">
           </div>
         </form>
+ -->
+
         </div>
         </div>
         </div><!--/account container-->

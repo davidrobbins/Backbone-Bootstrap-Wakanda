@@ -445,7 +445,8 @@ $(document).ready(function() {
 				ptoHours: 		this.$el.find('#ptoHours').val(),
 				role: 			this.$el.find('#role').val(),
 				email: 			this.$el.find('#email').val(),
-				myManagerId:    this.$el.find('#managerSelect').val()
+				myManagerId:    this.$el.find('#managerSelect').val(),
+				password: 		this.$el.find('#password').val()
 
 			}, {
 				success: function(model, response) {
@@ -457,8 +458,6 @@ $(document).ready(function() {
 		},
 
 		render: function() {
-			console.log(this.model.isNew());
-
 			this.$el.find('#fullName').val(this.model.get('fullName'));
 			this.$el.find('#floatingDays').val(this.model.get('floatingDays'));
 			this.$el.find('#ptoHours').val(this.model.get('ptoHours'));
@@ -532,60 +531,6 @@ $(document).ready(function() {
 		} //end - newUser().
 
 	}); //end - PTO.Views.UserToolbar().
-
-
-	// PTO.Views.NewUser = Backbone.View.extend({
-	// 	el: '#editUserModalWin',
-
-	// 	events: {
-	// 		"click button.save"	: "saveUser",
-	// 	}, //end - events.
-
-	// 	saveUser: function() {
-	// 		this.model.save({
-	// 			fullName: 		this.$el.find('#fullName').val(),
-	// 			floatingDays: 	this.$el.find('#floatingDays').val(),
-	// 			ptoHours: 		this.$el.find('#ptoHours').val(),
-	// 			role: 			this.$el.find('#role').val(),
-	// 			email: 			this.$el.find('#email').val(),
-	// 			__ISNEW: true
-	// 		}, {
-	// 			success: function(model, response) {
-	// 				// console.log('New user saved on wakanda server.');
-	// 				// console.log(model);
-	// 				PTO.userCollection.add(model);
-	// 				PTO.userCollectionView.render();
-	// 			}, //end - success().
-
-	// 			error: function(model, response) {
-	// 				PTO.setMessage({title: response.responseJSON.__ENTITIES[0].__ERROR[0].message, contextualClass: "alert-danger"});
-	// 				//console.log(response.responseJSON.__ENTITIES[0].__ERROR[0].message);
-	// 			}
-	// 		}); //end - this.model.save().
-			
-
-	// 	}, //end - saveUser().
-
-	// 	render: function() {
-	// 		this.$el.find('#fullName').val("");
-	// 		this.$el.find('#floatingDays').val("");
-	// 		this.$el.find('#ptoHours').val("");
-	// 		this.$el.find('#role').val("Employee");
-	// 		this.$el.find('#email').val("");
-
-	// 		var theUser = this.model;
-
-	// 		PTO.managerCollection = new PTO.Collections.ManagerCollection();
-	// 		PTO.managerCollection.fetch({
-	// 			success: function(theCollection) {
-	// 				PTO.managerCollectionView = new PTO.Views.ManagerCollectionView({collection: theCollection});
-	// 				PTO.managerCollectionView.render(theUser);
-	// 			}
-	// 		});
-
-	// 		return this; 
-	// 	}  //end - render().
-	// }); //end - PTO.Views.NewUser().
 
 	PTO.Collections.ManagerCollection = Backbone.Collection.extend({
 		model: PTO.Models.User,
