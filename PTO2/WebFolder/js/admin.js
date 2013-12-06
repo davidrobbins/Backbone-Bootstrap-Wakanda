@@ -43,6 +43,7 @@ $(document).ready(function() {
 			PTO.userToolBar = new PTO.Views.UserToolbar();
 
 			PTO.editUserView = new PTO.Views.EditUser();
+
 			PTO.userCollection = new PTO.Collections.UserCollection();
 			PTO.userCollection.fetch({
 				success: function(theCollection) {
@@ -354,6 +355,9 @@ $(document).ready(function() {
 	            var wakandaquestPayload = {},
                 	updateAttrs = this.changedAttributes();
                 wakandaquestPayload.__ENTITIES = [];
+                if (model.isNew()) {
+                	updateAttrs.__ISNEW = true;
+                }
                 updateAttrs.__KEY = this.attributes.__KEY;
                 updateAttrs.__STAMP = this.attributes.__STAMP;
                 wakandaquestPayload.__ENTITIES.push(updateAttrs);
@@ -445,20 +449,22 @@ $(document).ready(function() {
 
 			}, {
 				success: function(model, response) {
-					PTO.messageModel.set({title: model.get('fullName') + " updated on the server.", contextualClass: "alert-info"});
+					//PTO.messageModel.set({title: model.get('fullName') + " updated on the server.", contextualClass: "alert-info"});
+					PTO.userCollection.add(model);
+					PTO.userCollectionView.render();
 				}
 			});
 		},
 
 		render: function() {
-			console.log(this);
+			console.log(this.model.isNew());
 
 			this.$el.find('#fullName').val(this.model.get('fullName'));
 			this.$el.find('#floatingDays').val(this.model.get('floatingDays'));
 			this.$el.find('#ptoHours').val(this.model.get('ptoHours'));
 			this.$el.find('#role').val(this.model.get('role'));
 			this.$el.find('#email').val(this.model.get('email'));
-			this.$el.find('#id').val(this.model.get('id'));
+			//this.$el.find('#id').val(this.model.get('id'));
 
 			var theUser = this.model;
 
@@ -473,11 +479,6 @@ $(document).ready(function() {
 			return this; 
 		}  //end - render().
 	}); //end - PTO.Views.EditUser().
-
-	
-
-
-
 
 	// The List of Users
 	PTO.Collections.UserCollection = Backbone.Collection.extend({
@@ -520,80 +521,71 @@ $(document).ready(function() {
 		el: '#userToolBar',
 
 		events: {
-			"click button.newUser"		: "newUser"
+			"click button.newUser"	: "newUser"
 		},
 
 		newUser: function() {
-			PTO.newUserView = new PTO.Views.NewUser({model: new PTO.Models.User(), collection: PTO.userCollection});
-			PTO.newUserView.render();
+			PTO.editUserView.model = new PTO.Models.User();
+			PTO.editUserView.render(); 
+			//PTO.newUserView = new PTO.Views.NewUser({model: new PTO.Models.User(), collection: PTO.userCollection});
+			//PTO.newUserView.render();
 		} //end - newUser().
 
 	}); //end - PTO.Views.UserToolbar().
 
-	PTO.Views.NewUser = Backbone.View.extend({
-		el: '#editUserModalWin',
 
-		events: {
-			"click button.save"	: "saveUser",
-		}, //end - events.
+	// PTO.Views.NewUser = Backbone.View.extend({
+	// 	el: '#editUserModalWin',
 
-		saveUser: function() {
+	// 	events: {
+	// 		"click button.save"	: "saveUser",
+	// 	}, //end - events.
 
-			/*
-			this.collection.create({
-				fullName: 		this.$el.find('#fullName').val(),
-				floatingDays: 	this.$el.find('#floatingDays').val(),
-				ptoHours: 		this.$el.find('#ptoHours').val(),
-				role: 			this.$el.find('#role').val(),
-				email: 			this.$el.find('#email').val(),
-				__ISNEW: true
-			}, {
-				success: function(ev) {
-					//console.log('New user saved on wakanda server.');
-					PTO.userCollectionView.render();
-				}, //end - success().
+	// 	saveUser: function() {
+	// 		this.model.save({
+	// 			fullName: 		this.$el.find('#fullName').val(),
+	// 			floatingDays: 	this.$el.find('#floatingDays').val(),
+	// 			ptoHours: 		this.$el.find('#ptoHours').val(),
+	// 			role: 			this.$el.find('#role').val(),
+	// 			email: 			this.$el.find('#email').val(),
+	// 			__ISNEW: true
+	// 		}, {
+	// 			success: function(model, response) {
+	// 				// console.log('New user saved on wakanda server.');
+	// 				// console.log(model);
+	// 				PTO.userCollection.add(model);
+	// 				PTO.userCollectionView.render();
+	// 			}, //end - success().
 
-				error: function(ev) {
-
-				}
-			});
-			*/
-
-
-			/**/
-			this.model.save({
-				fullName: 		this.$el.find('#fullName').val(),
-				floatingDays: 	this.$el.find('#floatingDays').val(),
-				ptoHours: 		this.$el.find('#ptoHours').val(),
-				role: 			this.$el.find('#role').val(),
-				email: 			this.$el.find('#email').val(),
-				__ISNEW: true
-			}, {
-				success: function(model, response) {
-					// console.log('New user saved on wakanda server.');
-					// console.log(model);
-					PTO.userCollection.add(model);
-					PTO.userCollectionView.render();
-				}, //end - success().
-
-				error: function(model, response) {
-					PTO.setMessage({title: response.responseJSON.__ENTITIES[0].__ERROR[0].message, contextualClass: "alert-danger"});
-					//console.log(response.responseJSON.__ENTITIES[0].__ERROR[0].message);
-				}
-			}); //end - this.model.save().
+	// 			error: function(model, response) {
+	// 				PTO.setMessage({title: response.responseJSON.__ENTITIES[0].__ERROR[0].message, contextualClass: "alert-danger"});
+	// 				//console.log(response.responseJSON.__ENTITIES[0].__ERROR[0].message);
+	// 			}
+	// 		}); //end - this.model.save().
 			
 
-		}, //end - saveUser().
+	// 	}, //end - saveUser().
 
-		render: function() {
-			this.$el.find('#fullName').val("");
-			this.$el.find('#floatingDays').val("");
-			this.$el.find('#ptoHours').val("");
-			this.$el.find('#role').val("Employee");
-			this.$el.find('#email').val("");
-			return this; 
-		}  //end - render().
-	}); //end - PTO.Views.NewUser().
+	// 	render: function() {
+	// 		this.$el.find('#fullName').val("");
+	// 		this.$el.find('#floatingDays').val("");
+	// 		this.$el.find('#ptoHours').val("");
+	// 		this.$el.find('#role').val("Employee");
+	// 		this.$el.find('#email').val("");
+
+	// 		var theUser = this.model;
+
+	// 		PTO.managerCollection = new PTO.Collections.ManagerCollection();
+	// 		PTO.managerCollection.fetch({
+	// 			success: function(theCollection) {
+	// 				PTO.managerCollectionView = new PTO.Views.ManagerCollectionView({collection: theCollection});
+	// 				PTO.managerCollectionView.render(theUser);
+	// 			}
+	// 		});
+
+	// 		return this; 
+	// 	}  //end - render().
+	// }); //end - PTO.Views.NewUser().
 
 	PTO.Collections.ManagerCollection = Backbone.Collection.extend({
 		model: PTO.Models.User,
