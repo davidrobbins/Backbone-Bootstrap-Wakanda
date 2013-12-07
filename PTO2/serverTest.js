@@ -1,5 +1,19 @@
 
-ds.User.all()
+
+
+
+if (loginByPassword("greg@wakanda.org", "wakanda1")) {
+	ds.Request.remove();
+	//ds.Request.all()//.toArray("payrollChecked")
+}
+
+
+//ds.Request.all()
+
+//ds.User.all();
+
+//var greg = ds.User("31EB9FCA60224813AF0F72C17ABAC502");
+//greg
 
 
 /*

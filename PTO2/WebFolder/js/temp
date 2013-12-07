@@ -1,4 +1,9 @@
 
+
+http://127.0.0.1/rest/Request/$entityset/4AF58DC317A14D1098868AEADA4892CE/acceptRequests/?$top=40&$method=entityset&$timeout=300
+
+
+
 { "__ENTITIES": [{"__KEY":"BA91A6180F5E4FB29B8CA8EEA153525B","__STAMP":4,"myManager":{"__KEY":"FAE473275A854222AEC79D335E6B255F"}}]}
 
 

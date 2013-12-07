@@ -36,7 +36,7 @@
 
 			//Employee Requests
 			PTO.employeeRequestCollection = new PTO.Collections.EmployeeRequestCollection();
-			PTO.employeeRequestsToolbar = new PTO.Views.EmployeeRequestsToolbar();
+			PTO.employeeRequestsToolbar = new PTO.Views.EmployeeRequestsToolbar({collection: PTO.employeeRequestCollection});
 
 			//Accounts
 			PTO.accountModel = new PTO.Models.Account();
@@ -792,8 +792,13 @@
 
 		acceptAllRequests: function() {
 			console.log('accept all requests');
-		} //end - newUser().
+			this.collection.acceptAllRequests(function(collection) {
 
+				PTO.employeeRequestCollectionView.render();
+				//console.log(collection);
+				//this.collection.render();
+			});
+		} //end - newUser().
 	}); //end - PTO.Views.UserToolbar().
 
 
@@ -858,25 +863,78 @@
 	PTO.Collections.EmployeeRequestCollection = Backbone.Collection.extend({
 		model: PTO.Models.Request,
 
-		url: function() {
-			var requestConfigObj = {};
-			requestConfigObj.dataClass = "Request";
-			requestConfigObj.top = 40;
-			//requestConfigObj.filter = "dateRequested > :1 && owner.myManagerId == :2  && status == :3";
-			requestConfigObj.filter = "dateRequested > :1 && owner.myManager.id == :2  && status == :3";
-			requestConfigObj.timeout = 300;
+		entitySetId: null,
+		// /rest/Request/$entityset/04F2B41EB1B847EF816AD1217F4B6197/acceptRequests/?$top=40&$method=entityset&$timeout=300
 
-			return PTO.wakandaQueryURLString(requestConfigObj, moment().subtract('days', 1).format(), PTO.currentUserModel.get('ID'), "pending");
-			//return "/rest/Request/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'";
-			},
+		// url: function() {
+		// 	var requestConfigObj = {};
+		// 	requestConfigObj.dataClass = "Request";
+		// 	requestConfigObj.top = 40;
+		// 	//requestConfigObj.filter = "dateRequested > :1 && owner.myManagerId == :2  && status == :3";
+		// 	requestConfigObj.filter = "dateRequested > :1 && owner.myManager.id == :2  && status == :3";
+		// 	requestConfigObj.timeout = 300;
+
+		// 	return PTO.wakandaQueryURLString(requestConfigObj, moment().subtract('days', 1).format(), PTO.currentUserModel.get('ID'), "pending");
+		// 	//return "/rest/Request/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'";
+		// 	},
 
 		parse: function(response) {
+			//set entity set id
+			if (response.__ENTITYSET) {
+				var entitySetStr = response.__ENTITYSET,
+					tokens = entitySetStr.split("/");
+
+				this.entitySetId = 	tokens[4];
+				//console.log(this.entitySetId)
+				// console.log(entitySetStr);
+				// console.log(tokens);
+			}
+
 			if (response.__ENTITIES) {
 				return response.__ENTITIES;
 			} else {
 				return response;
 			}
-		} //end - parse.
+		}, //end - parse.
+
+		sync: function(method, model, options) {
+			// console.log('employee requests collections sync.');
+			// console.log(options)
+
+			options || (options = {});
+
+			switch (method) {
+				case "read":
+
+				if (!options.url) {
+					var requestConfigObj = {};
+					requestConfigObj.dataClass = "Request";
+					requestConfigObj.top = 40;
+					//requestConfigObj.filter = "dateRequested > :1 && owner.myManagerId == :2  && status == :3";
+					requestConfigObj.filter = "dateRequested > :1 && owner.myManager.id == :2  && status == :3";
+					requestConfigObj.timeout = 300;
+
+					options.url =  PTO.wakandaQueryURLString(requestConfigObj, moment().subtract('days', 1).format(), PTO.currentUserModel.get('ID'), "pending");
+				}
+	            //options.url = "/rest/Request/?top=1&$filter='id%20%3D%20'" + this.get('id') + "&$params='%5B%5D'";
+	            break;
+
+
+			}; //end - switch(method);
+
+			if (options.url) {
+				return Backbone.sync.call(model, method, model, options); //first parameter sets the context.
+			}; //end - if (options.url).
+		}, //end - sync().
+
+		
+
+		acceptAllRequests: function(successCallBkFn) {
+			this.fetch({
+				url: "rest/Request/$entityset/" + this.entitySetId + "/acceptAllRequests/?$top=40&$method=entityset&$timeout=300",
+				success: successCallBkFn(this)
+			}); //end this.save();
+		} //end - acceptAllRequests().
 	}); //PTO.Collections.RequestCollection().
 
 	PTO.Views.EmployeeRequestCollectionView = Backbone.View.extend({
