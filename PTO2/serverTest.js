@@ -3,6 +3,7 @@
 
 
 if (loginByPassword("greg@wakanda.org", "wakanda1")) {
+	//ds.User.all()
 	ds.Request.remove();
 	//ds.Request.all()//.toArray("payrollChecked")
 }

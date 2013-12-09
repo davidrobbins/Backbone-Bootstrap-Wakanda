@@ -463,7 +463,7 @@ $(document).ready(function() {
 			this.$el.find('#ptoHours').val(this.model.get('ptoHours'));
 			this.$el.find('#role').val(this.model.get('role'));
 			this.$el.find('#email').val(this.model.get('email'));
-			//this.$el.find('#id').val(this.model.get('id'));
+			this.$el.find('#password').val(this.model.get('password'));
 
 			var theUser = this.model;
 

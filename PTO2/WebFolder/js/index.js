@@ -325,6 +325,33 @@
 													PTO.dayName$.html(moment(dateSelectedStr).format('dddd'));
 												}
 											}); //end - $( "#requestDate" ).datepicker().
+
+
+											//Skip holidays, weekends, and current requests.
+											var keepLooking = true;
+											var currentDayMoment = moment();
+											
+											while (keepLooking) {
+										  		if (holidaysArr.indexOf(currentDayMoment.format("MM/DD/YYYY")) !== -1) {
+													currentDayMoment.add('days', 1);
+
+												} else if (requestsArr.indexOf(currentDayMoment.format("MM/DD/YYYY")) !== -1) {
+													currentDayMoment.add('days', 1);
+
+												} else if (currentDayMoment.day() == 5) {
+													currentDayMoment.add('days', 2);
+
+												} else if (currentDayMoment.day() == 0) {
+													currentDayMoment.add('days', 1);
+
+												} else {
+													keepLooking = false;
+												}
+										  	} //end while()
+
+											PTO.newRequestView.$el.find('#requestDate').val(currentDayMoment.format("MM/DD/YYYY"));
+											PTO.dayName$.html(currentDayMoment.format('dddd'));
+
 										}
 									});
 					
@@ -335,20 +362,21 @@
 							//set new request form defaults.//moment().format("MM/DD/YYYY")
 							//Need to make this a function. Refactor.
 							//set date to next day.
-							var currentDayMoment = moment();
+							//var currentDayMoment = moment();
 							//Skip Saturday and Sunday.
-							var daysToAdd
-							if (currentDayMoment.day() == 5) {
-								daysToAdd = 3;
-							} else if (currentDayMoment.day() == 6) {
-								daysToAdd = 2;
-							} else {
-								//daysToAdd = 1;
-							}
-							currentDayMoment.add('days', daysToAdd);
+							//var daysToAdd
+							// if (currentDayMoment.day() == 0) {
+							// 	daysToAdd = 1;
+							// } else if (currentDayMoment.day() == 6) {
+							// 	daysToAdd = 2;
+							// } else {
+							// 	//daysToAdd = 1;
+							// }
 
-							PTO.newRequestView.$el.find('#requestDate').val(currentDayMoment.format("MM/DD/YYYY"));
-							PTO.dayName$.html(currentDayMoment.format('dddd'));
+							//currentDayMoment.add('days', daysToAdd);
+
+
+
 
 							// PTO.newRequestView.$el.find('#requestDate').val(moment().format("MM/DD/YYYY"));
 							// PTO.dayName$.html(moment().format('dddd'));
@@ -791,12 +819,9 @@
 		},
 
 		acceptAllRequests: function() {
-			console.log('accept all requests');
-			this.collection.acceptAllRequests(function(collection) {
-
+			this.collection.acceptAllRequests(function(model, response, options) {
+				//PTO.employeeRequestCollectionView = new PTO.Views.EmployeeRequestCollectionView({collection: theCollection});
 				PTO.employeeRequestCollectionView.render();
-				//console.log(collection);
-				//this.collection.render();
 			});
 		} //end - newUser().
 	}); //end - PTO.Views.UserToolbar().
@@ -864,20 +889,7 @@
 		model: PTO.Models.Request,
 
 		entitySetId: null,
-		// /rest/Request/$entityset/04F2B41EB1B847EF816AD1217F4B6197/acceptRequests/?$top=40&$method=entityset&$timeout=300
-
-		// url: function() {
-		// 	var requestConfigObj = {};
-		// 	requestConfigObj.dataClass = "Request";
-		// 	requestConfigObj.top = 40;
-		// 	//requestConfigObj.filter = "dateRequested > :1 && owner.myManagerId == :2  && status == :3";
-		// 	requestConfigObj.filter = "dateRequested > :1 && owner.myManager.id == :2  && status == :3";
-		// 	requestConfigObj.timeout = 300;
-
-		// 	return PTO.wakandaQueryURLString(requestConfigObj, moment().subtract('days', 1).format(), PTO.currentUserModel.get('ID'), "pending");
-		// 	//return "/rest/Request/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'";
-		// 	},
-
+		
 		parse: function(response) {
 			//set entity set id
 			if (response.__ENTITYSET) {
@@ -885,9 +897,6 @@
 					tokens = entitySetStr.split("/");
 
 				this.entitySetId = 	tokens[4];
-				//console.log(this.entitySetId)
-				// console.log(entitySetStr);
-				// console.log(tokens);
 			}
 
 			if (response.__ENTITIES) {
@@ -898,9 +907,6 @@
 		}, //end - parse.
 
 		sync: function(method, model, options) {
-			// console.log('employee requests collections sync.');
-			// console.log(options)
-
 			options || (options = {});
 
 			switch (method) {
@@ -910,13 +916,11 @@
 					var requestConfigObj = {};
 					requestConfigObj.dataClass = "Request";
 					requestConfigObj.top = 40;
-					//requestConfigObj.filter = "dateRequested > :1 && owner.myManagerId == :2  && status == :3";
 					requestConfigObj.filter = "dateRequested > :1 && owner.myManager.id == :2  && status == :3";
 					requestConfigObj.timeout = 300;
 
 					options.url =  PTO.wakandaQueryURLString(requestConfigObj, moment().subtract('days', 1).format(), PTO.currentUserModel.get('ID'), "pending");
 				}
-	            //options.url = "/rest/Request/?top=1&$filter='id%20%3D%20'" + this.get('id') + "&$params='%5B%5D'";
 	            break;
 
 
@@ -932,7 +936,7 @@
 		acceptAllRequests: function(successCallBkFn) {
 			this.fetch({
 				url: "rest/Request/$entityset/" + this.entitySetId + "/acceptAllRequests/?$top=40&$method=entityset&$timeout=300",
-				success: successCallBkFn(this)
+				success: successCallBkFn()
 			}); //end this.save();
 		} //end - acceptAllRequests().
 	}); //PTO.Collections.RequestCollection().
