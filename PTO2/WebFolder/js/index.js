@@ -539,7 +539,8 @@
 				this.$el.find('#ptoHours').val(this.model.get('ptoHours'));
 				this.$el.find('#floatingDays').val(this.model.get('floatingDays'));
 				this.$el.find('#compDays').val(this.model.get('compDays'));
-				this.$el.find('#myManager').val(this.model.get('myManager').fullName);
+				if (this.model.get('myManager')) {this.$el.find('#myManager').val(this.model.get('myManager').fullName);}
+				
 
 				return this; //this allows us to chain.
 			}  //end - render().
@@ -821,7 +822,25 @@
 		acceptAllRequests: function() {
 			this.collection.acceptAllRequests(function(model, response, options) {
 				//PTO.employeeRequestCollectionView = new PTO.Views.EmployeeRequestCollectionView({collection: theCollection});
-				PTO.employeeRequestCollectionView.render();
+				//PTO.employeeRequestCollectionView.render();
+				console.log('accept all requests success.');
+
+				PTO.employeeRequestCollection.fetch({
+					success: function(theCollection) {
+						PTO.employeeRequestCollection.fetch({
+							success: function(theCollection) {
+								//PTO.messageModel.set({title: "Request for " + model.get('ownerName') + " on " + model.get('dateString') + " updated on server.", contextualClass: "alert-info"});
+								PTO.setMessage({title: "All requests have been accepted and the server updated.", contextualClass: "alert-info"});
+								PTO.employeeRequestCollectionView = new PTO.Views.EmployeeRequestCollectionView({collection: theCollection});
+								PTO.employeeRequestCollectionView.render();
+							}
+						}); //end - PTO.userCollection.fetch();
+						// console.log('fetch the employee request collection.');
+						// console.log(theCollection);
+						// PTO.employeeRequestCollectionView = new PTO.Views.EmployeeRequestCollectionView({collection: theCollection});
+						// PTO.employeeRequestCollectionView.render();
+					}
+				}); //end - PTO.userCollection.fetch();
 			});
 		} //end - newUser().
 	}); //end - PTO.Views.UserToolbar().

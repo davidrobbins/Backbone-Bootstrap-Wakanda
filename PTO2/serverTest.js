@@ -2,10 +2,10 @@
 
 
 
-if (loginByPassword("greg@wakanda.org", "wakanda1")) {
-	ds.Holiday.all()
+if (loginByPassword("sandra@wakanda.org", "wakanda1")) {
+	//ds.Holiday.all()
 	//ds.User.all()
-	//ds.Request.remove();
+	ds.Request.remove();
 	//ds.Request.all()//.toArray("payrollChecked")
 }
 
