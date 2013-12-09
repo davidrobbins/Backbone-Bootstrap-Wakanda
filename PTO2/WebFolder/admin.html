@@ -6,6 +6,8 @@
 
     <!-- Bootstrap -->
     <link href="libs/bootstrap-3.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jquery-ui datapicker -->
+    <link href="libs/jquery-ui-1.10.3/css/smoothness/jquery-ui-1.10.3.custom.min.css" rel="stylesheet">
     <!-- Custom styles for PTO2 application -->
     <link href="css/pto2.css" rel="stylesheet">
   </head>
@@ -160,7 +162,7 @@
 
 
 
-        <div class="container users ">
+        <div class="container users">
         <div class="row">
         <div class="col-md-12">
           <h3>Users</h3>
@@ -211,8 +213,6 @@
             </div>
             </div>
             </div>
-
-
           </div><!--/user table-responsive-->
 
           </div>
@@ -229,8 +229,58 @@
         <div class="row">
         <div class="col-md-12">
           <h3>Holidays</h3>
-          <hr class='hr-double'>
           <br>
+
+          <div class='row'>
+            <div class='col-sm-12'>
+            <div class="panel panel-default">
+              <div id="holidayToolBar" class="panel-body">
+                <button type="button" class="btn btn-primary newHoliday" data-toggle="modal" href="#editHolidayModalWin">New Holiday</button>
+              </div>
+            </div>
+            </div>
+          </div>
+
+
+          <!-- Holiday Table (start) -->
+          <div class='row'>
+          <div class='col-sm-12'>
+
+          <div class="panel panel-default">
+          <div class="panel-body">
+          <div id="holidayTable" class="table-responsive">  <!--/table-responsive-->
+
+          <!-- <div class="table-responsive"> -->
+          <!-- <table class="table table-hover table-condensed"> -->
+            <table class="table">
+            <thead>
+              <tr>
+                <th class="column160">#</th>
+                <th class="column160">Title</th>
+                <th class="column160">Date</th>
+                <th class="column160"></th>
+                <!-- <th></th> -->
+              </tr>
+            </thead>
+            </table>
+
+            <div class="scrollable-area">
+            <table class="table table-hover "> <!--/table-condensed-->
+            <tbody id="holidayTableBody">
+            </tbody>
+            </table>
+            </div>
+
+            </div>
+            </div>
+            </div>
+          </div><!--/user table-responsive-->
+
+          </div>
+          </div>
+          <!-- Holiday Table (end) -->
+
+
         </div><!--/col-md-12-->
         </div><!--/row-->
         </div><!--/holiday container-->
@@ -286,6 +336,49 @@
     </div> 
     </div>
     <!--End Edit Request Modal Dialog-->
+
+
+     <!--Edit Holiday Modal Dialog-->
+    <div class='modal fade' id='editHolidayModalWin' tabindex='-1'>
+    <div class='modal-dialog'>
+    <div class='modal-content'>
+
+    <div class='modal-header'>
+      <h4 class='modal-title' id='myModalLabel'>Holiday</h4>
+    </div>
+
+    <div class='modal-body'>
+    <form class="form-stacked"   role="form">
+      <div class="col-xs-12">
+        <label for='holidayId'>#</label>
+        <input class='form-control' id='holidayId'  type='text'>
+      </div>
+
+      <div class="col-xs-12">
+        <label for='holidayTitle'>Title</label>
+        <input class='form-control' id='holidayTitle'  type='text'>
+      </div>
+
+      <div class="col-xs-12">
+        <label for='holidayDateString'>Date</label>
+        <input class='form-control' id='holidayDateString'  type='text'>
+      </div>
+
+    <hr class='hr-normal'>
+    </form>
+    </div><!--/class='modal-body'-->
+
+    <div class='modal-footer'>
+      <button  class='btn btn-default' data-dismiss='modal' type='button'>Close</button>
+      <button  class='btn btn-primary save' data-dismiss='modal' type='button'>Save</button>
+    </div>
+
+    </div>
+    </div>
+    </div>
+    <!--End Edit Holiday Modal Dialog-->
+
+
 
 
 
@@ -404,6 +497,14 @@
       <td class="column160"><a class="btn btn-primary edit" data-toggle="modal" href="#editUserModalWin" role="button">Edit</a></td>
     </script>
 
+      <script id="holiday-template" type="text/template">
+      <td class="column160"><%= id %></td>
+      <td class="column160"><%= title %></td>
+      <td class="column160"><%= dateString %></td>
+      <td class="column160"><a class="btn btn-primary edit" data-toggle="modal" href="#editHolidayModalWin" role="button">Edit</a></td>
+    </script>
+
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins and  some Bootstrap features) -->
     <script src="libs/jquery-1.10.2.min.js" type="text/javascript"></script>
     <!-- Backbone's only hard dependency is Underscore.js -->
@@ -411,6 +512,8 @@
     <script src="libs/backbone-min.js" type="text/javascript"></script>
     <!-- For Bootstrap - Include all compiled plugins (below), or include individual files as needed -->
     <script src="libs/bootstrap-3.0.2/js/bootstrap.min.js"></script>
+     <!-- jquery-ui datepicker. -->
+    <script src="libs/jquery-ui-1.10.3/js/jquery-ui-1.10.3.custom.min.js"></script>
     <!-- Now let's load our application specific Javascript. -->
     <script type="text/javascript" src="/js/PTO_Utility.js"></script>
     <script type="text/javascript" src="/js/admin.js"></script>

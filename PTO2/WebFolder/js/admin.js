@@ -41,14 +41,26 @@ $(document).ready(function() {
 			PTO.currentUserMsg$ = $('#currentUserMsg');
 
 			PTO.userToolBar = new PTO.Views.UserToolbar();
+			PTO.holidayToolBar = new PTO.Views.HolidayToolbar();
 
 			PTO.editUserView = new PTO.Views.EditUser();
+			PTO.editHolidayView = new PTO.Views.EditHoliday();
 
 			PTO.userCollection = new PTO.Collections.UserCollection();
 			PTO.userCollection.fetch({
 				success: function(theCollection) {
 					PTO.userCollectionView = new PTO.Views.UserCollectionView({collection: PTO.userCollection});
 					PTO.userCollectionView.render();
+				}
+			}); //end - PTO.userCollection.fetch();
+
+			PTO.holidayCollection = new PTO.Collections.HolidayCollection();
+			PTO.holidayCollection.fetch({
+				success: function(theCollection) {
+					$( "#holidayDateString" ).datepicker({});
+
+					PTO.holidayCollectionView = new PTO.Views.HolidayCollectionView({collection: PTO.holidayCollection});
+					PTO.holidayCollectionView.render();
 				}
 			}); //end - PTO.userCollection.fetch();
 			
@@ -188,6 +200,9 @@ $(document).ready(function() {
 				url: "rest/$directory/logout/?$top=40&$method=entityset&$timeout=300",
 				//success: successCallBkFn
 				success: function(model, response) {
+					PTO.appContainerView.$el.find('.requests').addClass('hidden');
+					PTO.appContainerView.$el.find('.users').addClass('hidden');
+					PTO.appContainerView.$el.find('.holidays').addClass('hidden');
 					model.fetch(); 
 				}
 			}); //end - this.save().
@@ -211,6 +226,7 @@ $(document).ready(function() {
 						 	//Yes to admin permission.
 							model.fetch({success: function(model) {
 								if (model.get('fullName') !== null) {
+									PTO.appContainerView.$el.find('.users').removeClass('hidden');
 									PTO.currentUserMsg$.text("Signed in as " + model.get('fullName'));
 									PTO.requestCollection.fetch({
 										success: function(theCollection) {
@@ -299,6 +315,34 @@ $(document).ready(function() {
 	            options.url = "/rest/Holiday/?top=1&$filter='id%20%3D%20'" + this.get('id') + "&$params='%5B%5D'";
 	            break;
 
+	            case "update":
+	            options.url = "/rest/Holiday/?$method=update";
+	            var wakandaquestPayload = {},
+                	updateAttrs = this.changedAttributes();
+                wakandaquestPayload.__ENTITIES = [];
+                if (model.isNew()) {
+                	updateAttrs.__ISNEW = true;
+                }
+                updateAttrs.__KEY = this.attributes.__KEY;
+                updateAttrs.__STAMP = this.attributes.__STAMP;
+                wakandaquestPayload.__ENTITIES.push(updateAttrs);
+                options.data = JSON.stringify(wakandaquestPayload);
+
+                console.log(options.data);
+                break;
+
+                case "create":
+                options.url = "/rest/Holiday/?$method=update";
+                var wakandaquestPayload = {};
+                wakandaquestPayload.__ENTITIES = [];
+                var currentModelObject = this.attributes;
+                if (model.isNew()) {
+                	currentModelObject.__ISNEW = true;
+                }
+                wakandaquestPayload.__ENTITIES.push(currentModelObject);
+                options.data = JSON.stringify(wakandaquestPayload);
+                break;
+
 			} //end - switch (method).
 
 			if (options.url) {
@@ -324,6 +368,113 @@ $(document).ready(function() {
 		} //end - parse.
 	}); //end - PTO.Collections.HolidayCollection.
 
+	PTO.Views.HolidayView = Backbone.View.extend({
+		tagName: 'tr',
+
+		initialize: function() {
+			//_bindAll(this, 'editTask', 'render');
+			this.model.on('change', this.render, this); //change:title, destroy, add, etc.
+			this.model.on('destroy', this.remove, this);
+		},
+
+		events: {
+			"click a.edit"		: "editHoliday",
+			"click a.delete"	: "deleteHoliday",
+			"click" 			: "selected"
+		},
+
+		editHoliday: function() {
+			this.model.fetch({
+				success: function(model, response) {
+					PTO.editHolidayView.model = model;
+					PTO.editHolidayView.render(); 
+				}
+			}); 
+		}, //end - editHoliday().
+
+		deleteHoliday: function() {
+			this.model.destroy();
+		}, //end - deleteHoliday().
+
+		selected: function() {
+			this.$el.siblings().removeClass('gridSelect');
+			this.$el.addClass('gridSelect');
+		}, //end - selected().
+
+		template: PTO.Utility.template('holiday-template'),
+
+		render: function() {
+			this.$el.html(this.template(this.model.toJSON()));
+			return this; //this allows us to chain.
+		}  //end - render().
+	}); //end - PTO.Views.HolidayView().
+
+	PTO.Views.EditHoliday = Backbone.View.extend({
+		el: '#editHolidayModalWin',
+
+
+		events: {
+			"click button.save"	: "saveHoliday",
+		}, //end - events.
+
+		saveHoliday: function() {
+			this.model.save({
+				title: 		this.$el.find('#holidayTitle').val(),
+				dateString: 	this.$el.find('#holidayDateString').val(),
+
+			}, {
+				success: function(model, response) {
+					//PTO.messageModel.set({title: model.get('fullName') + " updated on the server.", contextualClass: "alert-info"});
+					PTO.holidayCollection.add(model);
+					PTO.holidayCollectionView.render();
+				}
+			});
+		},
+
+		render: function() {
+			this.$el.find('#holidayId').val(this.model.get('id'));
+			this.$el.find('#holidayTitle').val(this.model.get('title'));
+			this.$el.find('#holidayDateString').val(this.model.get('dateString'));
+			
+
+			return this; 
+		}  //end - render().
+	}); //end - PTO.Views.EditUser().
+
+
+
+	PTO.Views.HolidayCollectionView = Backbone.View.extend({
+		el: '#holidayTableBody',
+
+		// initialize: function() {
+		// 	this.collection.bind('add', this.render);
+		// },
+
+		render: function() {
+			this.$el.children().remove();
+
+			//1. filter through all items in a collection.
+			this.collection.each(function(user) {
+				//2. For each item create a new person view.
+				var userView = new PTO.Views.HolidayView({model: user});
+				//3. Append each person view to our collection view.
+				this.$el.append(userView.render().el); //chain chain chain...
+			}, this); //the second parameter to each is the context.
+		}
+	}); //end - PTO.Views.HolidayCollectionView().
+
+	PTO.Views.HolidayToolbar = Backbone.View.extend({
+		el: '#holidayToolBar',
+
+		events: {
+			"click button.newHoliday"	: "newHoliday"
+		},
+
+		newHoliday: function() {
+			PTO.editHolidayView.model = new PTO.Models.Holiday();
+			PTO.editHolidayView.render(); 
+		} //end - newHoliday().
+	}); //end - PTO.Views.HolidayToolbar().
 
 
 
@@ -529,7 +680,6 @@ $(document).ready(function() {
 			//PTO.newUserView = new PTO.Views.NewUser({model: new PTO.Models.User(), collection: PTO.userCollection});
 			//PTO.newUserView.render();
 		} //end - newUser().
-
 	}); //end - PTO.Views.UserToolbar().
 
 	PTO.Collections.ManagerCollection = Backbone.Collection.extend({
