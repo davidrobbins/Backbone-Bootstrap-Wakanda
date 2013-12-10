@@ -432,7 +432,7 @@ $(document).ready(function() {
 		},
 
 		render: function() {
-			this.$el.find('#holidayId').val(this.model.get('id'));
+			//this.$el.find('#holidayId').val(this.model.get('id'));
 			this.$el.find('#holidayTitle').val(this.model.get('title'));
 			this.$el.find('#holidayDateString').val(this.model.get('dateString'));
 			

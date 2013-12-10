@@ -1,21 +1,65 @@
 
 
+//ds.User.all();
 
+//var dave = ds.User("8CCD3E42AFE447F68B7DF286B5BD431E");
+//dave.requestCollection
+
+//var greg = ds.User("31EB9FCA60224813AF0F72C17ABAC502");
+//greg
 
 if (loginByPassword("sandra@wakanda.org", "wakanda1")) {
 	//ds.Holiday.all()
 	//ds.User.all()
-	ds.Request.remove();
-	//ds.Request.all()//.toArray("payrollChecked")
+	 //ds.Request.remove();
+	//ds.Request.all()
+	
+	
+//	ds.Holiday.remove();
+//	new ds.Holiday({title: "Thanksgiving", dateString: "11/28/2013"}).save(); 
+//	new ds.Holiday({title: "Black Friday", dateString: "11/29/2013"}).save(); 
+//	new ds.Holiday({title: "Christmas Eve", dateString: "12/24/2013"}).save(); 
+//	new ds.Holiday({title: "Christmas Day", dateString: "12/25/2013"}).save(); 
+//	new ds.Holiday({title: "New Years Eve", dateString: "12/31/2013"}).save(); 
+//	new ds.Holiday({title: "New Years Day", dateString: "01/01/2014"}).save(); 
 }
 
 
 //ds.Request.all()
 
-//ds.User.all();
 
-//var greg = ds.User("31EB9FCA60224813AF0F72C17ABAC502");
-//greg
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*

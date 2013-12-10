@@ -51,6 +51,8 @@
 
 			PTO.navbarlist$ = $('#navbarlist');
 			PTO.dayName$ = $('#dayName');
+			PTO.requestDateInput$ = $('#requestDate');
+
 			PTO.collapseContainer$ = $('#collapseContainer');
 			PTO.currentUserMsg$ = $('#currentUserMsg');
 			//PTO.messageContainer$ = $('#messageContainer');
@@ -289,98 +291,76 @@
 							PTO.navbarlist$.find('li.newRequestNav').addClass('active');
 							PTO.currentUserMsg$.text("Signed in as " + model.get('fullName'));
 
+							PTO.setCalendar(PTO.requestDateInput$, PTO.dayName$);
+
 							//Set Calendar Start
-							PTO.holidayCollection.fetch({
-								success: function(theHolidayCollection) {
-									PTO.requestCollection.fetch({
-										success: function(theRequestCollection) {
-											var holidaysArr = theHolidayCollection.toJSON().map(function(oneDay) {return oneDay.dateString;});
-											var requestsArr = theRequestCollection.toJSON().map(function(oneDay) {return oneDay.dateString;});
+							// PTO.holidayCollection.fetch({
+							// 	success: function(theHolidayCollection) {
+							// 		PTO.requestCollection.fetch({
+							// 			success: function(theRequestCollection) {
+							// 				var holidaysArr = theHolidayCollection.toJSON().map(function(oneDay) {return oneDay.dateString;});
+							// 				var requestsArr = theRequestCollection.toJSON().map(function(oneDay) {return oneDay.dateString;});
 											
-											$( "#requestDate" ).datepicker({
-												// beforeShowDay: $.datepicker.noWeekends,
-												beforeShowDay: function(date){
-											       	var holidayDateString = jQuery.datepicker.formatDate('mm/dd/yy', date);
+							// 				$( "#requestDate" ).datepicker({
+							// 					// beforeShowDay: $.datepicker.noWeekends,
+							// 					beforeShowDay: function(date){
+							// 				       	var holidayDateString = jQuery.datepicker.formatDate('mm/dd/yy', date);
 
-											        if ((date.getDay() === 6) || (date.getDay() === 0)) {
-											        	//Weekends are not selectable.
-											        	return [false];
+							// 				        if ((date.getDay() === 6) || (date.getDay() === 0)) {
+							// 				        	//Weekends are not selectable.
+							// 				        	return [false];
 
-											        } else if (holidaysArr.indexOf(holidayDateString) !== -1) {
-											        	//Neither are holidays.
-											        	return [false, 'holiday'];	
+							// 				        } else if (holidaysArr.indexOf(holidayDateString) !== -1) {
+							// 				        	//Neither are holidays.
+							// 				        	return [false, 'holiday'];	
 
-				 									} else if (requestsArr.indexOf(holidayDateString) !== -1) {
-											        	//Neither are holidays.
-											        	return [false, 'vacation'];	
+				 		// 							} else if (requestsArr.indexOf(holidayDateString) !== -1) {
+							// 				        	//Neither are holidays.
+							// 				        	return [false, 'vacation'];	
 
-											        } else {
-											        	return [true];
-											        }
+							// 				        } else {
+							// 				        	return [true];
+							// 				        }
 
-									        		//return [holidaysArr.indexOf(holidayDateString) == -1];
-											    },
+							// 		        		//return [holidaysArr.indexOf(holidayDateString) == -1];
+							// 				    },
 
-												onSelect: function(dateSelectedStr, datePickerObj) {
-													PTO.dayName$.html(moment(dateSelectedStr).format('dddd'));
-												}
-											}); //end - $( "#requestDate" ).datepicker().
+							// 					onSelect: function(dateSelectedStr, datePickerObj) {
+							// 						PTO.dayName$.html(moment(dateSelectedStr).format('dddd'));
+							// 					}
+							// 				}); //end - $( "#requestDate" ).datepicker().
 
 
-											//Skip holidays, weekends, and current requests.
-											var keepLooking = true;
-											var currentDayMoment = moment();
+							// 				//Skip holidays, weekends, and current requests.
+							// 				var keepLooking = true;
+							// 				var currentDayMoment = moment();
 											
-											while (keepLooking) {
-										  		if (holidaysArr.indexOf(currentDayMoment.format("MM/DD/YYYY")) !== -1) {
-													currentDayMoment.add('days', 1);
+							// 				while (keepLooking) {
+							// 			  		if (holidaysArr.indexOf(currentDayMoment.format("MM/DD/YYYY")) !== -1) {
+							// 						currentDayMoment.add('days', 1);
 
-												} else if (requestsArr.indexOf(currentDayMoment.format("MM/DD/YYYY")) !== -1) {
-													currentDayMoment.add('days', 1);
+							// 					} else if (requestsArr.indexOf(currentDayMoment.format("MM/DD/YYYY")) !== -1) {
+							// 						currentDayMoment.add('days', 1);
 
-												} else if (currentDayMoment.day() == 5) {
-													currentDayMoment.add('days', 2);
+							// 					} else if (currentDayMoment.day() == 5) {
+							// 						currentDayMoment.add('days', 2);
 
-												} else if (currentDayMoment.day() == 0) {
-													currentDayMoment.add('days', 1);
+							// 					} else if (currentDayMoment.day() == 0) {
+							// 						currentDayMoment.add('days', 1);
 
-												} else {
-													keepLooking = false;
-												}
-										  	} //end while()
+							// 					} else {
+							// 						keepLooking = false;
+							// 					}
+							// 			  	} //end while()
 
-											PTO.newRequestView.$el.find('#requestDate').val(currentDayMoment.format("MM/DD/YYYY"));
-											PTO.dayName$.html(currentDayMoment.format('dddd'));
-
-										}
-									});
-					
-								} //end - success().
-							}); //end - PTO.userCollection.fetch();
+							// 				PTO.newRequestView.$el.find('#requestDate').val(currentDayMoment.format("MM/DD/YYYY"));
+							// 				PTO.dayName$.html(currentDayMoment.format('dddd'));
+							// 			}
+							// 		});
+							// 	} //end - success().
+							// }); //end - PTO.userCollection.fetch();
 							//Set Calendar End
-
-							//set new request form defaults.//moment().format("MM/DD/YYYY")
-							//Need to make this a function. Refactor.
-							//set date to next day.
-							//var currentDayMoment = moment();
-							//Skip Saturday and Sunday.
-							//var daysToAdd
-							// if (currentDayMoment.day() == 0) {
-							// 	daysToAdd = 1;
-							// } else if (currentDayMoment.day() == 6) {
-							// 	daysToAdd = 2;
-							// } else {
-							// 	//daysToAdd = 1;
-							// }
-
-							//currentDayMoment.add('days', daysToAdd);
-
-
-
-
-							// PTO.newRequestView.$el.find('#requestDate').val(moment().format("MM/DD/YYYY"));
-							// PTO.dayName$.html(moment().format('dddd'));
-
+							
 							PTO.newRequestView.$el.find('#requestHours').val(8);
 
 							PTO.appContainerView.$el.find('.account').addClass('hidden');
@@ -776,8 +756,8 @@
 
 					//Need to make this a function. Refactor.
 					//set date to next day.
-					var requestDateInput$ = that.$el.find('#requestDate'),
-						currentDayMoment = moment(requestDateInput$.val()),
+					//var requestDateInput$ = that.$el.find('#requestDate'),
+					var	currentDayMoment = moment(PTO.requestDateInput$.val()),
 						holidaysArr = PTO.holidayCollection.toJSON().map(function(oneDay) {return oneDay.dateString;}),
 						requestArr = PTO.requestCollection.toJSON().map(function(oneDay) {return oneDay.dateString;});
 
@@ -803,8 +783,11 @@
 						}
 				  	} //end while()
 
-					requestDateInput$.val(currentDayMoment.format("MM/DD/YYYY"));
+					PTO.requestDateInput$.val(currentDayMoment.format("MM/DD/YYYY"));
 					PTO.dayName$.html(currentDayMoment.format('dddd'));
+
+					//reset our date picker. 
+					PTO.setCalendar(PTO.requestDateInput$, PTO.dayName$);
 				} //end - success().
 			});
 		}
