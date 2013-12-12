@@ -52,6 +52,9 @@
 			PTO.navbarlist$ = $('#navbarlist');
 			PTO.dayName$ = $('#dayName');
 			PTO.requestDateInput$ = $('#requestDate');
+			PTO.pendingRequestsMessage$ = $('#pendingRequestsMessage');
+			PTO.employeeRequestsMessage$ = $('#employeeRequestsMessage');
+			PTO.employeeRequestsAcceptAllBtnContainer$ = $('#employeeRequestsAcceptAllBtnContainer');
 
 			PTO.collapseContainer$ = $('#collapseContainer');
 			PTO.currentUserMsg$ = $('#currentUserMsg');
@@ -106,6 +109,12 @@
 						success: function(model, response) {
 							PTO.requestCollection.fetch({
 								success: function(theCollection) {
+									if (theCollection.length == 0) {
+										PTO.pendingRequestsMessage$.show();
+									} else {
+										PTO.pendingRequestsMessage$.hide();
+									}
+									//PTO.pendingRequestsMessage$
 									PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: PTO.requestCollection});
 									PTO.requestCollectionView.render();
 								}
@@ -133,6 +142,13 @@
 						success: function(model, response) {
 							PTO.employeeRequestCollection.fetch({
 								success: function(theCollection) {
+									if (theCollection.length == 0) {
+										PTO.employeeRequestsMessage$.show();
+										PTO.employeeRequestsAcceptAllBtnContainer$.hide();
+									} else {
+										PTO.employeeRequestsMessage$.hide();
+										PTO.employeeRequestsAcceptAllBtnContainer$.show();
+									}
 									PTO.employeeRequestCollectionView = new PTO.Views.EmployeeRequestCollectionView({collection: theCollection});
 									PTO.employeeRequestCollectionView.render();
 								}
@@ -291,7 +307,7 @@
 							PTO.navbarlist$.find('li.newRequestNav').addClass('active');
 							PTO.currentUserMsg$.text("Signed in as " + model.get('fullName'));
 
-							PTO.setCalendar(PTO.requestDateInput$, PTO.dayName$);
+							PTO.setCalendar(PTO.requestDateInput$, PTO.dayName$, moment());
 
 							//Set Calendar Start
 							// PTO.holidayCollection.fetch({
@@ -314,7 +330,7 @@
 							// 				        	//Neither are holidays.
 							// 				        	return [false, 'holiday'];	
 
-				 		// 							} else if (requestsArr.indexOf(holidayDateString) !== -1) {
+				 		    // 						} else if (requestsArr.indexOf(holidayDateString) !== -1) {
 							// 				        	//Neither are holidays.
 							// 				        	return [false, 'vacation'];	
 
@@ -360,7 +376,7 @@
 							// 	} //end - success().
 							// }); //end - PTO.userCollection.fetch();
 							//Set Calendar End
-							
+
 							PTO.newRequestView.$el.find('#requestHours').val(8);
 
 							PTO.appContainerView.$el.find('.account').addClass('hidden');
@@ -669,7 +685,7 @@
 			this.$el.find('p.requestId').html(this.model.get('id'));
 			this.$el.find('p.requestDate').html(this.model.get('dateString'));
 			this.$el.find('p.requestStatus').html(this.model.get('status'));
-			this.$el.find('p.requestHours').html(this.model.get('hours'));
+			this.$el.find('p.requestHours').html(this.model.get('hours') + " " + this.model.get('compensation'));
 
 			return this; 
 		}  //end - render().
@@ -754,40 +770,10 @@
 					PTO.requestModel = new PTO.Models.Request();
 					PTO.newRequestView.model = PTO.requestModel;
 
-					//Need to make this a function. Refactor.
-					//set date to next day.
-					//var requestDateInput$ = that.$el.find('#requestDate'),
-					var	currentDayMoment = moment(PTO.requestDateInput$.val()),
-						holidaysArr = PTO.holidayCollection.toJSON().map(function(oneDay) {return oneDay.dateString;}),
-						requestArr = PTO.requestCollection.toJSON().map(function(oneDay) {return oneDay.dateString;});
-
-
-					//Skip holidays, weekends, and current requests.
-					var keepLooking = true;
+					//reset our date picker.
+					var	currentDayMoment = 	moment(PTO.requestDateInput$.val());
 					currentDayMoment.add('days', 1);
-					while (keepLooking) {
-				  		if (holidaysArr.indexOf(currentDayMoment.format("MM/DD/YYYY")) !== -1) {
-							currentDayMoment.add('days', 1);
-
-						} else if (requestArr.indexOf(currentDayMoment.format("MM/DD/YYYY")) !== -1) {
-							currentDayMoment.add('days', 1);
-
-						} else if (currentDayMoment.day() == 6) {
-							currentDayMoment.add('days', 2);
-
-						} else if (currentDayMoment.day() == 0) {
-							currentDayMoment.add('days', 1);
-
-						} else {
-							keepLooking = false;
-						}
-				  	} //end while()
-
-					PTO.requestDateInput$.val(currentDayMoment.format("MM/DD/YYYY"));
-					PTO.dayName$.html(currentDayMoment.format('dddd'));
-
-					//reset our date picker. 
-					PTO.setCalendar(PTO.requestDateInput$, PTO.dayName$);
+					PTO.setCalendar(PTO.requestDateInput$, PTO.dayName$, currentDayMoment);
 				} //end - success().
 			});
 		}
@@ -812,8 +798,14 @@
 					success: function(theCollection) {
 						PTO.employeeRequestCollection.fetch({
 							success: function(theCollection) {
-								//PTO.messageModel.set({title: "Request for " + model.get('ownerName') + " on " + model.get('dateString') + " updated on server.", contextualClass: "alert-info"});
-								PTO.setMessage({title: "All requests have been accepted and the server updated.", contextualClass: "alert-info"});
+								if (theCollection.length == 0) {
+									PTO.employeeRequestsMessage$.show();
+									PTO.employeeRequestsAcceptAllBtnContainer$.hide();
+								} else {
+									PTO.employeeRequestsMessage$.hide();
+									PTO.employeeRequestsAcceptAllBtnContainer$.show();
+								}
+								//PTO.setMessage({title: "All requests have been accepted and the server updated.", contextualClass: "alert-info"});
 								PTO.employeeRequestCollectionView = new PTO.Views.EmployeeRequestCollectionView({collection: theCollection});
 								PTO.employeeRequestCollectionView.render();
 							}

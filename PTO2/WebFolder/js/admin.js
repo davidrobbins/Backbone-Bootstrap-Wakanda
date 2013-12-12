@@ -839,6 +839,8 @@ $(document).ready(function() {
 			this.$el.html(this.template(this.model.toJSON()));
 			if (this.model.get('payrollChecked')) {
 				this.$el.addClass('warning');
+			} else {
+				this.$el.removeClass('warning');
 			}
 			return this; //this allows us to chain.
 		}

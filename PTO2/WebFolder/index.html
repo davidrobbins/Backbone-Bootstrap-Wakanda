@@ -28,7 +28,7 @@
           <input type="text" class="form-control" id="loginEmail" placeholder="Email address" required autofocus>
           <input type="password" class="form-control" id="loginPassword" placeholder="Password" required>
           <label class="checkbox">
-            <input type="checkbox" value="remember-me"> Remember me
+            <input type="checkbox" value="remember-me">Remember me
           </label>
           <button class="btn btn-lg btn-primary btn-block " type="submit">Sign in</button>
         </form>
@@ -168,7 +168,9 @@
         <div class="col-md-12">
         <h4>Pending Requests</h4>
 
-          <!-- <div id="pendingRequests" class="list-group"></div>  -->
+          <div id="pendingRequestsMessage" class="alert alert-warning">
+            You have no pending requests.
+          </div>
 
           <div id="listContainer" > 
             <ul id="pendingRequestsUL" class="list-group"></ul>
@@ -185,6 +187,10 @@
         <div class="col-md-12">
         <h4>Employee Requests</h4>
 
+          <div id="employeeRequestsMessage" class="alert alert-warning">
+            You have no pending employee requests.
+          </div>
+
         <div id="employeeRequestListContainer" > 
           <ul id="employeeRequestsUL" class="list-group"></ul> 
         </div>
@@ -192,7 +198,7 @@
         </div>
         </div><!--/end row-->
 
-        <div class='row'>
+        <div id="employeeRequestsAcceptAllBtnContainer" class='row'>
           <div class='col-sm-12'>
           <div class="panel panel-default">
             <div id="employeeRequestsToolBar" class="panel-body">
