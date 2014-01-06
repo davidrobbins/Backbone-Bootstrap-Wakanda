@@ -47,12 +47,7 @@ $(document).ready(function() {
 			PTO.editHolidayView = new PTO.Views.EditHoliday();
 
 			PTO.userCollection = new PTO.Collections.UserCollection();
-			PTO.userCollection.fetch({
-				success: function(theCollection) {
-					PTO.userCollectionView = new PTO.Views.UserCollectionView({collection: PTO.userCollection});
-					PTO.userCollectionView.render();
-				}
-			}); //end - PTO.userCollection.fetch();
+			
 
 			PTO.holidayCollection = new PTO.Collections.HolidayCollection();
 			PTO.holidayCollection.fetch({
@@ -226,12 +221,18 @@ $(document).ready(function() {
 						 	//Yes to admin permission.
 							model.fetch({success: function(model) {
 								if (model.get('fullName') !== null) {
-									PTO.appContainerView.$el.find('.users').removeClass('hidden');
+									PTO.appContainerView.$el.find('.requests').removeClass('hidden');
 									PTO.currentUserMsg$.text("Signed in as " + model.get('fullName'));
 									PTO.requestCollection.fetch({
 										success: function(theCollection) {
 											PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
 											PTO.requestCollectionView.render();
+										}
+									}); //end - PTO.userCollection.fetch(); 
+									PTO.userCollection.fetch({
+										success: function(theCollection) {
+											PTO.userCollectionView = new PTO.Views.UserCollectionView({collection: PTO.userCollection});
+											PTO.userCollectionView.render();
 										}
 									}); //end - PTO.userCollection.fetch();
 
@@ -286,7 +287,7 @@ $(document).ready(function() {
 				this.$el.find('.login').addClass('hidden'); 
 				this.$el.find('.logout').removeClass('hidden'); 
 				//PTO.navbarlist$.find('li.requests').addClass('active');
-				PTO.navbarlist$.find('li.users').addClass('active');
+				PTO.navbarlist$.find('li.requests').addClass('active');
 			}
 			
 			return this; //So we can chain our render() method.
