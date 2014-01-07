@@ -595,10 +595,12 @@ $(document).ready(function() {
 				fullName: 		this.$el.find('#fullName').val(),
 				floatingDays: 	this.$el.find('#floatingDays').val(),
 				ptoHours: 		this.$el.find('#ptoHours').val(),
+				compHours: 		this.$el.find('#compHours').val(),
 				role: 			this.$el.find('#role').val(),
 				email: 			this.$el.find('#email').val(),
 				myManagerId:    this.$el.find('#managerSelect').val(),
-				password: 		this.$el.find('#password').val()
+				password: 		this.$el.find('#password').val(),
+				ptoAccrualRate: this.$el.find('#ptoAccrualRate').val(),
 
 			}, {
 				success: function(model, response) {
@@ -613,9 +615,11 @@ $(document).ready(function() {
 			this.$el.find('#fullName').val(this.model.get('fullName'));
 			this.$el.find('#floatingDays').val(this.model.get('floatingDays'));
 			this.$el.find('#ptoHours').val(this.model.get('ptoHours'));
+			this.$el.find('#compHours').val(this.model.get('compHours'));
 			this.$el.find('#role').val(this.model.get('role'));
 			this.$el.find('#email').val(this.model.get('email'));
 			this.$el.find('#password').val(this.model.get('password'));
+			this.$el.find('#ptoAccrualRate').val(this.model.get('ptoAccrualRate'));
 
 			var theUser = this.model;
 
