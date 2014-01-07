@@ -13,26 +13,3 @@ Wakanda Client Framework
 
 For this project I replaced the Wakanda Client Framwork with Backbone and Bootstrap. I modified Backbone to use the Wakanda Server rest api.
 
-If you want to give it a try there are two applications :
-
-A  [User application](http://192.241.155.204:8081).
-
-And an [Admin application](http://192.241.155.204:8081/admin.html).
-
-Here is a list of some of the username/passwords you can use to login the user application:
-
-    greg@wakanda.org/wakanda1
-
-    dave@wakanda.org/wakanda1
-
-    tom@wakanda.org/wakanda1
-
-    court@wakanda.org/wakanda1
-
-    tracy@wakanda.org/wakanda1
-
-
-
-You can use the admin application to set the role of the user and assign them PTO hours. Here is a username/password for the admin application:
-
-    sanda@wakanda.org/wakanda1

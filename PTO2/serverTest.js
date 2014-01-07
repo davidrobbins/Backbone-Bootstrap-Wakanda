@@ -1,5 +1,14 @@
 
 
+if (loginByPassword("sandra@wakanda.org", "wakanda1")) {
+	var tracy = ds.User("839C1A351D314125AED4654588E75A66");
+	tracy.floatingDays = 3;
+	tracy.save();
+	tracy
+}
+
+//ds.User.all()
+
 
 //ds.User("74C46A7CD3EC455790896ED02C7666BA").remove();
 //ds.User.all();
@@ -12,9 +21,9 @@
 //var greg = ds.User("31EB9FCA60224813AF0F72C17ABAC502");
 //greg
 
-if (loginByPassword("dave@wakanda.org", "wakanda1")) {
-	ds.User.all();
-}
+//if (loginByPassword("dave@wakanda.org", "wakanda1")) {
+//	ds.User.all();
+//}
 
 
 
