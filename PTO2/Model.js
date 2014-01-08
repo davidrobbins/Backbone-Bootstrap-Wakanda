@@ -6,3 +6,4 @@ model.User = require('CustomLogin').User;
 
 include("classes/holiday.js");
 include("classes/request.js");
+include("classes/log.js");

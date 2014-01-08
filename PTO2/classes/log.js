@@ -1,0 +1,1 @@
+﻿//Creating the Log classmodel.Log = new DataClass("Logs");//Add Log attributes.model.Log.id = new Attribute("storage", "long", "key auto");model.Log.kind = new Attribute("storage", "string", "btree");model.Log.createDate = new Attribute("storage", "date", "btree");
