@@ -1,1 +1,1 @@
-﻿var PTO = PTO || {}; //Don't assume we are first to define PTO.PTO.customLogin = require('CustomLogin').customLoginListener;
+﻿var PTO = PTO || {}; //Don't assume we are first to define PTO.PTO.customLogin = require('CustomLogin').customLoginListener;PTO.makeid = function (){    var text = "";    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";    for( var i=0; i < 5; i++ )        text += possible.charAt(Math.floor(Math.random() * possible.length));    return text;};
