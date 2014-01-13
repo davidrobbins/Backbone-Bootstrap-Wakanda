@@ -1,4 +1,4 @@
-	$(document).ready(function() {
+$(document).ready(function() {
 	Backbone.emulateHTTP = true; 
 	PTO.vent = _.extend({}, Backbone.Events);
 
@@ -45,10 +45,13 @@
 			//Holidays
 			PTO.holidayCollection = new PTO.Collections.HolidayCollection();
 			
+			//Login 
+			PTO.loginEmail$ = $('#loginEmail');
+			PTO.loginPassword$ = $('#loginPassword');
+			PTO.loginRemember$ = $('#loginRemember');
 
 			//Nav
 			PTO.navListView = new PTO.Views.Navlist();
-
 			PTO.navbarlist$ = $('#navbarlist');
 			PTO.dayName$ = $('#dayName');
 			PTO.requestDateInput$ = $('#requestDate');
@@ -301,6 +304,20 @@
 				//success: successCallBkFn
 
 				success: function(model, response) {
+					if (PTO.loginRemember$.prop("checked") ) {
+						//console.log('remember me');
+						// set cookies to expire in 14 days
+						$.cookie('loginEmail', PTO.loginEmail$.val(), { expires: 30 });
+						$.cookie('loginPassword', PTO.loginPassword$.val(), { expires: 30 });
+						$.cookie('loginRemember', true, { expires: 30 });
+
+					} else {
+						//console.log('forget me');
+						$.cookie('loginEmail', null);
+						$.cookie('loginPassword', null);
+						$.cookie('loginRemember', null);
+					}
+
 					model.fetch({success: function(model) {
 						if (model.get('fullName') !== null) {
 							//PTO.messageModel.set({title: model.get('fullName') + " successfully signed in.", contextualClass: "alert-info"});
@@ -308,75 +325,6 @@
 							PTO.currentUserMsg$.text("Signed in as " + model.get('fullName'));
 
 							PTO.setCalendar(PTO.requestDateInput$, PTO.dayName$, moment());
-
-							//Set Calendar Start
-							// PTO.holidayCollection.fetch({
-							// 	success: function(theHolidayCollection) {
-							// 		PTO.requestCollection.fetch({
-							// 			success: function(theRequestCollection) {
-							// 				var holidaysArr = theHolidayCollection.toJSON().map(function(oneDay) {return oneDay.dateString;});
-							// 				var requestsArr = theRequestCollection.toJSON().map(function(oneDay) {return oneDay.dateString;});
-											
-							// 				$( "#requestDate" ).datepicker({
-							// 					// beforeShowDay: $.datepicker.noWeekends,
-							// 					beforeShowDay: function(date){
-							// 				       	var holidayDateString = jQuery.datepicker.formatDate('mm/dd/yy', date);
-
-							// 				        if ((date.getDay() === 6) || (date.getDay() === 0)) {
-							// 				        	//Weekends are not selectable.
-							// 				        	return [false];
-
-							// 				        } else if (holidaysArr.indexOf(holidayDateString) !== -1) {
-							// 				        	//Neither are holidays.
-							// 				        	return [false, 'holiday'];	
-
-				 		    // 						} else if (requestsArr.indexOf(holidayDateString) !== -1) {
-							// 				        	//Neither are holidays.
-							// 				        	return [false, 'vacation'];	
-
-							// 				        } else {
-							// 				        	return [true];
-							// 				        }
-
-							// 		        		//return [holidaysArr.indexOf(holidayDateString) == -1];
-							// 				    },
-
-							// 					onSelect: function(dateSelectedStr, datePickerObj) {
-							// 						PTO.dayName$.html(moment(dateSelectedStr).format('dddd'));
-							// 					}
-							// 				}); //end - $( "#requestDate" ).datepicker().
-
-
-							// 				//Skip holidays, weekends, and current requests.
-							// 				var keepLooking = true;
-							// 				var currentDayMoment = moment();
-											
-							// 				while (keepLooking) {
-							// 			  		if (holidaysArr.indexOf(currentDayMoment.format("MM/DD/YYYY")) !== -1) {
-							// 						currentDayMoment.add('days', 1);
-
-							// 					} else if (requestsArr.indexOf(currentDayMoment.format("MM/DD/YYYY")) !== -1) {
-							// 						currentDayMoment.add('days', 1);
-
-							// 					} else if (currentDayMoment.day() == 5) {
-							// 						currentDayMoment.add('days', 2);
-
-							// 					} else if (currentDayMoment.day() == 0) {
-							// 						currentDayMoment.add('days', 1);
-
-							// 					} else {
-							// 						keepLooking = false;
-							// 					}
-							// 			  	} //end while()
-
-							// 				PTO.newRequestView.$el.find('#requestDate').val(currentDayMoment.format("MM/DD/YYYY"));
-							// 				PTO.dayName$.html(currentDayMoment.format('dddd'));
-							// 			}
-							// 		});
-							// 	} //end - success().
-							// }); //end - PTO.userCollection.fetch();
-							//Set Calendar End
-
 							PTO.newRequestView.$el.find('#requestHours').val(8);
 
 							PTO.appContainerView.$el.find('.account').addClass('hidden');
@@ -979,6 +927,13 @@
 
 
 	new PTO.Views.App(); //Let's instantiate our App view so it can init everything.
+
+
+	if ($.cookie('loginRemember') === "true") {
+		PTO.loginEmail$.val($.cookie('loginEmail'));
+		PTO.loginPassword$.val($.cookie('loginPassword'));
+		PTO.loginRemember$.prop('checked', true);
+	} 
 
 	//new PTO.Router(); //Create an instance of our router.
 	//Backbone.history.start(); //Tell Backbone to start monitoring hash change events in the browser.
