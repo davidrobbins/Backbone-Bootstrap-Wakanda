@@ -50,7 +50,8 @@ $(document).ready(function() {
 
 			switch (method) {
 				case "read":
-	            options.url = "/rest/Request/?top=1&$filter='id%20%3D%20'" + this.get('id') + "&$params='%5B%5D'&$expand=owner";
+	            //options.url = "/rest/Request/?top=1&$filter='id%20%3D%20'" + this.get('id') + "&$params='%5B%5D'&$expand=owner";
+	            options.url = "rest/Request/calendarAllRequests/?$top=40&$method=entityset&$timeout=300";
 	            break;
 
             	case "delete":
@@ -107,6 +108,7 @@ $(document).ready(function() {
 			// requestConfigObj.timeout = 300;
 
 			// return PTO.wakandaQueryURLString(requestConfigObj, new Date(), PTO.currentUserModel.get('ID'));
+			return "rest/Request/calendarAllRequests/?$top=40&$method=entityset&$timeout=300";
 			return "/rest/Request/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'";
 		},
 
