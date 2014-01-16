@@ -11,6 +11,8 @@ $(document).ready(function() {
 	PTO.Views.App = Backbone.View.extend({
 		initialize: function() {
 			PTO.vent.on('navigate', this.navigate, this); //Set hash change event handler.
+			PTO.vent.on('accountNavigate', this.accountNavigate, this); //Set hash change event handler.
+
 			PTO.currentUserModel = new PTO.Models.CurrentUser(); //Instantiate our currentUser Model.
 			PTO.currentUserView = new PTO.Views.CurrentUser({model: PTO.currentUserModel});
 			PTO.currentUserLogoutView = new PTO.Views.CurrentUserLogout({model: PTO.currentUserModel}); 
@@ -51,6 +53,11 @@ $(document).ready(function() {
 			PTO.loginRemember$ = $('#loginRemember');
 
 			//Nav
+			//accountNavbarlist
+			PTO.accountNavListView = new PTO.Views.AccountNavlist(); 
+			PTO.accountNavbarlist$ = $('#accountNavbarlist');
+			PTO.accountForm$ = $('#accountForm');
+
 			PTO.navListView = new PTO.Views.Navlist();
 			PTO.navbarlist$ = $('#navbarlist');
 			PTO.dayName$ = $('#dayName');
@@ -64,17 +71,57 @@ $(document).ready(function() {
 			//PTO.messageContainer$ = $('#messageContainer');
 		}, //end - initialize().
 
+		accountNavigate: function(where) {
+			console.log('account navigate');
+
+			switch(where) {
+				case "personalInfo" :
+				PTO.accountForm$.removeClass('hidden');
+				PTO.accountNavbarlist$.find('li.securityNav').removeClass('active');
+				PTO.accountNavbarlist$.find('li.personalInfoNav').addClass('active');//personalInfoNav
+				break;
+
+
+
+				case "security" :
+				PTO.accountForm$.addClass('hidden');
+				PTO.accountNavbarlist$.find('li.personalInfoNav').removeClass('active');
+				PTO.accountNavbarlist$.find('li.securityNav').addClass('active');
+				break;
+			} //end - switch(where).
+		},
+
+
+
 		navigate: function(where) {
 			switch(where) {
+				case "resetPassword" :
+				if (PTO.currentUserModel.get('userName') !== null) {
+					PTO.appContainerView.$el.find('.account').addClass('hidden');
+					PTO.appContainerView.$el.find('.pendingRequests').addClass('hidden');
+					PTO.appContainerView.$el.find('.employeeRequests').addClass('hidden');
+					PTO.appContainerView.$el.find('.newRequest').addClass('hidden');
+
+					PTO.appContainerView.$el.find('.resetPassword').removeClass('hidden');
+					PTO.navbarlist$.find('li.resetPassword').addClass('active');
+					PTO.navbarlist$.find('li.resetPassword').siblings().removeClass('active');
+					//Try to get nav to collapse
+					PTO.collapseContainer$.removeClass('in');
+					PTO.collapseContainer$.addClass('collapse');
+
+				}
+				break;
 			
+
+
 				case "newRequest" :
 				if (PTO.currentUserModel.get('userName') !== null) {
 					PTO.appContainerView.$el.find('.account').addClass('hidden');
 					PTO.appContainerView.$el.find('.pendingRequests').addClass('hidden');
 					PTO.appContainerView.$el.find('.employeeRequests').addClass('hidden');
+					PTO.appContainerView.$el.find('.changePassword').addClass('hidden');
 
 					PTO.appContainerView.$el.find('.newRequest').removeClass('hidden');
-
 					PTO.navbarlist$.find('li.newRequestNav').addClass('active');
 					PTO.navbarlist$.find('li.newRequestNav').siblings().removeClass('active');
 					//Try to get nav to collapse
@@ -82,6 +129,8 @@ $(document).ready(function() {
 					PTO.collapseContainer$.addClass('collapse');
 				}
 				break;
+
+
 
 				case "account" :
 				if (PTO.currentUserModel.get('userName') !== null) {
@@ -93,6 +142,7 @@ $(document).ready(function() {
 							PTO.appContainerView.$el.find('.newRequest').addClass('hidden');
 							PTO.appContainerView.$el.find('.pendingRequests').addClass('hidden');
 							PTO.appContainerView.$el.find('.employeeRequests').addClass('hidden');
+							PTO.appContainerView.$el.find('.changePassword').addClass('hidden');
 
 							PTO.appContainerView.$el.find('.account').removeClass('hidden');
 							PTO.navbarlist$.find('li.accountNav').addClass('active');
@@ -104,6 +154,8 @@ $(document).ready(function() {
 					});
 				} //end - if (PTO.currentUserModel.get('userName') !== null).
 				break;
+
+
 
 				case "pendingRequests" :
 				if (PTO.currentUserModel.get('userName') !== null) {
@@ -126,6 +178,7 @@ $(document).ready(function() {
 							PTO.appContainerView.$el.find('.newRequest').addClass('hidden');
 							PTO.appContainerView.$el.find('.account').addClass('hidden');
 							PTO.appContainerView.$el.find('.employeeRequests').addClass('hidden');
+							PTO.appContainerView.$el.find('.changePassword').addClass('hidden');
 
 							PTO.appContainerView.$el.find('.pendingRequests').removeClass('hidden');
 							PTO.navbarlist$.find('li.pendingRequestsNav').addClass('active');
@@ -137,6 +190,8 @@ $(document).ready(function() {
 					});
 				} //end - if (PTO.currentUserModel.get('userName') !== null).
 				break;
+
+
 
 				case "employeeRequests" :
 				if (PTO.currentUserModel.get('userName') !== null) {
@@ -160,6 +215,7 @@ $(document).ready(function() {
 							PTO.appContainerView.$el.find('.newRequest').addClass('hidden');
 							PTO.appContainerView.$el.find('.account').addClass('hidden');
 							PTO.appContainerView.$el.find('.pendingRequests').addClass('hidden');
+							PTO.appContainerView.$el.find('.changePassword').addClass('hidden');
 
 							PTO.appContainerView.$el.find('.employeeRequests').removeClass('hidden');
 							PTO.navbarlist$.find('li.employeeRequestsNav').addClass('active');
@@ -177,14 +233,41 @@ $(document).ready(function() {
 	});//end - PTO.Views.App().
 
 	//Don't like using hash navigation.
+	//#accountNavbarlist
+	PTO.Views.AccountNavlist = Backbone.View.extend({
+		el: '#accountNavbarlist',
+
+		events: {
+			'click .personalInfoNav' : 'personalInfo',
+			'click .securityNav' : 'security'
+		},
+
+		personalInfo: function(e) {
+			e.preventDefault();
+			PTO.vent.trigger('accountNavigate', 'personalInfo');
+		},
+
+		security: function(e) {
+			e.preventDefault();
+			PTO.vent.trigger('accountNavigate', 'security');
+		}
+	});//end - PTO.Views.AccountNavlist.
+
+
 	PTO.Views.Navlist = Backbone.View.extend({
 		el: '#navbarlist',
 
 		events: {
 			'click .newRequestNav' : 'newRequest',
+			'click .resetPasswordNav' : 'resetPassword',
 			'click .accountNav' : 'account',
 			'click .pendingRequestsNav' : 'pendingRequests',
 			'click .employeeRequestsNav' : 'employeeRequests'
+		},
+
+		resetPassword: function(e) {
+			e.preventDefault();
+			PTO.vent.trigger('navigate', 'resetPassword');
 		},
 
 		newRequest: function(e) {
