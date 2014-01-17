@@ -27,6 +27,8 @@ $(document).ready(function() {
 				PTO.messageXView.render();
 			};
 
+
+
 			PTO.appContainerView = new PTO.Views.AppContainer({model: PTO.currentUserModel});
 			
 			//Requests
@@ -60,6 +62,12 @@ $(document).ready(function() {
 			PTO.accountForm$ = $('#accountForm');
 			PTO.securityForm$ = $('#securityForm');
 
+			PTO.clearSecurityInputFields = function(jQueryFormRef) {
+				jQueryFormRef.find('input[type=password]').each(function() {
+					$(this).val("");
+				});
+			};
+
 			PTO.navListView = new PTO.Views.Navlist();
 			PTO.navbarlist$ = $('#navbarlist');
 			PTO.dayName$ = $('#dayName');
@@ -86,6 +94,7 @@ $(document).ready(function() {
 
 
 				case "security" :
+				PTO.clearSecurityInputFields(PTO.securityForm$);
 				PTO.accountForm$.addClass('hidden');
 				PTO.securityForm$.removeClass('hidden');
 				PTO.accountNavbarlist$.find('li.personalInfoNav').removeClass('active');
@@ -545,9 +554,6 @@ $(document).ready(function() {
 	                wakandaquestPayload.__ENTITIES.push(this.attributes);
 	                options.data = JSON.stringify(wakandaquestPayload);
 	            }
-
-	            
-	            
                 break;
 
                 case "create":
@@ -594,10 +600,10 @@ $(document).ready(function() {
 				newPassword: this.$el.find('#newPassword').val(), 
 				confirmNewPassword: this.$el.find('#confirmNewPassword').val()
 			}, function(model, response) {
-				//console.log('change password callback');
-				//console.log(response.result.message);
 				PTO.setMessage({title: response.result.message, contextualClass: "alert-info"});
-
+				if (response.result.error === 900) {
+					PTO.clearSecurityInputFields(PTO.securityForm$);
+				}
 			});
 		}
 
