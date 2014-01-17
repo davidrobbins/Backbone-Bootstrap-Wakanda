@@ -80,7 +80,7 @@ $(document).ready(function() {
 				PTO.securityForm$.addClass('hidden');
 				PTO.accountForm$.removeClass('hidden');
 				PTO.accountNavbarlist$.find('li.securityNav').removeClass('active');
-				PTO.accountNavbarlist$.find('li.personalInfoNav').addClass('active');//personalInfoNav
+				PTO.accountNavbarlist$.find('li.personalInfoNav').addClass('active');
 				break;
 
 
@@ -153,6 +153,11 @@ $(document).ready(function() {
 							//Try to get nav to collapse
 							PTO.collapseContainer$.removeClass('in');
 							PTO.collapseContainer$.addClass('collapse');
+
+							PTO.securityForm$.addClass('hidden');
+							PTO.accountForm$.removeClass('hidden');
+							PTO.accountNavbarlist$.find('li.securityNav').removeClass('active');
+							PTO.accountNavbarlist$.find('li.personalInfoNav').addClass('active');
 						}
 					});
 				} //end - if (PTO.currentUserModel.get('userName') !== null).
@@ -517,8 +522,6 @@ $(document).ready(function() {
 		}, //end - parse.
 
 		sync: function(method, model, options) {
-			console.log(options);
-
 			options || (options = {});
 
 			switch (method) {
@@ -591,8 +594,10 @@ $(document).ready(function() {
 				newPassword: this.$el.find('#newPassword').val(), 
 				confirmNewPassword: this.$el.find('#confirmNewPassword').val()
 			}, function(model, response) {
-				console.log('change password callback');
-				console.log(response);
+				//console.log('change password callback');
+				//console.log(response.result.message);
+				PTO.setMessage({title: response.result.message, contextualClass: "alert-info"});
+
 			});
 		}
 
