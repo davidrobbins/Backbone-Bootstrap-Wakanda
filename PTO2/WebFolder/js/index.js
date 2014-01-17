@@ -43,6 +43,7 @@ $(document).ready(function() {
 			//Accounts
 			PTO.accountModel = new PTO.Models.Account();
 			PTO.newAccountView = new PTO.Views.Account({model: PTO.accountModel});
+			PTO.changePasswordView = new PTO.Views.ChangePassword({model: PTO.accountModel});
 			
 			//Holidays
 			PTO.holidayCollection = new PTO.Collections.HolidayCollection();
@@ -57,6 +58,7 @@ $(document).ready(function() {
 			PTO.accountNavListView = new PTO.Views.AccountNavlist(); 
 			PTO.accountNavbarlist$ = $('#accountNavbarlist');
 			PTO.accountForm$ = $('#accountForm');
+			PTO.securityForm$ = $('#securityForm');
 
 			PTO.navListView = new PTO.Views.Navlist();
 			PTO.navbarlist$ = $('#navbarlist');
@@ -72,10 +74,10 @@ $(document).ready(function() {
 		}, //end - initialize().
 
 		accountNavigate: function(where) {
-			console.log('account navigate');
 
 			switch(where) {
 				case "personalInfo" :
+				PTO.securityForm$.addClass('hidden');
 				PTO.accountForm$.removeClass('hidden');
 				PTO.accountNavbarlist$.find('li.securityNav').removeClass('active');
 				PTO.accountNavbarlist$.find('li.personalInfoNav').addClass('active');//personalInfoNav
@@ -85,6 +87,7 @@ $(document).ready(function() {
 
 				case "security" :
 				PTO.accountForm$.addClass('hidden');
+				PTO.securityForm$.removeClass('hidden');
 				PTO.accountNavbarlist$.find('li.personalInfoNav').removeClass('active');
 				PTO.accountNavbarlist$.find('li.securityNav').addClass('active');
 				break;
@@ -95,22 +98,22 @@ $(document).ready(function() {
 
 		navigate: function(where) {
 			switch(where) {
-				case "resetPassword" :
-				if (PTO.currentUserModel.get('userName') !== null) {
-					PTO.appContainerView.$el.find('.account').addClass('hidden');
-					PTO.appContainerView.$el.find('.pendingRequests').addClass('hidden');
-					PTO.appContainerView.$el.find('.employeeRequests').addClass('hidden');
-					PTO.appContainerView.$el.find('.newRequest').addClass('hidden');
+				// case "resetPassword" :
+				// if (PTO.currentUserModel.get('userName') !== null) {
+				// 	PTO.appContainerView.$el.find('.account').addClass('hidden');
+				// 	PTO.appContainerView.$el.find('.pendingRequests').addClass('hidden');
+				// 	PTO.appContainerView.$el.find('.employeeRequests').addClass('hidden');
+				// 	PTO.appContainerView.$el.find('.newRequest').addClass('hidden');
 
-					PTO.appContainerView.$el.find('.resetPassword').removeClass('hidden');
-					PTO.navbarlist$.find('li.resetPassword').addClass('active');
-					PTO.navbarlist$.find('li.resetPassword').siblings().removeClass('active');
-					//Try to get nav to collapse
-					PTO.collapseContainer$.removeClass('in');
-					PTO.collapseContainer$.addClass('collapse');
+				// 	PTO.appContainerView.$el.find('.resetPassword').removeClass('hidden');
+				// 	PTO.navbarlist$.find('li.resetPassword').addClass('active');
+				// 	PTO.navbarlist$.find('li.resetPassword').siblings().removeClass('active');
+				// 	//Try to get nav to collapse
+				// 	PTO.collapseContainer$.removeClass('in');
+				// 	PTO.collapseContainer$.addClass('collapse');
 
-				}
-				break;
+				// }
+				// break;
 			
 
 
@@ -361,6 +364,7 @@ $(document).ready(function() {
 			return response.result;
 		}, //end - parse.
 
+
 		logout: function() {
 			this.save({}, {
 				url: "rest/$directory/logout/?$top=40&$method=entityset&$timeout=300",
@@ -377,7 +381,7 @@ $(document).ready(function() {
 				url: "rest/User/currentUserBelongsTo/?$top=40&$method=entityset&$timeout=300",
 				success: successCallBkFn
 			}); //end this.save();
-		}, //end - currentUserBelongsTo().,
+		}, //end - currentUserBelongsTo().
 
 		loginByPassword: function(credentialsObj, successCallBkFn) {
 			this.save({}, {
@@ -513,6 +517,8 @@ $(document).ready(function() {
 		}, //end - parse.
 
 		sync: function(method, model, options) {
+			console.log(options);
+
 			options || (options = {});
 
 			switch (method) {
@@ -526,13 +532,19 @@ $(document).ready(function() {
                 break;
 
 	            case "update":
-	            options.url = "/rest/User/?$method=update";
-	            //delete(model.attributes.uri);
-             	//options.url = "/rest/Request(" + this.get('id') + ")/?$method=update";
-                var wakandaquestPayload = {};
-                wakandaquestPayload.__ENTITIES = [];
-                wakandaquestPayload.__ENTITIES.push(this.attributes);
-                options.data = JSON.stringify(wakandaquestPayload);
+	            if (!options.urlFlag === "changePassword") {
+	            	//console.log('never would have worked');
+	            	options.url = "/rest/User/?$method=update";
+	            	//delete(model.attributes.uri);
+	             	//options.url = "/rest/Request(" + this.get('id') + ")/?$method=update";
+	                var wakandaquestPayload = {};
+	                wakandaquestPayload.__ENTITIES = [];
+	                wakandaquestPayload.__ENTITIES.push(this.attributes);
+	                options.data = JSON.stringify(wakandaquestPayload);
+	            }
+
+	            
+	            
                 break;
 
                 case "create":
@@ -552,8 +564,39 @@ $(document).ready(function() {
 			if (options.url) {
 				return Backbone.sync.call(model, method, model, options); //first parameter sets the context.
 			} //end - if (options.url).
-		} //end - sync().
+		}, //end - sync().
+
+		changePassword: function(parmObj, successCallBkFn) {
+			this.save({}, {
+				data: JSON.stringify({currentPassword: parmObj.currentPassword, newPassword: parmObj.newPassword, confirmNewPassword: parmObj.confirmNewPassword}),
+				url: "rest/User/changePassword/?$top=40&$method=entityset&$timeout=300",
+				success: successCallBkFn,
+				urlFlag: "changePassword"
+			}); //end this.save();
+		} //end - changeUser().
 	}); //end - PTO.Models.Account().
+
+	PTO.Views.ChangePassword = Backbone.View.extend({
+		el: '#changePasswordContainer',
+
+		events: {
+			'submit .changePassword' : 'changePassword'
+		}, //end - events.
+
+		changePassword: function(e) {
+			e.preventDefault();
+			this.model.changePassword(
+			{
+				currentPassword: this.$el.find('#currentPassword').val(), 
+				newPassword: this.$el.find('#newPassword').val(), 
+				confirmNewPassword: this.$el.find('#confirmNewPassword').val()
+			}, function(model, response) {
+				console.log('change password callback');
+				console.log(response);
+			});
+		}
+
+	});
 
 	PTO.Views.Account = Backbone.View.extend({
 			el: '#accountForm', 
@@ -567,7 +610,9 @@ $(document).ready(function() {
 				this.$el.find('#ptoHours').val(this.model.get('ptoHours'));
 				this.$el.find('#floatingDays').val(this.model.get('floatingDays'));
 				this.$el.find('#compDays').val(this.model.get('compDays'));
-				if (this.model.get('myManager')) {this.$el.find('#myManager').val(this.model.get('myManager').fullName);}
+				if (this.model.get('myManager')) {
+					this.$el.find('#myManager').val(this.model.get('myManager').fullName);
+				}
 				
 
 				return this; //this allows us to chain.
