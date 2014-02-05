@@ -885,15 +885,20 @@ $(document).ready(function() {
 	PTO.Collections.RequestCollection = Backbone.Collection.extend({
 		model: PTO.Models.Request,
 
-		url: function() {
-			// var requestConfigObj = {};
-			// requestConfigObj.dataClass = "Request";
-			// requestConfigObj.top = 40;
-			// requestConfigObj.filter = "dateRequested > :1 && owner.id == :2";
-			// requestConfigObj.timeout = 300;
+		//dateRequested > :1 && dateRequested < :2
 
-			// return PTO.wakandaQueryURLString(requestConfigObj, new Date(), PTO.currentUserModel.get('ID'));
-			return "/rest/Request/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'&$expand=owner, owner.myManager";
+		url: function() {
+			console.log("Request Collection url");
+			var requestConfigObj = {};
+			requestConfigObj.dataClass = "Request";
+			requestConfigObj.top = 30;
+			//requestConfigObj.filter = "$all";
+			requestConfigObj.filter = "dateRequested > :1";
+			requestConfigObj.timeout = 300;
+			//return PTO.wakandaQueryURLString(requestConfigObj); //2011,10,30)
+			return PTO.wakandaQueryURLString(requestConfigObj, new Date(2014, 05, 01)); //, PTO.currentUserModel.get('ID')
+			
+			//return "/rest/Request/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'&$expand=owner, owner.myManager";
 		},
 
 		parse: function(response) {

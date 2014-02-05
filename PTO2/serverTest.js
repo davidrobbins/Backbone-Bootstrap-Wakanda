@@ -1,11 +1,16 @@
 
+promoteToken = currentSession().promoteWith("Administrator"); 
+ds.Request.all().length;
 
-if (loginByPassword("sandra@wakanda.org", "wakanda1")) {
-	var tracy = ds.User("839C1A351D314125AED4654588E75A66");
-	tracy.floatingDays = 3;
-	tracy.save();
-	tracy
-}
+
+
+
+//if (loginByPassword("sandra@wakanda.org", "wakanda1")) {
+//	var tracy = ds.User("839C1A351D314125AED4654588E75A66");
+//	tracy.floatingDays = 3;
+//	tracy.save();
+//	tracy
+//}
 
 //ds.User.all()
 

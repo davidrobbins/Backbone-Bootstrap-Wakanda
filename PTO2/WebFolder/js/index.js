@@ -535,7 +535,6 @@ $(document).ready(function() {
 
 			switch (method) {
 				case "read":
-	            //options.url = "/rest/User/?top=1&$filter='id%20%3D%20'" + this.get('id') + "&$params='%5B%5D'";
 	            options.url = "/rest/User/?top=1&$filter='id%20%3D%20'" + this.get('id') + "&$params='%5B%5D'&$expand=myManager";
 	            break;
 
@@ -545,10 +544,7 @@ $(document).ready(function() {
 
 	            case "update":
 	            if (!options.urlFlag === "changePassword") {
-	            	//console.log('never would have worked');
 	            	options.url = "/rest/User/?$method=update";
-	            	//delete(model.attributes.uri);
-	             	//options.url = "/rest/Request(" + this.get('id') + ")/?$method=update";
 	                var wakandaquestPayload = {};
 	                wakandaquestPayload.__ENTITIES = [];
 	                wakandaquestPayload.__ENTITIES.push(this.attributes);
