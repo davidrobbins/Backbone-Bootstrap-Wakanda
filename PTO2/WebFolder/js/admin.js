@@ -41,6 +41,7 @@ $(document).ready(function() {
 			PTO.currentUserMsg$ = $('#currentUserMsg');
 
 			PTO.userToolBar = new PTO.Views.UserToolbar();
+			PTO.requestToolBar = new PTO.Views.RequestToolBar();
 			PTO.holidayToolBar = new PTO.Views.HolidayToolbar();
 
 			PTO.editUserView = new PTO.Views.EditUser();
@@ -686,6 +687,19 @@ $(document).ready(function() {
 			//PTO.newUserView.render();
 		} //end - newUser().
 	}); //end - PTO.Views.UserToolbar().
+
+	PTO.Views.RequestToolBar = Backbone.View.extend({
+		el: '#requestToolBar',
+
+		events: {
+			"click button.searchRequests"	: "searchRequests"
+		},
+
+		searchRequests: function(ev) {
+			ev.preventDefault(); //Don't let this button submit the form.
+			console.log("search Request dataclass.");
+		}
+	});//end - PTO.Views.RequestToolBar().
 
 	PTO.Collections.ManagerCollection = Backbone.Collection.extend({
 		model: PTO.Models.User,
