@@ -16,6 +16,12 @@ $(document).ready(function() {
 			PTO.currentUserView = new PTO.Views.CurrentUser({model: PTO.currentUserModel}); //Instantiate our currentUser Model.
 			// PTO.editUserView = new PTO.Views.EditUser();
 
+
+			//Request Grid Message.
+			PTO.requestGridMessage = new PTO.Models.RequestGridMessage();
+			PTO.requestGridMessageView = new PTO.Views.RequestGridMessage({model: PTO.requestGridMessage});
+
+
 			//Message.
 			PTO.messageModel = new PTO.Models.Message();
 			//PTO.messageXView = new PTO.Views.XMessage({model: PTO.messageModel});
@@ -137,6 +143,33 @@ $(document).ready(function() {
 			PTO.vent.trigger('navigate', 'requests');
 		}
 	});
+
+
+
+
+	//Request Grid Message Model.
+	PTO.Models.RequestGridMessage = Backbone.Model.extend({
+		defaults: {
+			title: ''
+		}
+	}); //end - PTO.Models.RequestGridMessage().
+
+	PTO.Views.RequestGridMessage = Backbone.View.extend({
+		el: '#requestGridMessage', 
+
+		initialize: function() {
+			this.model.on('change', this.render, this); //change:title, destroy, add, etc.
+		},
+
+		template: PTO.Utility.template('request-grid-message-template'),
+
+		render: function() {
+			this.$el.text(this.template(this.model.toJSON())); 
+			return this; //this allows us to chain.
+		}  //end - render().
+	}); //end - PTO.Views.Message().
+
+
 
 	//Message Model.
 	PTO.Models.Message = Backbone.Model.extend({
@@ -728,6 +761,9 @@ $(document).ready(function() {
 		}
 	}); //end - PTO.Views.RequestToolbarPaging.
 
+
+
+
 	PTO.Views.RequestToolBar = Backbone.View.extend({
 		el: '#requestToolBar',
 
@@ -1028,9 +1064,18 @@ $(document).ready(function() {
 		},
 
 		parse: function(response) {
+			
+
 			this.collectionCount = response.__COUNT || 0;
 			this.collectionSent = response.__SENT || 0;
 			this.collectionFirst = response.__FIRST || 0;
+
+			var requestGridMessageText = "",
+			firstRequest = this.collectionFirst + 1,
+			lastRequest = this.collectionFirst + this.collectionSent;
+			requestGridMessageText += firstRequest + " - " + lastRequest + " of " + this.collectionCount + ".";
+
+			PTO.requestGridMessage.set({title: requestGridMessageText});
 
 			if (response.__ENTITIES) {
 				return response.__ENTITIES;
