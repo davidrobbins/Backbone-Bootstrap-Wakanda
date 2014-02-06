@@ -42,6 +42,7 @@ $(document).ready(function() {
 
 			PTO.userToolBar = new PTO.Views.UserToolbar();
 			PTO.requestToolBar = new PTO.Views.RequestToolBar();
+			PTO.requestToolbarPaging = new PTO.Views.RequestToolbarPaging();
 
 			$('#requestStart').datepicker({});
 			$('#requestEnd').datepicker({});
@@ -692,13 +693,76 @@ $(document).ready(function() {
 		} //end - newUser().
 	}); //end - PTO.Views.UserToolbar().
 
+	PTO.Views.RequestToolbarPaging = Backbone.View.extend({
+		el: '#requestToolBarPaging',
+
+		events: {
+			"click button.nextRequests" : "nextRequests",
+			"click button.prevRequests" : "prevRequests"
+		},
+
+		prevRequests: function(ev) {
+			ev.preventDefault();
+			PTO.requestCollection.fetch({
+				data: {
+					skip: -10
+				},
+				success: function(theCollection) {
+					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
+					PTO.requestCollectionView.render();
+				}
+			}); //end - PTO.userCollection.fetch();
+		},
+
+		nextRequests: function(ev) {
+			ev.preventDefault();
+			PTO.requestCollection.fetch({
+				data: {
+					skip: 10
+				},
+				success: function(theCollection) {
+					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
+					PTO.requestCollectionView.render();
+				}
+			}); //end - PTO.userCollection.fetch();
+		}
+	}); //end - PTO.Views.RequestToolbarPaging.
+
 	PTO.Views.RequestToolBar = Backbone.View.extend({
 		el: '#requestToolBar',
 
 		events: {
 			"click button.searchRequests"	: "searchRequests",
-			"click button.allRequests"	: "allRequests"
+			"click button.allRequests"	: "allRequests",
+			// "click button.nextRequests" : "nextRequests",
+			// "click button.prevRequests" : "prevRequests"
 		},
+
+		// prevRequests: function(ev) {
+		// 	ev.preventDefault();
+		// 	PTO.requestCollection.fetch({
+		// 		data: {
+		// 			skip: -10
+		// 		},
+		// 		success: function(theCollection) {
+		// 			PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
+		// 			PTO.requestCollectionView.render();
+		// 		}
+		// 	}); //end - PTO.userCollection.fetch();
+		// },
+
+		// nextRequests: function(ev) {
+		// 	ev.preventDefault();
+		// 	PTO.requestCollection.fetch({
+		// 		data: {
+		// 			skip: 10
+		// 		},
+		// 		success: function(theCollection) {
+		// 			PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
+		// 			PTO.requestCollectionView.render();
+		// 		}
+		// 	}); //end - PTO.userCollection.fetch();
+		// },
 
 		allRequests: function(ev) {
 			ev.preventDefault();
@@ -712,10 +776,6 @@ $(document).ready(function() {
 
 		searchRequests: function(ev) {
 			ev.preventDefault(); //Don't let this button submit the form.
-			//console.log("search Request dataclass.");
-			// console.log(this.$el.find('#requestStart').val());
-			// console.log(this.$el.find('#requestEnd').val());
-
 			PTO.requestCollection.fetch({
 				data: {
 					requestStart: this.$el.find('#requestStart').val(),
@@ -929,44 +989,49 @@ $(document).ready(function() {
 
 		requestStart: null,
 		requestEnd: null,
+		skip: null,
 
 		fetch: function(options) {
             options || (options = {});
             var data = (options.data || {});
             this.requestStart = (data.requestStart || null),
             this.requestEnd = (data.requestEnd || null);
-            
-            //console.log("Request Start: " + this.requestStart);
-            //console.log("Request End: " + this.requestEnd);
-            //console.log(options);
-            delete options.data;
-            //console.log(options);
-
+            this.skip = data.skip || null;
+            delete options.data; //delete this or Backbone will append it to the end of our url.
             return Backbone.Collection.prototype.fetch.call(this, options);
-          },
+        },
 
 		url: function() {
-
 			var requestConfigObj = {};
 			requestConfigObj.dataClass = "Request";
-			requestConfigObj.top = 300;
+			requestConfigObj.top = 10;
 			requestConfigObj.timeout = 300;
 
+			if (this.skip) {
+				requestConfigObj.skip = this.collectionFirst + this.skip;
+			}
+
 			if (this.requestStart) {
-				requestConfigObj.filter = "dateRequested > :1";
-				return PTO.wakandaQueryURLString(requestConfigObj, moment(this.requestStart).toDate());
+				requestConfigObj.filter = "dateRequested >= :1";
+				if (this.requestEnd) {
+					requestConfigObj.filter += " && dateRequested <= :2";
+					return PTO.wakandaQueryURLString(requestConfigObj, moment(this.requestStart).toDate(), moment(this.requestEnd).toDate());
+				} else {
+					return PTO.wakandaQueryURLString(requestConfigObj, moment(this.requestStart).toDate());
+				}
+				
 			} else {
 				requestConfigObj.filter = "$all";
 				return PTO.wakandaQueryURLString(requestConfigObj);
-			}
+			} //if (this.requestStart).
 			
-			
-			//return PTO.wakandaQueryURLString(requestConfigObj); //2011,10,30)
-			//return PTO.wakandaQueryURLString(requestConfigObj, moment(this.requestStart).toDate()); //, PTO.currentUserModel.get('ID') //new Date(2014, 05, 01)
-			//return "/rest/Request/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'&$expand=owner, owner.myManager";
 		},
 
 		parse: function(response) {
+			this.collectionCount = response.__COUNT || 0;
+			this.collectionSent = response.__SENT || 0;
+			this.collectionFirst = response.__FIRST || 0;
+
 			if (response.__ENTITIES) {
 				return response.__ENTITIES;
 			} else {

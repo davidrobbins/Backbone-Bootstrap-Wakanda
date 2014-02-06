@@ -107,11 +107,11 @@
         <div class="row">
         <div class="col-md-12">
           <h3>Requests</h3>
-          <hr class='hr-double'>
-          <br>
+          <!-- <hr class='hr-double'> -->
+         <!--  <br> -->
 
-          <div class='row'>
-            <div class='col-sm-12'>
+           <!-- <div class='row'>
+            <div class='col-sm-12'> -->
             <div class="panel panel-default">
               <div id="requestToolBar" class="panel-body">
                 <form class="form-inline"> <!--role="form"-->
@@ -125,19 +125,18 @@
                 </div>
                 <button type="submit" class="btn btn-default searchRequests">Search</button>
                 <button type="submit" class="btn btn-default allRequests">All Requests</button>
+                <!-- <button type="submit" class="btn btn-default prevRequests">Prev</button>
+                <button type="submit" class="btn btn-default nextRequests">Next</button> -->
               </form>
               </div>
             </div>
-            </div>
-          </div>
-
-          <!-- <div id="listContainer" > 
-            <ul id="requestsUL" class="list-group"></ul>
+          <!-- </div>
           </div> -->
 
+
            <!-- Request Table (start) -->
-          <div class='row'>
-          <div class='col-sm-12'>
+          <!-- <div class='row'>
+          <div class='col-sm-12'> -->
 
           <div class="panel panel-default">
           <div class="panel-body">
@@ -158,7 +157,7 @@
             </thead>
             </table>
 
-            <div class="scrollable-area">
+            <div> <!--/class="scrollable-area"-->
             <table class="table table-hover "> <!--/table-condensed-->
             <tbody id="requestTableBody">
             </tbody>
@@ -169,7 +168,15 @@
           </div>
           </div>
             
-          </div>
+          <!-- </div>
+          </div> -->
+
+          <div class="panel panel-default">
+            <div id="requestToolBarPaging" class="panel-body">
+              <button type="submit" class="btn btn-default prevRequests">Prev</button>
+              <button type="submit" class="btn btn-default nextRequests">Next</button>
+              <h5 class="pull-right">51 Item(s)</h5>
+            </div>
           </div>
 
           </div><!--/col-md-12-->
