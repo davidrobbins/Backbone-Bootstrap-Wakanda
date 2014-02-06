@@ -42,6 +42,10 @@ $(document).ready(function() {
 
 			PTO.userToolBar = new PTO.Views.UserToolbar();
 			PTO.requestToolBar = new PTO.Views.RequestToolBar();
+
+			$('#requestStart').datepicker({});
+			$('#requestEnd').datepicker({});
+
 			PTO.holidayToolBar = new PTO.Views.HolidayToolbar();
 
 			PTO.editUserView = new PTO.Views.EditUser();
@@ -697,7 +701,20 @@ $(document).ready(function() {
 
 		searchRequests: function(ev) {
 			ev.preventDefault(); //Don't let this button submit the form.
-			console.log("search Request dataclass.");
+			//console.log("search Request dataclass.");
+			// console.log(this.$el.find('#requestStart').val());
+			// console.log(this.$el.find('#requestEnd').val());
+
+			PTO.requestCollection.fetch({
+				data: {
+					requestStart: this.$el.find('#requestStart').val(),
+					requestEnd: this.$el.find('#requestEnd').val(),
+				},
+				success: function(theCollection) {
+					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
+					PTO.requestCollectionView.render();
+				}
+			}); //end - PTO.userCollection.fetch();
 		}
 	});//end - PTO.Views.RequestToolBar().
 
@@ -899,10 +916,26 @@ $(document).ready(function() {
 	PTO.Collections.RequestCollection = Backbone.Collection.extend({
 		model: PTO.Models.Request,
 
-		//dateRequested > :1 && dateRequested < :2
+		requestStart: null,
+		requestEnd: null,
+
+		fetch: function(options) {
+            options || (options = {});
+            var data = (options.data || {});
+            this.requestStart = (data.requestStart || "04/15/2014"),
+            this.requestEnd = (data.requestEnd || null);
+            
+            console.log("Request Start: " + this.requestStart);
+            console.log("Request End: " + this.requestEnd);
+            console.log(options);
+            delete options.data;
+            console.log(options);
+
+            return Backbone.Collection.prototype.fetch.call(this, options);
+          },
 
 		url: function() {
-			console.log("Request Collection url");
+
 			var requestConfigObj = {};
 			requestConfigObj.dataClass = "Request";
 			requestConfigObj.top = 30;
@@ -910,7 +943,7 @@ $(document).ready(function() {
 			requestConfigObj.filter = "dateRequested > :1";
 			requestConfigObj.timeout = 300;
 			//return PTO.wakandaQueryURLString(requestConfigObj); //2011,10,30)
-			return PTO.wakandaQueryURLString(requestConfigObj, new Date(2014, 05, 01)); //, PTO.currentUserModel.get('ID')
+			return PTO.wakandaQueryURLString(requestConfigObj, moment(this.requestStart).toDate()); //, PTO.currentUserModel.get('ID') //new Date(2014, 05, 01)
 			
 			//return "/rest/Request/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'&$expand=owner, owner.myManager";
 		},

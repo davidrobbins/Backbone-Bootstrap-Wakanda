@@ -834,14 +834,6 @@ $(document).ready(function() {
 
 			{validate: true}).save({},{
 				error: function(model, xhr, options) {
-					// console.log(xhr.responseJSON.__ENTITIES[0].__ERROR[0].message);
-					// console.log(xhr.responseJSON.__ENTITIES[0].__ERROR[0].errCode);
-					/*
-					PTO.messageModel.set({
-						title: xhr.responseJSON.__ENTITIES[0].__ERROR[0].message,
-						contextualClass: "alert-danger"
-					});
-					*/
 					PTO.setMessage({
 						title: xhr.responseJSON.__ENTITIES[0].__ERROR[0].message,
 						contextualClass: "alert-danger"
