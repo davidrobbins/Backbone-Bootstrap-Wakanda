@@ -749,6 +749,8 @@ $(document).ready(function() {
 
 		nextRequests: function(ev) {
 			ev.preventDefault();
+			console.log(PTO.requestCollection);
+
 			PTO.requestCollection.fetch({
 				data: {
 					skip: 10
@@ -769,36 +771,8 @@ $(document).ready(function() {
 
 		events: {
 			"click button.searchRequests"	: "searchRequests",
-			"click button.allRequests"	: "allRequests",
-			// "click button.nextRequests" : "nextRequests",
-			// "click button.prevRequests" : "prevRequests"
+			"click button.allRequests"	: "allRequests"
 		},
-
-		// prevRequests: function(ev) {
-		// 	ev.preventDefault();
-		// 	PTO.requestCollection.fetch({
-		// 		data: {
-		// 			skip: -10
-		// 		},
-		// 		success: function(theCollection) {
-		// 			PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
-		// 			PTO.requestCollectionView.render();
-		// 		}
-		// 	}); //end - PTO.userCollection.fetch();
-		// },
-
-		// nextRequests: function(ev) {
-		// 	ev.preventDefault();
-		// 	PTO.requestCollection.fetch({
-		// 		data: {
-		// 			skip: 10
-		// 		},
-		// 		success: function(theCollection) {
-		// 			PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
-		// 			PTO.requestCollectionView.render();
-		// 		}
-		// 	}); //end - PTO.userCollection.fetch();
-		// },
 
 		allRequests: function(ev) {
 			ev.preventDefault();
@@ -815,7 +789,7 @@ $(document).ready(function() {
 			PTO.requestCollection.fetch({
 				data: {
 					requestStart: this.$el.find('#requestStart').val(),
-					requestEnd: this.$el.find('#requestEnd').val(),
+					requestEnd: this.$el.find('#requestEnd').val()
 				},
 				success: function(theCollection) {
 					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
@@ -1026,6 +1000,8 @@ $(document).ready(function() {
 		requestStart: null,
 		requestEnd: null,
 		skip: null,
+		filter: null,
+		urlParams: [],
 
 		fetch: function(options) {
             options || (options = {});
@@ -1038,34 +1014,61 @@ $(document).ready(function() {
         },
 
 		url: function() {
-			var requestConfigObj = {};
+			var requestConfigObj = {},
+			urlString = "";
+
 			requestConfigObj.dataClass = "Request";
 			requestConfigObj.top = 10;
 			requestConfigObj.timeout = 300;
 
 			if (this.skip) {
 				requestConfigObj.skip = this.collectionFirst + this.skip;
-			}
+				requestConfigObj.filter = this.filter;
 
-			if (this.requestStart) {
-				requestConfigObj.filter = "dateRequested >= :1";
-				if (this.requestEnd) {
-					requestConfigObj.filter += " && dateRequested <= :2";
-					return PTO.wakandaQueryURLString(requestConfigObj, moment(this.requestStart).toDate(), moment(this.requestEnd).toDate());
+				if (this.urlParams.length > 0) {
+					if (this.urlParams.length > 1) {
+						urlString = PTO.wakandaQueryURLString(requestConfigObj, this.urlParams[0], this.urlParams[1]);
+					} else {
+						urlString = PTO.wakandaQueryURLString(requestConfigObj, this.urlParams[0]);
+					} //end - if (this.requestEnd).
+
 				} else {
-					return PTO.wakandaQueryURLString(requestConfigObj, moment(this.requestStart).toDate());
-				}
-				
+					requestConfigObj.filter = "$all";
+					urlString =  PTO.wakandaQueryURLString(requestConfigObj);
+					this.params = [];
+				} //end - if (this.requestStart).
+
 			} else {
-				requestConfigObj.filter = "$all";
-				return PTO.wakandaQueryURLString(requestConfigObj);
-			} //if (this.requestStart).
+				if (this.requestStart) {
+					requestConfigObj.filter = "dateRequested >= :1";
+					if (this.requestEnd) {
+						requestConfigObj.filter += " && dateRequested <= :2";
+						urlString = PTO.wakandaQueryURLString(requestConfigObj, moment(this.requestStart).toDate(), moment(this.requestEnd).toDate());
+						this.urlParams = [];
+						this.urlParams.push(moment(this.requestStart).toDate());
+						this.urlParams.push(moment(this.requestEnd).toDate());
+
+					} else {
+						urlString = PTO.wakandaQueryURLString(requestConfigObj, moment(this.requestStart).toDate());
+						this.urlParams = [];
+						this.urlParams.push(moment(this.requestStart).toDate());
+					}
+					
+				} else {
+					requestConfigObj.filter = "$all";
+					urlString =  PTO.wakandaQueryURLString(requestConfigObj);
+					this.params = [];
+				} //if (this.requestStart).
+
+				this.filter = requestConfigObj.filter;
+			} //not - if (this.skip) 
+
+			
+			return urlString;
 			
 		},
 
 		parse: function(response) {
-			
-
 			this.collectionCount = response.__COUNT || 0;
 			this.collectionSent = response.__SENT || 0;
 			this.collectionFirst = response.__FIRST || 0;
