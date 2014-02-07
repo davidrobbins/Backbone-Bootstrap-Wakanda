@@ -34,6 +34,7 @@
               <li class="requests"><a href="">Requests</a></li>
               <li class="users"><a href="">Users</a></li>
               <li class="holidays"><a href="">Holidays</a></li>
+              <li class="log"><a href="">Log</a></li>
             </ul>
 
             <div id="loginContainer">
@@ -103,15 +104,61 @@
       </div><!--/splash-->
 
       <div class="hidden app"> 
+
+
+
+        <div class="container log hidden">
+        <div class="row">
+        <div class="col-md-12">
+          <h3>Log</h3>
+
+          <!-- Log Table (start) -->
+          <div class='row'>
+          <div class='col-sm-12'>
+
+          <div class="panel panel-default">
+          <div class="panel-body">
+          <div id="logTable" class="table-responsive">  <!--/table-responsive-->
+
+            <table class="table">
+            <thead>
+              <tr>
+                <th class="column160">#</th>
+                <th class="column160">Kind</th>
+                <th class="column160">Date</th>
+              </tr>
+            </thead>
+            </table>
+
+            <table class="table table-hover "> <!--/table-condensed-->
+            <tbody id="logTableBody">
+            </tbody>
+            </table>
+
+            </div>
+            </div>
+            </div>
+
+          </div>
+          </div>
+          <!-- log Table (end) -->
+
+
+        </div><!--/col-md-12-->
+        </div><!--/row-->
+        </div><!--/log container-->
+
+
+
+
+
+
+
         <div class="container requests">
         <div class="row">
         <div class="col-md-12">
           <h3>Requests</h3>
-          <!-- <hr class='hr-double'> -->
-         <!--  <br> -->
-
-           <!-- <div class='row'>
-            <div class='col-sm-12'> -->
+         
             <div class="panel panel-default">
               <div id="requestToolBar" class="panel-body">
                 <form class="form-inline"> <!--role="form"-->
@@ -130,14 +177,7 @@
               </form>
               </div>
             </div>
-          <!-- </div>
-          </div> -->
-
-
-           <!-- Request Table (start) -->
-          <!-- <div class='row'>
-          <div class='col-sm-12'> -->
-
+         
           <div class="panel panel-default">
           <div class="panel-body">
           <div id="requestTable" class="table-responsive">  <!--/table-responsive-->
@@ -158,7 +198,7 @@
             </table>
 
             <div> <!--/class="scrollable-area"-->
-            <table class="table table-hover "> <!--/table-condensed-->
+            <table class="table table-hover "> <!--/table-condensed--> 
             <tbody id="requestTableBody">
             </tbody>
             </table>
@@ -168,8 +208,7 @@
           </div>
           </div>
             
-          <!-- </div>
-          </div> -->
+         
 
           <div class="panel panel-default">
             <div id="requestToolBarPaging" class="panel-body">
@@ -179,9 +218,9 @@
             </div>
           </div>
 
-          </div><!--/col-md-12-->
-          </div><!--/row-->
-          </div><!--/request container-->
+        </div><!--/col-md-12-->
+        </div><!--/row-->
+        </div><!--/request container-->
 
 
 
@@ -205,8 +244,6 @@
             </div>
           </div>
          
-
-
           <!-- User Table (start) -->
           <div class='row'>
           <div class='col-sm-12'>
@@ -255,7 +292,7 @@
         <div class="row">
         <div class="col-md-12">
           <h3>Holidays</h3>
-          <br>
+          <!-- <br> -->
 
           <div class='row'>
             <div class='col-sm-12'>
@@ -300,20 +337,20 @@
             </div>
             </div>
             </div>
-          </div><!--/user table-responsive-->
+          </div><!--/holiday table-responsive-->
 
           </div>
           </div>
           <!-- Holiday Table (end) -->
 
-
         </div><!--/col-md-12-->
         </div><!--/row-->
         </div><!--/holiday container-->
+
+
+
       </div><!--/app-->
-
       </div><!--/appContainer-->
-
     </div><!--/wrap-->
 
     <div id="footer">
@@ -534,11 +571,18 @@
       <td class="column160"><a class="btn btn-primary edit" data-toggle="modal" href="#editUserModalWin" role="button">Edit</a></td>
     </script>
 
+
     <script id="holiday-template" type="text/template">
       <td class="column160"><%= id %></td>
       <td class="column160"><%= title %></td>
       <td class="column160"><%= dateString %></td>
       <td class="column160"><a class="btn btn-primary edit" data-toggle="modal" href="#editHolidayModalWin" role="button">Edit</a></td>
+    </script>
+
+    <script id="log-template" type="text/template">
+      <td class="column160"><%= id %></td>
+      <td class="column160"><%= kind %></td>
+      <td class="column160"><%= createDate %></td>
     </script>
 
     <script id="request-grid-message-template" type="text/template">

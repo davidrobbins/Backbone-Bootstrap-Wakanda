@@ -61,6 +61,18 @@ $(document).ready(function() {
 			PTO.userCollection = new PTO.Collections.UserCollection();
 			
 
+			
+			PTO.logCollection = new PTO.Collections.LogCollection();
+			PTO.logCollection.fetch({
+				success: function(theCollection) {
+					PTO.logCollectionView = new PTO.Views.LogCollectionView({collection: PTO.logCollection});
+					PTO.logCollectionView.render();
+				}
+			}); //end - PTO.logCollection.fetch();
+			
+
+
+
 			PTO.holidayCollection = new PTO.Collections.HolidayCollection();
 			PTO.holidayCollection.fetch({
 				success: function(theCollection) {
@@ -69,17 +81,32 @@ $(document).ready(function() {
 					PTO.holidayCollectionView = new PTO.Views.HolidayCollectionView({collection: PTO.holidayCollection});
 					PTO.holidayCollectionView.render();
 				}
-			}); //end - PTO.userCollection.fetch();
+			}); //end - PTO.holidayCollection.fetch();
 			
 		}, //end - initialize().
 
 		navigate: function(where) {
 			switch(where) {
+
+				case "log" :
+				if (PTO.currentUserModel.get('userName') !== null) {
+					PTO.appContainerView.$el.find('.requests').addClass('hidden');
+					PTO.appContainerView.$el.find('.users').addClass('hidden');
+					PTO.appContainerView.$el.find('.holidays').addClass('hidden');
+					
+					PTO.appContainerView.$el.find('.log').removeClass('hidden');
+					PTO.navbarlist$.find('li.log').addClass('active');
+					PTO.navbarlist$.find('li.log').siblings().removeClass('active');
+				}
+				break;
+
 			
 				case "holidays" :
 				if (PTO.currentUserModel.get('userName') !== null) {
 					PTO.appContainerView.$el.find('.requests').addClass('hidden');
 					PTO.appContainerView.$el.find('.users').addClass('hidden');
+					PTO.appContainerView.$el.find('.log').addClass('hidden');
+
 					PTO.appContainerView.$el.find('.holidays').removeClass('hidden');
 					PTO.navbarlist$.find('li.holidays').addClass('active');
 					PTO.navbarlist$.find('li.holidays').siblings().removeClass('active');
@@ -90,6 +117,8 @@ $(document).ready(function() {
 				if (PTO.currentUserModel.get('userName') !== null) {
 					PTO.appContainerView.$el.find('.requests').addClass('hidden');
 					PTO.appContainerView.$el.find('.holidays').addClass('hidden');
+					PTO.appContainerView.$el.find('.log').addClass('hidden');
+
 					PTO.appContainerView.$el.find('.users').removeClass('hidden');
 					PTO.navbarlist$.find('li.users').addClass('active');
 					PTO.navbarlist$.find('li.users').siblings().removeClass('active');
@@ -100,6 +129,8 @@ $(document).ready(function() {
 				if (PTO.currentUserModel.get('userName') !== null) {
 					PTO.appContainerView.$el.find('.users').addClass('hidden');
 					PTO.appContainerView.$el.find('.holidays').addClass('hidden');
+					PTO.appContainerView.$el.find('.log').addClass('hidden');
+
 					PTO.appContainerView.$el.find('.requests').removeClass('hidden');
 					PTO.navbarlist$.find('li.requests').addClass('active');
 					PTO.navbarlist$.find('li.requests').siblings().removeClass('active');
@@ -126,7 +157,13 @@ $(document).ready(function() {
 		events: {
 			'click .holidays' : 'holidays',
 			'click .users' : 'users',
-			'click .requests' : 'requests'
+			'click .requests' : 'requests',
+			'click .log' : 'log'
+		},
+
+		log: function(e) {
+			e.preventDefault();
+			PTO.vent.trigger('navigate', 'log');
 		},
 
 		holidays: function(e) {
@@ -337,6 +374,112 @@ $(document).ready(function() {
 
 
 
+	/**/
+	//Log
+	PTO.Models.Log = Backbone.Model.extend({
+		parse: function(response) {
+			if (response.__ENTITIES) {
+				return response.__ENTITIES[0]
+			} else {
+				return response;
+			}
+		}, //end - parse.
+
+		sync: function(method, model, options) {
+			options || (options = {});
+
+			switch (method) {
+				case "read":
+	            options.url = "/rest/Log/?top=1&$filter='id%20%3D%20'" + this.get('id') + "&$params='%5B%5D'";
+	            break;
+
+	            case "update":
+	            options.url = "/rest/Log/?$method=update";
+	            var wakandaquestPayload = {},
+                	updateAttrs = this.changedAttributes();
+                wakandaquestPayload.__ENTITIES = [];
+                if (model.isNew()) {
+                	updateAttrs.__ISNEW = true;
+                }
+                updateAttrs.__KEY = this.attributes.__KEY;
+                updateAttrs.__STAMP = this.attributes.__STAMP;
+                wakandaquestPayload.__ENTITIES.push(updateAttrs);
+                options.data = JSON.stringify(wakandaquestPayload);
+
+                console.log(options.data);
+                break;
+
+                case "create":
+                options.url = "/rest/Log/?$method=update";
+                var wakandaquestPayload = {};
+                wakandaquestPayload.__ENTITIES = [];
+                var currentModelObject = this.attributes;
+                if (model.isNew()) {
+                	currentModelObject.__ISNEW = true;
+                }
+                wakandaquestPayload.__ENTITIES.push(currentModelObject);
+                options.data = JSON.stringify(wakandaquestPayload);
+                break;
+
+			} //end - switch (method).
+
+			if (options.url) {
+				return Backbone.sync.call(model, method, model, options); //first parameter sets the context.
+			} //end - if (options.url).
+		} //end - sync().
+	}); //end - PTO.Models.Holiday().
+
+	PTO.Collections.LogCollection = Backbone.Collection.extend({
+		model: PTO.Models.Log,
+
+		url: function() {
+			return "/rest/Log/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'";
+		},
+
+		parse: function(response) {
+			if (response.__ENTITIES) {
+				return response.__ENTITIES;
+			} else {
+				return response;
+			}
+		} //end - parse.
+	}); //end - PTO.Collections.LogCollection.
+
+	PTO.Views.LogView = Backbone.View.extend({
+		tagName: 'tr',
+
+		initialize: function() {
+			//_bindAll(this, 'editTask', 'render');
+			this.model.on('change', this.render, this); //change:title, destroy, add, etc.
+			this.model.on('destroy', this.remove, this);
+		},
+
+		template: PTO.Utility.template('log-template'),
+
+		render: function() {
+			this.$el.html(this.template(this.model.toJSON()));
+			return this; //this allows us to chain.
+		}  //end - render().
+	}); //end - PTO.Views.LogView().
+	
+	PTO.Views.LogCollectionView = Backbone.View.extend({
+		el: '#logTableBody',
+
+		render: function() {
+			this.$el.children().remove();
+
+			//1. filter through all items in a collection.
+			this.collection.each(function(log) {
+				//2. For each item create a new log view.
+				var logView = new PTO.Views.LogView({model: log});
+				//3. Append each log view to our collection view.
+				this.$el.append(logView.render().el); //chain chain chain...
+			}, this); //the second parameter to each is the context.
+		}
+	}); //end - PTO.Views.HolidayCollectionView().
+	
+
+
 
 	//Holiday Model
 	PTO.Models.Holiday = Backbone.Model.extend({
@@ -482,24 +625,18 @@ $(document).ready(function() {
 		}  //end - render().
 	}); //end - PTO.Views.EditUser().
 
-
-
 	PTO.Views.HolidayCollectionView = Backbone.View.extend({
 		el: '#holidayTableBody',
-
-		// initialize: function() {
-		// 	this.collection.bind('add', this.render);
-		// },
 
 		render: function() {
 			this.$el.children().remove();
 
 			//1. filter through all items in a collection.
-			this.collection.each(function(user) {
-				//2. For each item create a new person view.
-				var userView = new PTO.Views.HolidayView({model: user});
-				//3. Append each person view to our collection view.
-				this.$el.append(userView.render().el); //chain chain chain...
+			this.collection.each(function(holiday) {
+				//2. For each item create a new holiday view.
+				var holidayView = new PTO.Views.HolidayView({model: holiday});
+				//3. Append each holiday view to our collection view.
+				this.$el.append(holidayView.render().el); //chain chain chain...
 			}, this); //the second parameter to each is the context.
 		}
 	}); //end - PTO.Views.HolidayCollectionView().
@@ -796,93 +933,6 @@ $(document).ready(function() {
 
 
 
-	PTO.Views.RequestToolBar = Backbone.View.extend({
-		el: '#requestToolBar',
-
-		events: {
-			"click button.searchRequests"	: "searchRequests",
-			"click button.allRequests"	: "allRequests"
-		},
-
-		allRequests: function(ev) {
-			ev.preventDefault();
-			PTO.requestCollection.fetch({
-				success: function(theCollection) {
-					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
-					PTO.requestCollectionView.render();
-				}
-			}); //end - PTO.userCollection.fetch();
-		},
-
-		searchRequests: function(ev) {
-			ev.preventDefault(); //Don't let this button submit the form.
-			PTO.requestCollection.fetch({
-				data: {
-					requestStart: this.$el.find('#requestStart').val(),
-					requestEnd: this.$el.find('#requestEnd').val()
-				},
-				success: function(theCollection) {
-					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
-					PTO.requestCollectionView.render();
-				}
-			}); //end - PTO.userCollection.fetch();
-		}
-	});//end - PTO.Views.RequestToolBar().
-
-	PTO.Collections.ManagerCollection = Backbone.Collection.extend({
-		model: PTO.Models.User,
-
-		url: function() {
-			var requestConfigObj = {};
-			requestConfigObj.dataClass = "User";
-			requestConfigObj.top = 40;
-			//requestConfigObj.filter = "dateRequested > :1 && owner.myManagerId == :2  && status == :3";
-			requestConfigObj.filter = "role == :1";
-			requestConfigObj.timeout = 300;
-
-			return PTO.wakandaQueryURLString(requestConfigObj, "Manager");
-
-			//return "/rest/User/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'&$expand=myManager";
-		},
-
-		parse: function(response) {
-			if (response.__ENTITIES) {
-				return response.__ENTITIES;
-			} else {
-				return response;
-			}
-		} //end - parse.
-
-	}); //end - PTO.Collections.ManagerCollection().
-
-	PTO.Views.ManagerCollectionView = Backbone.View.extend({
-		el : '#managerSelect',
-
-		template: PTO.Utility.template('manager-options-template'),
-
-		render: function(theUser) {
-			var managerName = theUser.toJSON().myManager ? theUser.toJSON().myManager.fullName : "None";
-			this.$el.empty();
-
-			this.$el.append('<option>None</option>');
-
-			//1. filter through all items in a collection.
-			this.collection.each(function(manager) {
-				this.$el.append(this.template(manager.toJSON())); 
-			}, this); //the second parameter to each is the context.
-
-			//this.$el.find("option[value='" + managerName + "']").attr('selected', 'selected');
-			if (theUser.toJSON().myManager) {
-				this.$el.find("option[value='" + theUser.toJSON().myManager.id + "']").attr('selected', 'selected');
-			}
-				
-
-			return this;
-		} //end - render().
-	}); //end - PTO.Views.ManagerCollectionView()
-
-
-
 	//Requests
 	PTO.Models.Request = Backbone.Model.extend({
 		parse: function(response) {
@@ -1135,6 +1185,92 @@ $(document).ready(function() {
 			}, this); //the second parameter to each is the context.
 		}
 	}); //end - PTO.Views.RequestCollectionView().
+
+
+	PTO.Views.RequestToolBar = Backbone.View.extend({
+		el: '#requestToolBar',
+
+		events: {
+			"click button.searchRequests"	: "searchRequests",
+			"click button.allRequests"	: "allRequests"
+		},
+
+		allRequests: function(ev) {
+			ev.preventDefault();
+			PTO.requestCollection.fetch({
+				success: function(theCollection) {
+					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
+					PTO.requestCollectionView.render();
+				}
+			}); //end - PTO.userCollection.fetch();
+		},
+
+		searchRequests: function(ev) {
+			ev.preventDefault(); //Don't let this button submit the form.
+			PTO.requestCollection.fetch({
+				data: {
+					requestStart: this.$el.find('#requestStart').val(),
+					requestEnd: this.$el.find('#requestEnd').val()
+				},
+				success: function(theCollection) {
+					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
+					PTO.requestCollectionView.render();
+				}
+			}); //end - PTO.userCollection.fetch();
+		}
+	});//end - PTO.Views.RequestToolBar().
+
+	PTO.Collections.ManagerCollection = Backbone.Collection.extend({
+		model: PTO.Models.User,
+
+		url: function() {
+			var requestConfigObj = {};
+			requestConfigObj.dataClass = "User";
+			requestConfigObj.top = 40;
+			//requestConfigObj.filter = "dateRequested > :1 && owner.myManagerId == :2  && status == :3";
+			requestConfigObj.filter = "role == :1";
+			requestConfigObj.timeout = 300;
+
+			return PTO.wakandaQueryURLString(requestConfigObj, "Manager");
+
+			//return "/rest/User/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'&$expand=myManager";
+		},
+
+		parse: function(response) {
+			if (response.__ENTITIES) {
+				return response.__ENTITIES;
+			} else {
+				return response;
+			}
+		} //end - parse.
+
+	}); //end - PTO.Collections.ManagerCollection().
+
+	PTO.Views.ManagerCollectionView = Backbone.View.extend({
+		el : '#managerSelect',
+
+		template: PTO.Utility.template('manager-options-template'),
+
+		render: function(theUser) {
+			var managerName = theUser.toJSON().myManager ? theUser.toJSON().myManager.fullName : "None";
+			this.$el.empty();
+
+			this.$el.append('<option>None</option>');
+
+			//1. filter through all items in a collection.
+			this.collection.each(function(manager) {
+				this.$el.append(this.template(manager.toJSON())); 
+			}, this); //the second parameter to each is the context.
+
+			//this.$el.find("option[value='" + managerName + "']").attr('selected', 'selected');
+			if (theUser.toJSON().myManager) {
+				this.$el.find("option[value='" + theUser.toJSON().myManager.id + "']").attr('selected', 'selected');
+			}
+				
+
+			return this;
+		} //end - render().
+	}); //end - PTO.Views.ManagerCollectionView()
 
 
 
