@@ -48,7 +48,7 @@ $(document).ready(function() {
 
 			PTO.userToolBar = new PTO.Views.UserToolbar();
 			PTO.requestToolBar = new PTO.Views.RequestToolBar();
-			PTO.requestToolbarPaging = new PTO.Views.RequestToolbarPaging();
+			PTO.requestToolbarPaging = new PTO.Views.RequestToolbarPaging({collection: PTO.requestCollection});
 
 			$('#requestStart').datepicker({});
 			$('#requestEnd').datepicker({});
@@ -106,6 +106,7 @@ $(document).ready(function() {
 
 					PTO.requestCollection.fetch({
 						success: function(theCollection) {
+							//PTO.pagingButtonSetDisabled(theCollection, $('#requestTable').find('button.prevRequests'), "prev");
 							PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
 							PTO.requestCollectionView.render();
 						}
@@ -729,6 +730,31 @@ $(document).ready(function() {
 	PTO.Views.RequestToolbarPaging = Backbone.View.extend({
 		el: '#requestToolBarPaging',
 
+
+
+		initialize: function(){
+			this.collection.on('reset', this.watchCollection, this); //change:selection
+		},
+
+		watchCollection: function() {
+			var prevButton$ = this.$el.find('button.prevRequests'),
+				nextButton$ = this.$el.find('button.nextRequests');
+
+			//set prev button
+			if (this.collection.collectionFirst === 0) {
+                prevButton$.attr("disabled", "disabled");
+            } else {
+                prevButton$.removeAttr("disabled");    
+            }
+
+            //set the next button.
+            if (this.collection.collectionFirst + this.collection.collectionSent >= this.collection.collectionCount) {
+                nextButton$.attr("disabled", "disabled");
+            } else {
+                nextButton$.removeAttr("disabled");    
+            }
+		},
+
 		events: {
 			"click button.nextRequests" : "nextRequests",
 			"click button.prevRequests" : "prevRequests"
@@ -741,6 +767,8 @@ $(document).ready(function() {
 					skip: -10
 				},
 				success: function(theCollection) {
+					//PTO.pagingButtonSetDisabled(theCollection, $(ev.currentTarget), "prev");
+
 					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
 					PTO.requestCollectionView.render();
 				}
@@ -749,13 +777,15 @@ $(document).ready(function() {
 
 		nextRequests: function(ev) {
 			ev.preventDefault();
-			console.log(PTO.requestCollection);
-
+		
 			PTO.requestCollection.fetch({
 				data: {
 					skip: 10
 				},
+
 				success: function(theCollection) {
+					//PTO.pagingButtonSetDisabled(theCollection, $(ev.currentTarget), "next");
+
 					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
 					PTO.requestCollectionView.render();
 				}
@@ -1010,6 +1040,7 @@ $(document).ready(function() {
             this.requestEnd = (data.requestEnd || null);
             this.skip = data.skip || null;
             delete options.data; //delete this or Backbone will append it to the end of our url.
+            options.reset = true; //Must set this for view to be able to listen when collection has changed.
             return Backbone.Collection.prototype.fetch.call(this, options);
         },
 
@@ -1130,6 +1161,26 @@ $(document).ready(function() {
 	}); //end - PTO.Views.AppContainer().
 
 	new PTO.Views.App(); //Let's instantiate our App view so it can init everything.
+
+	// var sync = Backbone.sync;
+	// Backbone.sync = function (method, model, options) {
+	// 	console.log(method);
+	// 	console.log(model);
+	// 	console.log(options);
+
+	//     var success = options.success;
+	//     options.success = function (resp, status, xhr) {
+	//         //Your logic goes here
+	//         console.log('sync override succeed');
+	//         if (success) success(resp, status, xhr);
+	//     };
+
+	//     options.error = function (xhr, ajaxOptions, thrownError) {
+	//         console.log('failed');
+	//     }
+
+	//     sync(method, model, options);
+	// };
 	
 	//Don't like Hash navigation.
 	//new PTO.Router(); //Create an instance of our router.
