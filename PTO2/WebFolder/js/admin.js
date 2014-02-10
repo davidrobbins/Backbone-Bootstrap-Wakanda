@@ -56,10 +56,14 @@ $(document).ready(function() {
 			PTO.userToolBar = new PTO.Views.UserToolbar();
 			PTO.requestToolBar = new PTO.Views.RequestToolBar();
 			PTO.requestToolbarPaging = new PTO.Views.RequestToolbarPaging({collection: PTO.requestCollection});
+			PTO.logToolBar = new PTO.Views.LogToolBar();
 			PTO.logToolbarPaging = new PTO.Views.LogToolbarPaging({collection: PTO.logCollection});
 
 			$('#requestStart').datepicker({});
 			$('#requestEnd').datepicker({});
+
+			$('#logStart').datepicker({});
+			$('#logEnd').datepicker({});
 
 			PTO.holidayToolBar = new PTO.Views.HolidayToolbar();
 
@@ -651,6 +655,39 @@ $(document).ready(function() {
 			}); //end - PTO.logCollection.fetch();
 		}
 	}); //end - PTO.Views.RequestToolbarPaging.
+
+	PTO.Views.LogToolBar = Backbone.View.extend({
+		el: '#logToolBar',
+
+		events: {
+			"click button.searchLogs"	: "searchLogs",
+			"click button.allLogs"	: "allLogs"
+		},
+
+		allLogs: function(ev) {
+			ev.preventDefault();
+			PTO.logCollection.fetch({
+				success: function(theCollection) {
+					PTO.logCollectionView = new PTO.Views.LogCollectionView({collection: theCollection}); 
+					PTO.logCollectionView.render();
+				}
+			}); //end - PTO.logCollection.fetch();
+		},
+
+		searchLogs: function(ev) {
+			ev.preventDefault(); //Don't let this button submit the form.
+			PTO.logCollection.fetch({
+				data: {
+					logStart: this.$el.find('#logStart').val(),
+					logEnd: this.$el.find('#logEnd').val()
+				},
+				success: function(theCollection) {
+					PTO.logCollectionView = new PTO.Views.LogCollectionView({collection: theCollection}); 
+					PTO.logCollectionView.render();
+				}
+			}); //end - PTO.logCollection.fetch();
+		}
+	});//end - PTO.Views.RequestToolBar().
 
 	
 
@@ -1314,7 +1351,7 @@ $(document).ready(function() {
 					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
 					PTO.requestCollectionView.render();
 				}
-			}); //end - PTO.userCollection.fetch();
+			}); //end - PTO.requestCollection.fetch();
 		},
 
 		searchRequests: function(ev) {
@@ -1328,7 +1365,7 @@ $(document).ready(function() {
 					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
 					PTO.requestCollectionView.render();
 				}
-			}); //end - PTO.userCollection.fetch();
+			}); //end - PTO.requestCollection.fetch();
 		}
 	});//end - PTO.Views.RequestToolBar().
 
