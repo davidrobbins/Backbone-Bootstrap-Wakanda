@@ -21,6 +21,10 @@ $(document).ready(function() {
 			PTO.requestGridMessage = new PTO.Models.RequestGridMessage();
 			PTO.requestGridMessageView = new PTO.Views.RequestGridMessage({model: PTO.requestGridMessage});
 
+			//Log Grid Message.
+			PTO.logGridMessage = new PTO.Models.LogGridMessage();
+			PTO.logGridMessageView = new PTO.Views.LogGridMessage({model: PTO.logGridMessage});
+
 
 			//Message.
 			PTO.messageModel = new PTO.Models.Message();
@@ -42,6 +46,9 @@ $(document).ready(function() {
 			PTO.requestCollection = new PTO.Collections.RequestCollection();
 			PTO.editRequestView = new PTO.Views.EditRequest();
 
+			//Log
+			PTO.logCollection = new PTO.Collections.LogCollection();
+
 			PTO.navbarlist$ = $('#navbarlist');
 			PTO.messageContainer$ = $('#messageContainer');
 			PTO.currentUserMsg$ = $('#currentUserMsg');
@@ -49,6 +56,7 @@ $(document).ready(function() {
 			PTO.userToolBar = new PTO.Views.UserToolbar();
 			PTO.requestToolBar = new PTO.Views.RequestToolBar();
 			PTO.requestToolbarPaging = new PTO.Views.RequestToolbarPaging({collection: PTO.requestCollection});
+			PTO.logToolbarPaging = new PTO.Views.LogToolbarPaging({collection: PTO.logCollection});
 
 			$('#requestStart').datepicker({});
 			$('#requestEnd').datepicker({});
@@ -60,9 +68,6 @@ $(document).ready(function() {
 
 			PTO.userCollection = new PTO.Collections.UserCollection();
 			
-
-			
-			PTO.logCollection = new PTO.Collections.LogCollection();
 			PTO.logCollection.fetch({
 				success: function(theCollection) {
 					PTO.logCollectionView = new PTO.Views.LogCollectionView({collection: PTO.logCollection});
@@ -70,8 +75,6 @@ $(document).ready(function() {
 				}
 			}); //end - PTO.logCollection.fetch();
 			
-
-
 
 			PTO.holidayCollection = new PTO.Collections.HolidayCollection();
 			PTO.holidayCollection.fetch({
@@ -200,6 +203,28 @@ $(document).ready(function() {
 		},
 
 		template: PTO.Utility.template('request-grid-message-template'),
+
+		render: function() {
+			this.$el.text(this.template(this.model.toJSON())); 
+			return this; //this allows us to chain.
+		}  //end - render().
+	}); //end - PTO.Views.Message().
+
+	//Log Grid Message Model.
+	PTO.Models.LogGridMessage = Backbone.Model.extend({
+		defaults: {
+			title: ''
+		}
+	}); //end - PTO.Models.LogGridMessage().
+
+	PTO.Views.LogGridMessage = Backbone.View.extend({
+		el: '#logGridMessage', 
+
+		initialize: function() {
+			this.model.on('change', this.render, this); //change:title, destroy, add, etc.
+		},
+
+		template: PTO.Utility.template('log-grid-message-template'),
 
 		render: function() {
 			this.$el.text(this.template(this.model.toJSON())); 
@@ -374,7 +399,7 @@ $(document).ready(function() {
 
 
 
-	/**/
+
 	//Log
 	PTO.Models.Log = Backbone.Model.extend({
 		parse: function(response) {
@@ -432,16 +457,105 @@ $(document).ready(function() {
 	PTO.Collections.LogCollection = Backbone.Collection.extend({
 		model: PTO.Models.Log,
 
+		logStart: null,
+		logEnd: null,
+		skip: null,
+		filter: null,
+		urlParams: [],
+
+		fetch: function(options) {
+            options || (options = {});
+            var data = (options.data || {});
+            this.logStart = (data.logStart || null),
+            this.logEnd = (data.logEnd || null);
+            this.skip = data.skip || null;
+            delete options.data; //delete this or Backbone will append it to the end of our url.
+            options.reset = true; //Must set this for view to be able to listen when collection has changed.
+            return Backbone.Collection.prototype.fetch.call(this, options);
+        },
+
+
 		url: function() {
-			return "/rest/Log/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'";
+			var logConfigObj = {},
+			urlString = "";
+
+			logConfigObj.dataClass = "Log";
+			logConfigObj.top = 10;
+			logConfigObj.timeout = 300;
+			logConfigObj.orderBy = "createDate asc";
+
+			if (this.skip) {
+				logConfigObj.skip = this.collectionFirst + this.skip;
+				logConfigObj.filter = this.filter;
+
+				if (this.urlParams.length > 0) {
+					if (this.urlParams.length > 1) {
+						urlString = PTO.wakandaQueryURLString(logConfigObj, this.urlParams[0], this.urlParams[1]);
+					} else {
+						urlString = PTO.wakandaQueryURLString(logConfigObj, this.urlParams[0]);
+					} //end - if (this.requestEnd).
+
+				} else {
+					logConfigObj.filter = "$all";
+					urlString =  PTO.wakandaQueryURLString(logConfigObj);
+					this.params = [];
+				} //end - if (this.urlParams.length > 0).
+
+			} else {
+				if (this.logStart) {
+					logConfigObj.filter = "createDate >= :1";
+					if (this.logEnd) {
+						logConfigObj.filter += " && createDate <= :2";
+						urlString = PTO.wakandaQueryURLString(logConfigObj, moment(this.logStart).toDate(), moment(this.logEnd).toDate());
+						this.urlParams = [];
+						this.urlParams.push(moment(this.logStart).toDate());
+						this.urlParams.push(moment(this.logEnd).toDate());
+
+					} else {
+						urlString = PTO.wakandaQueryURLString(logConfigObj, moment(this.logStart).toDate());
+						this.urlParams = [];
+						this.urlParams.push(moment(this.logStart).toDate());
+					}
+					
+				} else {
+					logConfigObj.filter = "$all";
+					urlString =  PTO.wakandaQueryURLString(logConfigObj);
+					this.params = [];
+				} //if (this.requestStart).
+
+				this.filter = logConfigObj.filter;
+
+			} //end - if (this.skip).
+
+
+
+			return urlString;
+			//return "/rest/Log/?$top=400&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'";
 		},
 
 		parse: function(response) {
+			this.collectionCount = response.__COUNT || 0;
+			this.collectionSent = response.__SENT || 0;
+			this.collectionFirst = response.__FIRST || 0;
+
+			var logGridMessageText = "",
+			firstRequest = this.collectionFirst + 1,
+			lastRequest = this.collectionFirst + this.collectionSent;
+			logGridMessageText += firstRequest + " - " + lastRequest + " of " + this.collectionCount + ".";
+
+			PTO.logGridMessage.set({title: logGridMessageText});
+
 			if (response.__ENTITIES) {
 				return response.__ENTITIES;
 			} else {
 				return response;
 			}
+
+			// if (response.__ENTITIES) {
+			// 	return response.__ENTITIES;
+			// } else {
+			// 	return response;
+			// }
 		} //end - parse.
 	}); //end - PTO.Collections.LogCollection.
 
@@ -477,7 +591,69 @@ $(document).ready(function() {
 			}, this); //the second parameter to each is the context.
 		}
 	}); //end - PTO.Views.HolidayCollectionView().
+
+	PTO.Views.LogToolbarPaging = Backbone.View.extend({
+		el: '#logToolBarPaging',
+
+		initialize: function(){
+			this.collection.on('reset', this.watchCollection, this); //change:selection
+		},
+
+		watchCollection: function() {
+			var prevButton$ = this.$el.find('button.prevLogs'),
+				nextButton$ = this.$el.find('button.nextLogs');
+
+			//set prev button
+			if (this.collection.collectionFirst === 0) {
+                prevButton$.attr("disabled", "disabled");
+            } else {
+                prevButton$.removeAttr("disabled");    
+            }
+
+            //set the next button.
+            if (this.collection.collectionFirst + this.collection.collectionSent >= this.collection.collectionCount) {
+                nextButton$.attr("disabled", "disabled");
+            } else {
+                nextButton$.removeAttr("disabled");    
+            }
+		},
+
+		events: {
+			"click button.nextLogs" : "nextLogs",
+			"click button.prevLogs" : "prevLogs"
+		},
+
+		prevLogs: function(ev) {
+			ev.preventDefault();
+			PTO.logCollection.fetch({
+				data: {
+					skip: -10
+				},
+				success: function(theCollection) {
+					PTO.logCollectionView = new PTO.Views.LogCollectionView({collection: theCollection});
+					PTO.logCollectionView.render();
+				}
+			}); //end - PTO.logCollection.fetch();
+		},
+
+		nextLogs: function(ev) {
+			ev.preventDefault();
+		
+			PTO.logCollection.fetch({
+				data: {
+					skip: 10
+				},
+
+				success: function(theCollection) {
+					PTO.logCollectionView = new PTO.Views.LogCollectionView({collection: theCollection}); 
+					PTO.logCollectionView.render();
+				}
+			}); //end - PTO.logCollection.fetch();
+		}
+	}); //end - PTO.Views.RequestToolbarPaging.
+
 	
+
 
 
 
@@ -653,6 +829,7 @@ $(document).ready(function() {
 			PTO.editHolidayView.render(); 
 		} //end - newHoliday().
 	}); //end - PTO.Views.HolidayToolbar().
+
 
 
 
@@ -864,71 +1041,6 @@ $(document).ready(function() {
 		} //end - newUser().
 	}); //end - PTO.Views.UserToolbar().
 
-	PTO.Views.RequestToolbarPaging = Backbone.View.extend({
-		el: '#requestToolBarPaging',
-
-
-
-		initialize: function(){
-			this.collection.on('reset', this.watchCollection, this); //change:selection
-		},
-
-		watchCollection: function() {
-			var prevButton$ = this.$el.find('button.prevRequests'),
-				nextButton$ = this.$el.find('button.nextRequests');
-
-			//set prev button
-			if (this.collection.collectionFirst === 0) {
-                prevButton$.attr("disabled", "disabled");
-            } else {
-                prevButton$.removeAttr("disabled");    
-            }
-
-            //set the next button.
-            if (this.collection.collectionFirst + this.collection.collectionSent >= this.collection.collectionCount) {
-                nextButton$.attr("disabled", "disabled");
-            } else {
-                nextButton$.removeAttr("disabled");    
-            }
-		},
-
-		events: {
-			"click button.nextRequests" : "nextRequests",
-			"click button.prevRequests" : "prevRequests"
-		},
-
-		prevRequests: function(ev) {
-			ev.preventDefault();
-			PTO.requestCollection.fetch({
-				data: {
-					skip: -10
-				},
-				success: function(theCollection) {
-					//PTO.pagingButtonSetDisabled(theCollection, $(ev.currentTarget), "prev");
-
-					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
-					PTO.requestCollectionView.render();
-				}
-			}); //end - PTO.userCollection.fetch();
-		},
-
-		nextRequests: function(ev) {
-			ev.preventDefault();
-		
-			PTO.requestCollection.fetch({
-				data: {
-					skip: 10
-				},
-
-				success: function(theCollection) {
-					//PTO.pagingButtonSetDisabled(theCollection, $(ev.currentTarget), "next");
-
-					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
-					PTO.requestCollectionView.render();
-				}
-			}); //end - PTO.userCollection.fetch();
-		}
-	}); //end - PTO.Views.RequestToolbarPaging.
 
 
 
@@ -1101,6 +1213,7 @@ $(document).ready(function() {
 			requestConfigObj.dataClass = "Request";
 			requestConfigObj.top = 10;
 			requestConfigObj.timeout = 300;
+			requestConfigObj.orderBy = "dateRequested asc";
 
 			if (this.skip) {
 				requestConfigObj.skip = this.collectionFirst + this.skip;
@@ -1117,7 +1230,7 @@ $(document).ready(function() {
 					requestConfigObj.filter = "$all";
 					urlString =  PTO.wakandaQueryURLString(requestConfigObj);
 					this.params = [];
-				} //end - if (this.requestStart).
+				} //end - (this.urlParams.length > 0).
 
 			} else {
 				if (this.requestStart) {
@@ -1186,7 +1299,6 @@ $(document).ready(function() {
 		}
 	}); //end - PTO.Views.RequestCollectionView().
 
-
 	PTO.Views.RequestToolBar = Backbone.View.extend({
 		el: '#requestToolBar',
 
@@ -1219,6 +1331,73 @@ $(document).ready(function() {
 			}); //end - PTO.userCollection.fetch();
 		}
 	});//end - PTO.Views.RequestToolBar().
+
+	PTO.Views.RequestToolbarPaging = Backbone.View.extend({
+		el: '#requestToolBarPaging',
+
+
+
+		initialize: function(){
+			this.collection.on('reset', this.watchCollection, this); //change:selection
+		},
+
+		watchCollection: function() {
+			var prevButton$ = this.$el.find('button.prevRequests'),
+				nextButton$ = this.$el.find('button.nextRequests');
+
+			//set prev button
+			if (this.collection.collectionFirst === 0) {
+                prevButton$.attr("disabled", "disabled");
+            } else {
+                prevButton$.removeAttr("disabled");    
+            }
+
+            //set the next button.
+            if (this.collection.collectionFirst + this.collection.collectionSent >= this.collection.collectionCount) {
+                nextButton$.attr("disabled", "disabled");
+            } else {
+                nextButton$.removeAttr("disabled");    
+            }
+		},
+
+		events: {
+			"click button.nextRequests" : "nextRequests",
+			"click button.prevRequests" : "prevRequests"
+		},
+
+		prevRequests: function(ev) {
+			ev.preventDefault();
+			PTO.requestCollection.fetch({
+				data: {
+					skip: -10
+				},
+				success: function(theCollection) {
+					//PTO.pagingButtonSetDisabled(theCollection, $(ev.currentTarget), "prev");
+
+					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
+					PTO.requestCollectionView.render();
+				}
+			}); //end - PTO.userCollection.fetch();
+		},
+
+		nextRequests: function(ev) {
+			ev.preventDefault();
+		
+			PTO.requestCollection.fetch({
+				data: {
+					skip: 10
+				},
+
+				success: function(theCollection) {
+					//PTO.pagingButtonSetDisabled(theCollection, $(ev.currentTarget), "next");
+
+					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
+					PTO.requestCollectionView.render();
+				}
+			}); //end - PTO.userCollection.fetch();
+		}
+	}); //end - PTO.Views.RequestToolbarPaging.
+
 
 	PTO.Collections.ManagerCollection = Backbone.Collection.extend({
 		model: PTO.Models.User,
