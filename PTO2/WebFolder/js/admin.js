@@ -69,6 +69,7 @@ $(document).ready(function() {
 
 			PTO.editUserView = new PTO.Views.EditUser();
 			PTO.editHolidayView = new PTO.Views.EditHoliday();
+			PTO.viewDetailLogView = new PTO.Views.ViewLogDetail(); //yes my naming convention broke down here. :-)
 
 			PTO.userCollection = new PTO.Collections.UserCollection();
 			
@@ -572,6 +573,27 @@ $(document).ready(function() {
 			this.model.on('destroy', this.remove, this);
 		},
 
+		events: {
+			"click a.view"				: "viewLogDetail",
+			"click" 					: "selected"
+		},
+
+		selected: function() {
+			this.$el.siblings().removeClass('gridSelect');
+			this.$el.addClass('gridSelect');
+		}, //end - selected().
+
+		viewLogDetail: function() {
+			this.model.fetch({
+				success: function(model, response) {
+					PTO.viewDetailLogView.model = model;
+					PTO.viewDetailLogView.render(); 
+				}
+			}); 
+		}, //end - editUser().
+
+
+
 		template: PTO.Utility.template('log-template'),
 
 		render: function() {
@@ -688,6 +710,17 @@ $(document).ready(function() {
 			}); //end - PTO.logCollection.fetch();
 		}
 	});//end - PTO.Views.RequestToolBar().
+
+	PTO.Views.ViewLogDetail = Backbone.View.extend({
+		el: '#viewLogModalWin',
+
+
+		render: function() {
+			this.$el.find('#logId').val(this.model.get('id'));
+			this.$el.find('#dataClassName').val(this.model.get('dataClassName'));
+			return this; 
+		}  //end - render().
+	}); //end - PTO.Views.EditUser().
 
 	
 
