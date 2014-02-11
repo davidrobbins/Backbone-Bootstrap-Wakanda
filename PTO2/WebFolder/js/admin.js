@@ -305,6 +305,7 @@ $(document).ready(function() {
 					PTO.appContainerView.$el.find('.requests').addClass('hidden');
 					PTO.appContainerView.$el.find('.users').addClass('hidden');
 					PTO.appContainerView.$el.find('.holidays').addClass('hidden');
+					PTO.appContainerView.$el.find('.log').addClass('hidden');
 					model.fetch(); 
 				}
 			}); //end - this.save().
@@ -717,7 +718,12 @@ $(document).ready(function() {
 
 		render: function() {
 			this.$el.find('#logId').val(this.model.get('id'));
-			this.$el.find('#dataClassName').val(this.model.get('dataClassName'));
+			this.$el.find('#logCreateDateStr').val(this.model.get('createDateStr'));
+			this.$el.find('#logDataClassName').val(this.model.get('dataClassName'));
+			this.$el.find('#logEventName').val(this.model.get('eventName'));
+			this.$el.find('#logOwnerName').val(this.model.get('ownerName'));
+			this.$el.find('#logUserName').val(this.model.get('userName'));
+			this.$el.find('#logErrorMsg').val(this.model.get('errorMsg'));
 			return this; 
 		}  //end - render().
 	}); //end - PTO.Views.EditUser().

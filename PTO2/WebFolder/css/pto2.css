@@ -5,6 +5,14 @@ body {
   padding-bottom: 20px;
 }
 
+#requestDate {
+  cursor: pointer;
+}
+
+#dayName {
+  cursor: default;
+}
+
 #accountNav {
   margin-top: 10px;
   margin-bottom: 10px;

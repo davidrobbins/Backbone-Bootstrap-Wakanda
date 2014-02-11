@@ -140,11 +140,10 @@
             <table class="table">
             <thead>
               <tr>
-                <th class="column160">#</th>
                 <th class="column160">Dataclass</th>
                 <th class="column160">Event</th>
                 <th class="column160">Date</th>
-                <th class="column160">Request Id</th>
+                <th class="column160">Owner</th>
                 <th class="column160">User Logged In</th>
                 <th class="column160"></th>
               </tr>
@@ -483,16 +482,47 @@
     <div class='modal-body'>
     <form class="form-stacked"   role="form">
 
-      <div class="row">
-         <div class="col-xs-6">
-          <label for='logId'>#</label>
-          <input class='form-control' id='logId'  type='text'>
-        </div>
-        <div class="col-xs-6">
-          <label for='dataClassName'>Dataclass</label>
-          <input class='form-control' id='dataClassName'  type='text'>
-        </div>
+    <div class="row">
+       <div class="col-xs-6">
+        <label for='logId'>#</label>
+        <input class='form-control' id='logId'  type='text'>
       </div>
+      <div class="col-xs-6">
+        <label for='logCreateDateStr'>Date</label>
+        <input class='form-control' id='logCreateDateStr'  type='text'>
+      </div>
+    </div>
+
+    <div class="row">
+    <div class="col-xs-6">
+      <label for='logDataClassName'>Dataclass</label>
+      <input class='form-control' id='logDataClassName'  type='text'>
+    </div>
+     <div class="col-xs-6">
+      <label for='logEventName'>Event</label>
+      <input class='form-control' id='logEventName'  type='text'>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-6">
+      <label for='logOwnerName'>Owner</label>
+      <input class='form-control' id='logOwnerName'  type='text'>
+    </div>
+     <div class="col-xs-6">
+      <label for='logUsername'>User Logged In</label>
+      <input class='form-control' id='logUsername'  type='text'>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <label for='logErrorMsg'>Error Msg</label>
+      <input class='form-control' id='logErrorMsg'  type='text'>
+    </div>
+  </div>
+
+
 
     <hr class='hr-normal'>
     </form>
@@ -647,11 +677,10 @@
     </script>
 
     <script id="log-template" type="text/template">
-      <td class="column160"><%= id %></td>
       <td class="column160"><%= dataClassName %></td>
       <td class="column160"><%= kind %></td>
       <td class="column160"><%= createDateStr %></td>
-      <td class="column160"><%= requestId %></td>
+      <td class="column160"><%= ownerName %></td>
       <td class="column160"><%= userName %></td>
       <td class="column160"><a class="btn btn-primary view" data-toggle="modal" href="#viewLogModalWin" role="button">View</a></td>
     </script>
