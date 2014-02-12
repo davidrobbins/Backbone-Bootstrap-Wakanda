@@ -73,13 +73,6 @@ $(document).ready(function() {
 
 			PTO.userCollection = new PTO.Collections.UserCollection();
 			
-			PTO.logCollection.fetch({
-				success: function(theCollection) {
-					PTO.logCollectionView = new PTO.Views.LogCollectionView({collection: PTO.logCollection});
-					PTO.logCollectionView.render();
-				}
-			}); //end - PTO.logCollection.fetch();
-			
 
 			PTO.holidayCollection = new PTO.Collections.HolidayCollection();
 			PTO.holidayCollection.fetch({
@@ -105,6 +98,13 @@ $(document).ready(function() {
 					PTO.appContainerView.$el.find('.log').removeClass('hidden');
 					PTO.navbarlist$.find('li.log').addClass('active');
 					PTO.navbarlist$.find('li.log').siblings().removeClass('active');
+
+					PTO.logCollection.fetch({
+						success: function(theCollection) {
+							PTO.logCollectionView = new PTO.Views.LogCollectionView({collection: PTO.logCollection});
+							PTO.logCollectionView.render();
+						}
+					}); //end - PTO.logCollection.fetch();
 				}
 				break;
 
@@ -722,8 +722,10 @@ $(document).ready(function() {
 			this.$el.find('#logDataClassName').val(this.model.get('dataClassName'));
 			this.$el.find('#logEventName').val(this.model.get('eventName'));
 			this.$el.find('#logOwnerName').val(this.model.get('ownerName'));
-			this.$el.find('#logUserName').val(this.model.get('userName'));
+			this.$el.find('#logUsername').val(this.model.get('userName'));
 			this.$el.find('#logErrorMsg').val(this.model.get('errorMsg'));
+			this.$el.find('#attrsBefore').val(this.model.get('old_entity_toJSON'));
+			this.$el.find('#attrsAfter').val(this.model.get('entity_toJSON'))
 			return this; 
 		}  //end - render().
 	}); //end - PTO.Views.EditUser().
