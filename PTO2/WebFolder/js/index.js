@@ -731,7 +731,7 @@ $(document).ready(function() {
 					PTO.deleteRequestView.render(); 
 				}
 			}); 
-		}, //end - editUser().
+		}, //end - deleteRequest().
 
 		template: PTO.Utility.template('pending-requests-template'),
 

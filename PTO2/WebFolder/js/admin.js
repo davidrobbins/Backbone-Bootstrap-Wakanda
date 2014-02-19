@@ -44,7 +44,8 @@ $(document).ready(function() {
 			//Requests
 			PTO.requestModel = new PTO.Models.Request();
 			PTO.requestCollection = new PTO.Collections.RequestCollection();
-			PTO.editRequestView = new PTO.Views.EditRequest();
+			//PTO.editRequestView = new PTO.Views.EditRequest();
+			PTO.deleteRequestView = new PTO.Views.DeleteRequest();
 
 			//Log
 			PTO.logCollection = new PTO.Collections.LogCollection();
@@ -1188,6 +1189,7 @@ $(document).ready(function() {
 		events: {
 			"click button.payrollcheck"	: "payrollCheck",
 			"click a.edit"				: "editRequest",
+			"click a.deleteRequest"		: "deleteRequest",
 			"click" 					: "selected"
 		},
 
@@ -1195,6 +1197,18 @@ $(document).ready(function() {
 			this.$el.siblings().removeClass('gridSelect');
 			this.$el.addClass('gridSelect');
 		}, //end - selected().
+
+		deleteRequest: function() {
+			console.log('delete request');
+			this.model.fetch({
+				success: function(model, response) {
+					console.log(model);
+					PTO.deleteRequestView.model = model;
+					PTO.deleteRequestView.render(); 
+				}
+			}); 
+		}, //end - deleteRequest().
+
 
 		editRequest: function() {
 			this.model.fetch({
@@ -1233,36 +1247,70 @@ $(document).ready(function() {
 		}
 	});
 
-	PTO.Views.EditRequest = Backbone.View.extend({
-		el: '#editRequestModalWin',
+	PTO.Views.DeleteRequest = Backbone.View.extend({
+		el: '#delRequestModalWin',
 
 		events: {
-			"click button.save"	: "saveRequest",
+			"click button.deleteRequest"	: "deleteRequest",
 		}, //end - events.
 
-		saveRequest: function() {
-			this.model.save({payrollChecked: this.$el.find('#payrollChecked').prop('checked')},{
-				success: function(ev) {
-					//PTO.messageModel.set({title: ev.get('fullName') + " updated on the server.", contextualClass: "alert-info"});
-				} //end - success().
+		deleteRequest : function() {
+			this.model.destroy({
+				success: function(model, response) {
+					if (response.ok) {
+						PTO.requestCollection.fetch({
+							success: function(theCollection) {
+								PTO.setMessage({title: "Request " + model.get('id') + " on date " + model.get('dateString') + " was deleted.", contextualClass: "alert-info"});
+								PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: PTO.requestCollection});
+								PTO.requestCollectionView.render();
+							}
+						}); //end - PTO.userCollection.fetch();
+					}
+				}
 			});
-		},
+		}, //end - deleteRequest().
 
 		render: function() {
-			// console.log(this.model.get('payrollChecked')); 
+			this.$el.find('p.requestId').html(this.model.get('id'));
+			this.$el.find('p.requestDate').html(this.model.get('dateString'));
+			this.$el.find('p.requestStatus').html(this.model.get('status'));
+			this.$el.find('p.requestHours').html(this.model.get('hours') + " " + this.model.get('compensation'));
 
-			this.$el.find('#payrollChecked').prop('checked', this.model.get('payrollChecked'));
-
-			// $('.myCheckbox').prop('checked', true);
-			// $('.myCheckbox').prop('checked', false);
-
-			// this.$el.find('#fullName').val(this.model.get('fullName'));
-			// this.$el.find('#floatingDays').val(this.model.get('floatingDays'));
-			// this.$el.find('#ptoHours').val(this.model.get('ptoHours'));
-			// this.$el.find('#role').val(this.model.get('role'));
 			return this; 
 		}  //end - render().
-	}); //end - PTO.Views.EditUser().
+	}); //end - PTO.Views.DeleteRequest().
+
+
+	// PTO.Views.EditRequest = Backbone.View.extend({
+	// 	el: '#editRequestModalWin',
+
+	// 	events: {
+	// 		"click button.save"	: "saveRequest",
+	// 	}, //end - events.
+
+	// 	saveRequest: function() {
+	// 		this.model.save({payrollChecked: this.$el.find('#payrollChecked').prop('checked')},{
+	// 			success: function(ev) {
+	// 				//PTO.messageModel.set({title: ev.get('fullName') + " updated on the server.", contextualClass: "alert-info"});
+	// 			} //end - success().
+	// 		});
+	// 	},
+
+	// 	render: function() {
+	// 		// console.log(this.model.get('payrollChecked')); 
+
+	// 		this.$el.find('#payrollChecked').prop('checked', this.model.get('payrollChecked'));
+
+	// 		// $('.myCheckbox').prop('checked', true);
+	// 		// $('.myCheckbox').prop('checked', false);
+
+	// 		// this.$el.find('#fullName').val(this.model.get('fullName'));
+	// 		// this.$el.find('#floatingDays').val(this.model.get('floatingDays'));
+	// 		// this.$el.find('#ptoHours').val(this.model.get('ptoHours'));
+	// 		// this.$el.find('#role').val(this.model.get('role'));
+	// 		return this; 
+	// 	}  //end - render().
+	// }); //end - PTO.Views.EditUser().
 
 	PTO.Collections.RequestCollection = Backbone.Collection.extend({
 		model: PTO.Models.Request,

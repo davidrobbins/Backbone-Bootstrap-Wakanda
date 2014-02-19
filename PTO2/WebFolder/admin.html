@@ -221,6 +221,7 @@
                 <th class="column80">Status</th>
                 <th class="column120">Checked</th>
                 <th class="column120"></th>
+                <th class="column120"></th>
               </tr>
             </thead>
             </table>
@@ -391,7 +392,57 @@
 
     
 
-    
+       <!-- Delete Request Modal (start) -->
+    <div class="modal fade" id="delRequestModalWin" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Delete Request</h4>
+          </div>
+          <div class="modal-body"> 
+            
+            <form role="form">
+              <div class="row">
+                <div class="col-xs-2">
+                  <label for="requestId">ID</label>
+                </div>
+                <div class="col-xs-4">
+                  <p class="requestId" id="requestId"></p>
+                </div>
+                <div class="col-xs-2">
+                  <label for="requestDate">Date</label>
+                </div>
+                <div class="col-xs-4">
+                  <p class="requestDate" id="requestDate"></p>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xs-2">
+                  <label for="requestHours">Hours</label>
+                </div>
+                <div class="col-xs-4">
+                  <p class="requestHours" id="requestHours"></p>
+                </div>
+                <div class="col-xs-2">
+                  <label for="requestStatus">Status</label>
+                </div>
+                <div class="col-xs-4">
+                  <p class="requestStatus" id="requestStatus"></p>
+                </div>
+              </div>
+            </form>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary deleteRequest" data-dismiss="modal">Delete Request</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- Delete Request Modal (end) -->
 
 
 
@@ -423,10 +474,14 @@
       <button  class='btn btn-default' data-dismiss='modal' type='button'>Close</button>
       <button  class='btn btn-primary save' data-dismiss='modal' type='button'>Save</button>
     </div>
+
     </div>
     </div> 
     </div>
     <!--End Edit Request Modal Dialog-->
+
+
+
 
 
      <!--Edit Holiday Modal Dialog-->
@@ -468,6 +523,9 @@
     </div>
     </div>
     <!--End Edit Holiday Modal Dialog-->
+
+
+
 
 
     <!--View Log Modal Dialog-->
@@ -645,6 +703,9 @@
     </div>
     <!--End Edit User Modal Dialog-->
 
+
+
+
     <script type="text/template" id="manager-options-template">
        <option value="<%= id %>"><%= fullName %></option>
     </script>
@@ -674,6 +735,7 @@
       <td class="column80"><%= status %></td>
       <td class="column120"><%= payrollChecked %></td>
       <td class="column120"><button type="button" class="btn btn-primary payrollcheck">Check</button></td>
+      <td class="column120"><a class="btn btn-primary deleteRequest" data-toggle="modal" href="#delRequestModalWin" role="button">Delete</a></td>
     </script>
 
 
