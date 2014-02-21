@@ -787,7 +787,7 @@ $(document).ready(function() {
 
 			return PTO.wakandaQueryURLString(requestConfigObj, moment().subtract('days', 1).format(), PTO.currentUserModel.get('ID'));
 			//return "/rest/Request/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'";
-			},
+		},
 
 		parse: function(response) {
 			if (response.__ENTITIES) {

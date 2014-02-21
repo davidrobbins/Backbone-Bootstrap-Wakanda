@@ -460,6 +460,12 @@ $(document).ready(function() {
 		} //end - sync().
 	}); //end - PTO.Models.Log().
 
+	PTO.Collections.LogCollectionTest = Wakbone.Collection.extend({
+		model: PTO.Models.Log,
+		
+		dataclass: "Log"
+	});
+
 	PTO.Collections.LogCollection = Backbone.Collection.extend({
 		model: PTO.Models.Log,
 
@@ -603,22 +609,10 @@ $(document).ready(function() {
 		}  //end - render().
 	}); //end - PTO.Views.LogView().
 	
-	PTO.Views.LogCollectionView = PTO.BaseCollectionView.extend({
+	PTO.Views.LogCollectionView = Wakbone.CollectionView.extend({
 		el: '#logTableBody',
 
 		rowView: PTO.Views.LogView
-
-		// render: function() {
-		// 	this.$el.children().remove();
-
-		// 	//1. filter through all items in a collection.
-		// 	this.collection.each(function(log) {
-		// 		//2. For each item create a new log view.
-		// 		var logView = new PTO.Views.LogView({model: log});
-		// 		//3. Append each log view to our collection view.
-		// 		this.$el.append(logView.render().el); //chain chain chain...
-		// 	}, this); //the second parameter to each is the context.
-		// }
 	}); //end - PTO.Views.LogCollectionView().
 
 	PTO.Views.LogToolbarPaging = Backbone.View.extend({
@@ -881,30 +875,10 @@ $(document).ready(function() {
 		}  //end - render().
 	}); //end - PTO.Views.EditUser().
 
-	//PTO.BaseCollectionView
-	//PTO.Views.HolidayCollectionView = Backbone.View.extend({
-	PTO.Views.HolidayCollectionView = PTO.BaseCollectionView.extend({
+	PTO.Views.HolidayCollectionView = Wakbone.CollectionView.extend({
 		el: '#holidayTableBody',
 
 		rowView: PTO.Views.HolidayView
-
-		// render: function() {
-		// 	this.$el.children().remove();
-
-		// 	this.collection.each(function(model) {
-		// 		var rowView = new this.rowView({model: model});
-		// 		this.$el.append(rowView.render().el); 
-		// 	}, this); 
-		// }
-
-		// render: function() {
-		// 	this.$el.children().remove();
-
-		// 	this.collection.each(function(holiday) {
-		// 		var holidayView = new PTO.Views.HolidayView({model: holiday});
-		// 		this.$el.append(holidayView.render().el); 
-		// 	}, this); 
-		// }
 	}); //end - PTO.Views.HolidayCollectionView().
 
 	PTO.Views.HolidayToolbar = Backbone.View.extend({
@@ -1096,26 +1070,10 @@ $(document).ready(function() {
 		} //end - parse.
 	}); //end - PTO.Collections.UserCollection.
 
-	PTO.Views.UserCollectionView = PTO.BaseCollectionView.extend({
+	PTO.Views.UserCollectionView = Wakbone.CollectionView.extend({
 		el: '#userTableBody',
 
 		rowView: PTO.Views.UserView
-
-		// initialize: function() {
-		// 	this.collection.bind('add', this.render);
-		// },
-
-		// render: function() {
-		// 	this.$el.children().remove();
-
-		// 	//1. filter through all items in a collection.
-		// 	this.collection.each(function(user) {
-		// 		//2. For each item create a new person view.
-		// 		var userView = new PTO.Views.UserView({model: user});
-		// 		//3. Append each person view to our collection view.
-		// 		this.$el.append(userView.render().el); //chain chain chain...
-		// 	}, this); //the second parameter to each is the context.
-		// }
 	}); //end - PTO.Views.UserCollectionView().
 
 	PTO.Views.UserToolbar = Backbone.View.extend({
@@ -1421,23 +1379,10 @@ $(document).ready(function() {
 		} //end - parse.
 	}); //PTO.Collections.RequestCollection().
 
-	PTO.Views.RequestCollectionView = PTO.BaseCollectionView.extend({
-		//el: '#requestsUL',
+	PTO.Views.RequestCollectionView = Wakbone.CollectionView.extend({
 		el: '#requestTableBody',
 
 		rowView: PTO.Views.Request
-
-		// render: function() {
-		// 	this.$el.empty();
-
-		// 	//1. filter through all items in a collection.
-		// 	this.collection.each(function(request) {
-		// 		//2. For each item create a new person view.
-		// 		var requestView = new PTO.Views.Request({model: request});
-		// 		//3. Append each person view to our collection view.
-		// 		this.$el.append(requestView.render().el); //chain chain chain...
-		// 	}, this); //the second parameter to each is the context.
-		// }
 	}); //end - PTO.Views.RequestCollectionView().
 
 	PTO.Views.RequestToolBar = Backbone.View.extend({
@@ -1477,7 +1422,6 @@ $(document).ready(function() {
 		el: '#requestToolBarPaging',
 
 
-
 		initialize: function(){
 			this.collection.on('reset', this.watchCollection, this); //change:selection
 		},
@@ -1513,8 +1457,6 @@ $(document).ready(function() {
 					skip: -10
 				},
 				success: function(theCollection) {
-					//PTO.pagingButtonSetDisabled(theCollection, $(ev.currentTarget), "prev");
-
 					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
 					PTO.requestCollectionView.render();
 				}
@@ -1530,8 +1472,6 @@ $(document).ready(function() {
 				},
 
 				success: function(theCollection) {
-					//PTO.pagingButtonSetDisabled(theCollection, $(ev.currentTarget), "next");
-
 					PTO.requestCollectionView = new PTO.Views.RequestCollectionView({collection: theCollection}); //PTO.requestCollection
 					PTO.requestCollectionView.render();
 				}
