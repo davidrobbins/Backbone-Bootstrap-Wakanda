@@ -462,7 +462,7 @@ $(document).ready(function() {
 
 	PTO.Collections.LogCollectionTest = Wakbone.Collection.extend({
 		model: PTO.Models.Log,
-		
+
 		dataclass: "Log"
 	});
 
@@ -511,7 +511,7 @@ $(document).ready(function() {
 					logConfigObj.filter = "$all";
 					urlString =  PTO.wakandaQueryURLString(logConfigObj);
 					this.params = [];
-				} //end - if (this.urlParams.length > 0).
+				} //end - if  (this.urlParams.length > 0).
 
 			} else {
 				if (this.logStart) {

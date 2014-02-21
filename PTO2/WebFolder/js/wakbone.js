@@ -5,6 +5,7 @@ var Wakbone = (function() {
 
     //P R I V A T E   M E T H O D S   (E N D).
 
+   
 
     wakboneObj.Collection = Backbone.Collection.extend({
     	dataclass: null,
@@ -12,21 +13,93 @@ var Wakbone = (function() {
     	collectionCount: 0,
     	collectionFirst: 0,
     	collectionSent: 0,
-		skip: 0,
+		skip: null,
 		filter: null,
-		urlParams: [],
+		savedfilter: "$all",
+		urlParams: null,
+
+		fetch: function(options) {
+            options || (options = {});
+            var data = (options.data || {});
+            this.skip = data.skip || null;
+
+            if (!(this.skip)) {
+            	if (data.filter) {
+            		this.filter = data.filter;
+            		this.savedfilter = data.filter;
+            	} else {
+            		this.filter = null;
+            		this.savedfilter = "$all";
+            	}
+
+
+            	if (data.urlParams) {
+            		this.urlParams = data.urlParams;
+            	} else {
+            		this.urlParams = null;
+            	}
+            } //end - (!(this.skip)).
+            
+            delete options.data; //delete this or Backbone will append it to the end of our url.
+            options.reset = true; //Must set this for view to be able to listen when collection has changed.
+
+            return Backbone.Collection.prototype.fetch.call(this, options);
+        },
 
 		url: function() {
 			var urlString = "/rest/";
-			var skipNumber = this.collectionFirst + this.skip;
 
 			urlString += this.dataclass;
 			urlString += "/?";
 			urlString += "$top=" + this.top;
+
+			if (this.skip) {
+				var skipNumber = this.collectionFirst + this.skip;
+				urlString += "&";
+				urlString += "$skip=" + skipNumber;
+			}
+
+			//params.
 			urlString += "&";
-			urlString += "$skip=" + skipNumber;
+			urlString += encodeURI("&$params='[");
+			if (this.urlParams) {
+				var parmsString = "";
+				this.urlParams.forEach(function(parm, index, paramsList) {
+					if (_.isString(parm)) {
+	                    parmsString += "\"" + parm + "\"";
+
+	                } else if (_.isNumber(parm)) {
+	                	parmsString += "\"" + parm + "\"";
+
+	                } else if (_.isDate(parm)) {
+	                    parmsString += "\"" + moment(parm).format() + "\"";
+	                }
+
+	                if (index < paramsList.length -1) {
+	                   parmsString += ","; 
+	                }
+				});
+
+				urlString += encodeURIComponent(parmsString);
+			}
+			urlString += encodeURI("]'");  
+			//urlString += "$params='%5B%5D'"; 
+
+
 			urlString += "&";
-			urlString += "$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'";
+			urlString += "$method=entityset";
+			urlString += "&";
+			urlString += "$timeout=300";
+			urlString += "&";
+
+			if (this.savedfilter == "$all") {
+	            urlString += "&$savedfilter='" + encodeURIComponent(this.savedfilter) + "'";
+	        } else {
+	            urlString += "&$savedfilter='" + encodeURIComponent(this.filter) + "'";
+	            urlString += "&$filter='" + encodeURIComponent(this.filter) + "'";
+	        }
+
+			//urlString += "$savedfilter='%24all'";
 
 			return urlString;
 		},
@@ -43,27 +116,65 @@ var Wakbone = (function() {
 			}
 		}, //end - parse.
 
-		fetch: function(options) {
-            options || (options = {});
-            var data = (options.data || {});
-            this.skip = data.skip || 0;
-            delete options.data; //delete this or Backbone will append it to the end of our url.
-            options.reset = true; //Must set this for view to be able to listen when collection has changed.
-            return Backbone.Collection.prototype.fetch.call(this, options);
-        },
-
 		selectNext: function() {
 			this.fetch({data: {skip: 10}});
 		}, //end selectNext().
 
-		query: function() {
-			
+		selectPrev: function() {
+			this.fetch({data: {skip: -10}});
+		}, //end selectPrev().
+
+		query: function(optionsObj) {
+			//?$top=40&$filter=%27id%20%3E%20%3A1%27
+			//&$params=%27%5B240%5D%27
+			//&$method=entityset
+			//&$timeout=300
+			//&$savedfilter=%27id%20%3E%20%3A1%27
+			//Build params.
+
+			var parms = _.rest(arguments);
+
+			//return parms;
+
+			this.fetch({data: {urlParams: parms, filter: optionsObj.filter}});
+
+			/*
+	        if (arguments.length > 1) {
+	            urlString += encodeURI("&$params='[");
+	            var parmsString = "";
+	            for(var arg = 1, len = arguments.length; arg < len; ++ arg) {
+	                var parm = arguments[arg];
+
+	                if (_.isString(parm)) {
+	                    parmsString += "\"" + parm + "\"";
+
+	                } else if (_.isNumber(parm)) {
+
+	                } else if (_.isDate(parm)) {
+	                    parmsString += "\"" + moment(parm).format() + "\"";
+	                }
+
+	                if (arg < len -1) {
+	                   parmsString += ","; 
+	                }
+	            } //end - for.
+
+	            urlString += encodeURIComponent(parmsString);
+	            urlString += encodeURI("]'");  
+	        } else {
+	            urlString += encodeURI("&$params='[");
+	            urlString += encodeURI("]'"); 
+	        } //if (arguments.length > 1) 	
+			*/
+
+
+			//this.fetch({data: {}});
 		}
 
     }); //end - wakboneObj.Collection().
 
 
-
+	
 
 
     wakboneObj.CollectionView = Backbone.View.extend({
