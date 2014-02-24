@@ -207,10 +207,11 @@ $(document).ready(function() {
 			this.model.on('change', this.render, this); //change:title, destroy, add, etc.
 		},
 
-		template: PTO.Utility.template('request-grid-message-template'),
+		//template: PTO.Utility.template('request-grid-message-template'),
 
 		render: function() {
-			this.$el.text(this.template(this.model.toJSON())); 
+			this.$el.text(Handlebars.templates.gridMessage(this.model.toJSON()));
+			//this.$el.text(this.template(this.model.toJSON())); 
 			return this; //this allows us to chain.
 		}  //end - render().
 	}); //end - PTO.Views.Message().
@@ -229,10 +230,11 @@ $(document).ready(function() {
 			this.model.on('change', this.render, this); //change:title, destroy, add, etc.
 		},
 
-		template: PTO.Utility.template('log-grid-message-template'),
+		//template: PTO.Utility.template('log-grid-message-template'),
 
 		render: function() {
-			this.$el.text(this.template(this.model.toJSON())); 
+			this.$el.text(Handlebars.templates.gridMessage(this.model.toJSON()));
+			//this.$el.text(this.template(this.model.toJSON())); 
 			return this; //this allows us to chain.
 		}  //end - render().
 	}); //end - PTO.Views.Message().
@@ -258,11 +260,12 @@ $(document).ready(function() {
 			//this.model.on('change', this.render, this); //change:title, destroy, add, etc.
 		},
 
-		template: PTO.Utility.template('message-template'),
+		//template: PTO.Utility.template('message-template'),
 
 		render: function() {
 			this.$el.children().remove();
-			this.$el.append(this.template(this.model.toJSON())); 
+			this.$el.append(Handlebars.templates.message(this.model.toJSON()));
+			//this.$el.append(this.template(this.model.toJSON())); 
 			this.$el.fadeIn(500);
 			var that$ = this.$el;
 			setTimeout(function() {that$.fadeOut(1500);}, 4000);
@@ -601,10 +604,11 @@ $(document).ready(function() {
 
 
 
-		template: PTO.Utility.template('log-template'),
+		//template: PTO.Utility.template('log-template'),
 
 		render: function() {
-			this.$el.html(this.template(this.model.toJSON()));
+			this.$el.html(Handlebars.templates.logList(this.model.toJSON()));
+			//this.$el.html(this.template(this.model.toJSON()));
 			return this; //this allows us to chain.
 		}  //end - render().
 	}); //end - PTO.Views.LogView().
@@ -732,7 +736,9 @@ $(document).ready(function() {
 
 
 	//Holiday Model
-	PTO.Models.Holiday = Backbone.Model.extend({
+	PTO.Models.Holiday = Wakbone.Model.extend({
+		dataclass: "Holiday"
+		/*
 		parse: function(response) {
 			if (response.__ENTITIES) {
 				return response.__ENTITIES[0]
@@ -783,12 +789,14 @@ $(document).ready(function() {
 				return Backbone.sync.call(model, method, model, options); //first parameter sets the context.
 			} //end - if (options.url).
 		} //end - sync().
+		*/
 	}); //end - PTO.Models.Holiday().
 
 	// The List of Holidays
 	PTO.Collections.HolidayCollection = Backbone.Collection.extend({
 		model: PTO.Models.Holiday,
 
+		
 		url: function() {
 			return "/rest/Holiday/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'";
 		},
@@ -835,10 +843,14 @@ $(document).ready(function() {
 			this.$el.addClass('gridSelect');
 		}, //end - selected().
 
-		template: PTO.Utility.template('holiday-template'),
+		//template: PTO.Utility.template('holiday-template'),
 
 		render: function() {
-			this.$el.html(this.template(this.model.toJSON()));
+			//console.log(Handlebars.templates.holidayList);
+			//console.log('trying pre-compliled templates.');
+			this.$el.html(Handlebars.templates.holidayList(this.model.toJSON()));
+
+			//this.$el.html(this.template(this.model.toJSON()));
 			return this; //this allows us to chain.
 		}  //end - render().
 	}); //end - PTO.Views.HolidayView().
@@ -972,8 +984,6 @@ $(document).ready(function() {
 		},
 
 		editUser: function() {
-			//console.log(this.model);
-
 			this.model.fetch({
 				success: function(model, response) {
 					//PTO.editUserView = new PTO.Views.EditUser();
@@ -992,10 +1002,11 @@ $(document).ready(function() {
 			this.$el.addClass('gridSelect');
 		}, //end - selected().
 
-		template: PTO.Utility.template('user-template'),
+		//template: PTO.Utility.template('user-template'),
 
 		render: function() {
-			this.$el.html(this.template(this.model.toJSON()));
+			this.$el.html(Handlebars.templates.userList(this.model.toJSON()));
+			//this.$el.html(this.template(this.model.toJSON()));
 			return this; //this allows us to chain.
 		}  //end - render().
 	}); //end - PTO.Views.UserView().
@@ -1205,10 +1216,11 @@ $(document).ready(function() {
         }, //end - payrollCheck().
 		
 
-		template: PTO.Utility.template('requests-table-template'),
+		//template: PTO.Utility.template('requests-table-template'),
 
 		render: function() {
-			this.$el.html(this.template(this.model.toJSON()));
+			this.$el.html(Handlebars.templates.requestList(this.model.toJSON()));
+			//this.$el.html(this.template(this.model.toJSON()));
 			if (this.model.get('payrollChecked')) {
 				this.$el.addClass('warning');
 			} else {
@@ -1509,7 +1521,7 @@ $(document).ready(function() {
 	PTO.Views.ManagerCollectionView = Backbone.View.extend({
 		el : '#managerSelect',
 
-		template: PTO.Utility.template('manager-options-template'),
+		//template: PTO.Utility.template('manager-options-template'),
 
 		render: function(theUser) {
 			var managerName = theUser.toJSON().myManager ? theUser.toJSON().myManager.fullName : "None";
@@ -1519,7 +1531,8 @@ $(document).ready(function() {
 
 			//1. filter through all items in a collection.
 			this.collection.each(function(manager) {
-				this.$el.append(this.template(manager.toJSON())); 
+				this.$el.append(Handlebars.templates.managerOptions(manager.toJSON()));
+				//this.$el.append(this.template(manager.toJSON())); 
 			}, this); //the second parameter to each is the context.
 
 			//this.$el.find("option[value='" + managerName + "']").attr('selected', 'selected');

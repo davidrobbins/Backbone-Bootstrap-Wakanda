@@ -705,19 +705,23 @@
 
 
 
-
+    <!--
     <script type="text/template" id="manager-options-template">
        <option value="<%= id %>"><%= fullName %></option>
     </script>
+    -->
 
-
+    <!--
     <script id="message-template" type="text/template">
       <div class="alert <%= contextualClass %> alert-dismissable">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
         <%= title %>
       </div>
     </script>
+    -->
 
+
+    <!--
     <script type="text/template" id="requests-template">
         <div class="requestLineItemTopRow">
           <div class="requestLineItemLeft"><em><%= dateString %></em></div>
@@ -725,7 +729,11 @@
         </div>
         <div style="clear: both;"></div>
     </script>
+    -->
 
+
+
+    <!--
     <script id="requests-table-template" type="text/template">
       <td class="column40"><%= id %></td>
       <td class="column160"><%= ownerName %></td>
@@ -737,23 +745,28 @@
       <td class="column120"><button type="button" class="btn btn-primary payrollcheck">Check</button></td>
       <td class="column120"><a class="btn btn-primary deleteRequest" data-toggle="modal" href="#delRequestModalWin" role="button">Delete</a></td>
     </script>
+    -->
 
 
+    <!--
     <script id="user-template" type="text/template">
       <td class="column160"><%= fullName %></td>
       <td class="column160"><%= email %></td>
       <td class="column160"><%= role %></td>
       <td class="column160"><a class="btn btn-primary edit" data-toggle="modal" href="#editUserModalWin" role="button">Edit</a></td>
     </script>
+    -->
 
-
+    <!--
     <script id="holiday-template" type="text/template">
       <td class="column160"><%= id %></td>
       <td class="column160"><%= title %></td>
       <td class="column160"><%= dateString %></td>
       <td class="column160"><a class="btn btn-primary edit" data-toggle="modal" href="#editHolidayModalWin" role="button">Edit</a></td>
     </script>
+    -->
 
+    <!--
     <script id="log-template" type="text/template">
       <td class="column160"><%= dataClassName %></td>
       <td class="column160"><%= kind %></td>
@@ -762,16 +775,23 @@
       <td class="column160"><%= userName %></td>
       <td class="column160"><a class="btn btn-primary view" data-toggle="modal" href="#viewLogModalWin" role="button">View</a></td>
     </script>
+    -->
 
+    <!--
     <script id="request-grid-message-template" type="text/template">
       <%= title %>
     </script>
+    -->
 
+    <!--
     <script id="log-grid-message-template" type="text/template">
       <%= title %>
     </script>
+    -->
+    
 
-
+    <!--Handlebars - for pre-compiled templates-->
+    <script src="libs/handlebars.runtime-v1.3.0.js" type="text/javascript"></script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins and  some Bootstrap features) -->
     <script src="libs/jquery-1.10.2.min.js" type="text/javascript"></script>
     <!-- Backbone's only hard dependency is Underscore.js -->
@@ -784,6 +804,7 @@
     <!--date library-->
     <script src="libs/moment.min.js"></script>
     <!-- Now let's load our application specific Javascript. -->
+    <script type="text/javascript" src="/js/templates.js"></script>
     <script type="text/javascript" src="/js/PTO_Utility.js"></script>
     <script type="text/javascript" src="/js/wakbone.js"></script>
     <script type="text/javascript" src="/js/admin.js"></script>

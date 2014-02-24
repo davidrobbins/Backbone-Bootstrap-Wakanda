@@ -5,7 +5,78 @@ var Wakbone = (function() {
 
     //P R I V A T E   M E T H O D S   (E N D).
 
-   
+    wakboneObj.Model = Backbone.Model.extend({
+    	dataclass: null,
+    	entitySetId: null,
+
+    	parse: function(response) {
+    		if (response.__ENTITYSET) {
+				var entitySetStr = response.__ENTITYSET,
+					tokens = entitySetStr.split("/");
+
+				this.entitySetId = 	tokens[4];
+			}
+
+			if (response.__ENTITIES) {
+				return response.__ENTITIES[0]
+			} else {
+				return response;
+			}
+		}, //end - parse.
+
+		sync: function(method, model, options) {
+			options || (options = {});
+
+			switch (method) {
+				case "read":
+	            options.url = "/rest/";
+	            options.url += this.dataclass;
+	            options.url += "/?top=1&$filter='id%20%3D%20'" + this.get('id') + "&$params='%5B%5D'";
+	            break;
+
+	            case "update":
+	            options.url = "/rest/";
+	            options.url += this.dataclass;
+	            options.url += "/?$method=update";
+
+	            var wakandaquestPayload = {},
+                	updateAttrs = this.changedAttributes();
+                wakandaquestPayload.__ENTITIES = [];
+                if (model.isNew()) {
+                	updateAttrs.__ISNEW = true;
+                }
+                updateAttrs.__KEY = this.attributes.__KEY;
+                updateAttrs.__STAMP = this.attributes.__STAMP;
+                wakandaquestPayload.__ENTITIES.push(updateAttrs);
+                options.data = JSON.stringify(wakandaquestPayload);
+                break;
+
+                case "create":
+                options.url = "/rest/";
+	            options.url += this.dataclass;
+                options.url += "/?$method=update";
+                var wakandaquestPayload = {};
+                wakandaquestPayload.__ENTITIES = [];
+                var currentModelObject = this.attributes;
+                if (model.isNew()) {
+                	currentModelObject.__ISNEW = true;
+                }
+                wakandaquestPayload.__ENTITIES.push(currentModelObject);
+                options.data = JSON.stringify(wakandaquestPayload);
+                break;
+
+			} //end - switch (method).
+
+			if (options.url) {
+				return Backbone.sync.call(model, method, model, options); //first parameter sets the context.
+			} //end - if (options.url).
+		} //end - sync().
+
+    });
+
+
+
+
 
     wakboneObj.Collection = Backbone.Collection.extend({
     	dataclass: null,
@@ -31,7 +102,6 @@ var Wakbone = (function() {
             		this.filter = null;
             		this.savedfilter = "$all";
             	}
-
 
             	if (data.urlParams) {
             		this.urlParams = data.urlParams;
@@ -65,6 +135,7 @@ var Wakbone = (function() {
 			if (this.urlParams) {
 				var parmsString = "";
 				this.urlParams.forEach(function(parm, index, paramsList) {
+
 					if (_.isString(parm)) {
 	                    parmsString += "\"" + parm + "\"";
 
@@ -74,6 +145,9 @@ var Wakbone = (function() {
 	                } else if (_.isDate(parm)) {
 	                    parmsString += "\"" + moment(parm).format() + "\"";
 	                }
+					
+
+					//parmsString += "\"" + parm + "\"";
 
 	                if (index < paramsList.length -1) {
 	                   parmsString += ","; 
@@ -83,8 +157,6 @@ var Wakbone = (function() {
 				urlString += encodeURIComponent(parmsString);
 			}
 			urlString += encodeURI("]'");  
-			//urlString += "$params='%5B%5D'"; 
-
 
 			urlString += "&";
 			urlString += "$method=entityset";
@@ -93,13 +165,12 @@ var Wakbone = (function() {
 			urlString += "&";
 
 			if (this.savedfilter == "$all") {
-	            urlString += "&$savedfilter='" + encodeURIComponent(this.savedfilter) + "'";
+	            urlString += "$savedfilter='" + encodeURIComponent(this.savedfilter) + "'";
 	        } else {
-	            urlString += "&$savedfilter='" + encodeURIComponent(this.filter) + "'";
-	            urlString += "&$filter='" + encodeURIComponent(this.filter) + "'";
+	            urlString += "$savedfilter='" + encodeURIComponent(this.filter) + "'";
+	            urlString += "&";
+	            urlString += "$filter='" + encodeURIComponent(this.filter) + "'";
 	        }
-
-			//urlString += "$savedfilter='%24all'";
 
 			return urlString;
 		},
@@ -125,60 +196,17 @@ var Wakbone = (function() {
 		}, //end selectPrev().
 
 		query: function(optionsObj) {
-			//?$top=40&$filter=%27id%20%3E%20%3A1%27
-			//&$params=%27%5B240%5D%27
-			//&$method=entityset
-			//&$timeout=300
-			//&$savedfilter=%27id%20%3E%20%3A1%27
-			//Build params.
-
 			var parms = _.rest(arguments);
-
-			//return parms;
-
 			this.fetch({data: {urlParams: parms, filter: optionsObj.filter}});
-
-			/*
-	        if (arguments.length > 1) {
-	            urlString += encodeURI("&$params='[");
-	            var parmsString = "";
-	            for(var arg = 1, len = arguments.length; arg < len; ++ arg) {
-	                var parm = arguments[arg];
-
-	                if (_.isString(parm)) {
-	                    parmsString += "\"" + parm + "\"";
-
-	                } else if (_.isNumber(parm)) {
-
-	                } else if (_.isDate(parm)) {
-	                    parmsString += "\"" + moment(parm).format() + "\"";
-	                }
-
-	                if (arg < len -1) {
-	                   parmsString += ","; 
-	                }
-	            } //end - for.
-
-	            urlString += encodeURIComponent(parmsString);
-	            urlString += encodeURI("]'");  
-	        } else {
-	            urlString += encodeURI("&$params='[");
-	            urlString += encodeURI("]'"); 
-	        } //if (arguments.length > 1) 	
-			*/
-
-
-			//this.fetch({data: {}});
 		}
-
     }); //end - wakboneObj.Collection().
 
 
-	
+
 
 
     wakboneObj.CollectionView = Backbone.View.extend({
-          render: function() {
+    	render: function() {
             this.$el.children().remove();
 
             this.collection.each(function(model) {
