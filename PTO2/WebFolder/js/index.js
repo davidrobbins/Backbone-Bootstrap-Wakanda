@@ -866,10 +866,6 @@ $(document).ready(function() {
 
 		acceptAllRequests: function() {
 			this.collection.acceptAllRequests(function(model, response, options) {
-				//PTO.employeeRequestCollectionView = new PTO.Views.EmployeeRequestCollectionView({collection: theCollection});
-				//PTO.employeeRequestCollectionView.render();
-				console.log('accept all requests success.');
-
 				PTO.employeeRequestCollection.fetch({
 					success: function(theCollection) {
 						PTO.employeeRequestCollection.fetch({
@@ -886,14 +882,10 @@ $(document).ready(function() {
 								PTO.employeeRequestCollectionView.render();
 							}
 						}); //end - PTO.userCollection.fetch();
-						// console.log('fetch the employee request collection.');
-						// console.log(theCollection);
-						// PTO.employeeRequestCollectionView = new PTO.Views.EmployeeRequestCollectionView({collection: theCollection});
-						// PTO.employeeRequestCollectionView.render();
 					}
 				}); //end - PTO.userCollection.fetch();
 			});
-		} //end - newUser().
+		} //end - acceptAllRequests().
 	}); //end - PTO.Views.UserToolbar().
 
 

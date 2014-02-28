@@ -54,11 +54,7 @@ $(document).ready(function() {
 			PTO.messageContainer$ = $('#messageContainer');
 			PTO.currentUserMsg$ = $('#currentUserMsg');
 
-			PTO.userToolBar = new PTO.Views.UserToolbar();
-			PTO.requestToolBar = new PTO.Views.RequestToolBar();
-			PTO.requestToolbarPaging = new PTO.Views.RequestToolbarPaging({collection: PTO.requestCollection});
-			PTO.logToolBar = new PTO.Views.LogToolBar();
-			PTO.logToolbarPaging = new PTO.Views.LogToolbarPaging({collection: PTO.logCollection});
+			
 
 			$('#requestStart').datepicker({});
 			$('#requestEnd').datepicker({});
@@ -84,6 +80,11 @@ $(document).ready(function() {
 				}
 			}); //end - PTO.holidayCollection.fetch();
 			
+			PTO.userToolBar = new PTO.Views.UserToolbar({collection: PTO.userCollection});
+			PTO.requestToolBar = new PTO.Views.RequestToolBar();
+			PTO.requestToolbarPaging = new PTO.Views.RequestToolbarPaging({collection: PTO.requestCollection});
+			PTO.logToolBar = new PTO.Views.LogToolBar();
+			PTO.logToolbarPaging = new PTO.Views.LogToolbarPaging({collection: PTO.logCollection});
 		}, //end - initialize().
 
 		navigate: function(where) {
@@ -1068,17 +1069,34 @@ $(document).ready(function() {
 	PTO.Collections.UserCollection = Backbone.Collection.extend({
 		model: PTO.Models.User,
 
+		entitySetId: null,
+
 		url: function() {
 			return "/rest/User/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'&$expand=myManager"; //"&$expand=owner, owner.myManager"
 		},
 
 		parse: function(response) {
+			//set entity set id
+			if (response.__ENTITYSET) {
+				var entitySetStr = response.__ENTITYSET,
+					tokens = entitySetStr.split("/");
+
+				this.entitySetId = 	tokens[4];
+			}
+
 			if (response.__ENTITIES) {
 				return response.__ENTITIES;
 			} else {
 				return response;
 			}
-		} //end - parse.
+		}, //end - parse.
+
+		addAccrual: function(successCallBkFn) {
+			this.fetch({
+				url: "rest/User/$entityset/" + this.entitySetId + "/addAccrual/?$top=40&$method=entityset&$timeout=300",
+				success: successCallBkFn()
+			}); //end this.save();
+		} //end - acceptAllRequests().
 	}); //end - PTO.Collections.UserCollection.
 
 	PTO.Views.UserCollectionView = Wakbone.CollectionView.extend({
@@ -1091,14 +1109,20 @@ $(document).ready(function() {
 		el: '#userToolBar',
 
 		events: {
-			"click button.newUser"	: "newUser"
+			"click button.newUser"	: "newUser",
+			"click button.addAccrual"	: "addAccrual"
+		},
+
+		addAccrual: function() {
+			//console.log(this.collection.addAccrual);
+			this.collection.addAccrual(function(model, response, options) {
+				PTO.setMessage({title: "User account PTO balances updated by the accrual rate.", contextualClass: "alert-info"}); //, contextualClass: "alert-danger"
+			});
 		},
 
 		newUser: function() {
 			PTO.editUserView.model = new PTO.Models.User();
 			PTO.editUserView.render(); 
-			//PTO.newUserView = new PTO.Views.NewUser({model: new PTO.Models.User(), collection: PTO.userCollection});
-			//PTO.newUserView.render();
 		} //end - newUser().
 	}); //end - PTO.Views.UserToolbar().
 
