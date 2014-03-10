@@ -1022,15 +1022,15 @@ $(document).ready(function() {
 
 		saveUser: function() {
 			this.model.save({
-				fullName: 		this.$el.find('#fullName').val(),
-				floatingDays: 	this.$el.find('#floatingDays').val(),
-				ptoHours: 		this.$el.find('#ptoHours').val(),
-				compDays: 		this.$el.find('#compDays').val(),
-				role: 			this.$el.find('#role').val(),
-				email: 			this.$el.find('#email').val(),
-				myManagerId:    this.$el.find('#managerSelect').val(),
-				password: 		this.$el.find('#password').val(),
-				ptoAccrualRate: this.$el.find('#ptoAccrualRate').val(),
+				fullName: 			this.$el.find('#fullName').val(),
+				floatingDays: 		this.$el.find('#floatingDays').val(),
+				ptoHours: 			this.$el.find('#ptoHours').val(),
+				compDays: 			this.$el.find('#compDays').val(),
+				role: 				this.$el.find('#role').val(),
+				email: 				this.$el.find('#email').val(),
+				myManagerId:    	this.$el.find('#managerSelect').val(),
+				password: 			this.$el.find('#password').val(),
+				ptoAccrualRate: 	this.$el.find('#ptoAccrualRate').val()
 
 			}, {
 				success: function(model, response) {
@@ -1050,6 +1050,7 @@ $(document).ready(function() {
 			this.$el.find('#email').val(this.model.get('email'));
 			this.$el.find('#password').val(this.model.get('password'));
 			this.$el.find('#ptoAccrualRate').val(this.model.get('ptoAccrualRate'));
+			this.$el.find('#lastAccrualDate').val(this.model.get('lastAccrualDate'));
 
 			var theUser = this.model;
 

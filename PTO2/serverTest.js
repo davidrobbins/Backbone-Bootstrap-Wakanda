@@ -1,6 +1,8 @@
 
-promoteToken = currentSession().promoteWith("Administrator"); 
-ds.Request.all().length;
+
+
+//promoteToken = currentSession().promoteWith("Administrator"); 
+//ds.Request.all().length;
 
 
 

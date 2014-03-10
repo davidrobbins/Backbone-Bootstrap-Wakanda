@@ -177,9 +177,13 @@ ul
 
 
 #messageContainer div{
+  position: absolute;
+  top: 12px;
+  left: 240px;
   border-radius: 0 !important;
   /*padding-left: 20px;*/
   margin: 0px;
+  z-index: 2000;
 }
 
 
