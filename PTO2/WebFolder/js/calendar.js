@@ -108,7 +108,7 @@ $(document).ready(function() {
 			// requestConfigObj.timeout = 300;
 
 			// return PTO.wakandaQueryURLString(requestConfigObj, new Date(), PTO.currentUserModel.get('ID'));
-			return "rest/Request/calendarAllRequests/?$top=40&$method=entityset&$timeout=300";
+			return "rest/Request/calendarAllRequests/?$top=400&$method=entityset&$timeout=300";
 			return "/rest/Request/?$top=40&$params='%5B%5D'&$method=entityset&$timeout=300&$savedfilter='%24all'";
 		},
 
